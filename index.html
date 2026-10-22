@@ -197,6 +197,36 @@ label.chk input{width:22px;height:22px;accent-color:var(--berry)}
 #lock{position:fixed;inset:0;background:var(--bg);z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center}
 #lock.open{display:flex}
 #lock input{max-width:220px;text-align:center;font-size:1.4rem;letter-spacing:.3em}
+
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px}
+.cwk{font-size:.72rem;font-weight:700;color:var(--muted);text-align:center;padding:2px 0}
+.cday{background:var(--card);border-radius:12px;min-height:52px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;box-shadow:var(--shadow)}
+.cday b{font-size:.92rem;font-weight:600}
+.cday .cev{font-size:.72rem;line-height:1.1;letter-spacing:-1px;min-height:.9rem}
+.cday.today b{color:var(--berry)}
+.cday.sel{outline:2px solid var(--berry);background:var(--berry-soft)}
+.post .phead{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.post .phead small{display:block;color:var(--muted);font-size:.78rem}
+.ptext{white-space:pre-wrap;overflow-wrap:anywhere;margin:0 0 10px;font-size:1.02rem}
+.pgrid{display:grid;gap:4px;grid-template-columns:1fr 1fr;margin:6px 0 8px}
+.pgrid.n1{grid-template-columns:1fr}
+.pgrid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block}
+.pgrid.n1 img{aspect-ratio:auto;max-height:420px}
+.pgrid .rm{position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;text-align:center}
+.pbar{display:flex;gap:6px;border-top:1px solid var(--line);padding-top:8px}
+.pact{padding:6px 12px;border-radius:999px;background:var(--bg);font-weight:600;font-size:.9rem}
+.pact.on{background:var(--berry-soft);color:var(--berry)}
+.pcom{margin-top:8px;display:flex;flex-direction:column;gap:6px;font-size:.92rem}
+.pcom>div{background:var(--bg);border-radius:12px;padding:7px 10px;overflow-wrap:anywhere}
+.pcom small{color:var(--muted)}
+.frow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--bg);border-radius:14px;padding:10px 12px;margin-bottom:6px}
+.frow .rt{flex:1;min-width:120px}
+.frow .rt b{display:block;overflow-wrap:anywhere;font-weight:600}
+.frow .rt small{color:var(--muted)}
+.frow a,.frow .mini{padding:6px 12px;font-size:.85rem;border-radius:999px;background:var(--berry-soft);color:var(--berry);font-weight:700;text-decoration:none}
+.tgl{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;font-weight:600;font-size:.92rem}
+.tgl input[type=checkbox]{width:22px;height:22px;accent-color:var(--berry)}
+.tgl input[type=time]{width:130px;min-height:40px}
 @media (prefers-reduced-motion:reduce){#ring .bell{animation:none}}
 </style>
 </head>
@@ -212,20 +242,10 @@ label.chk input{width:22px;height:22px;accent-color:var(--berry)}
 <script>
 /* Shows a clear message instead of an endless loading screen if something goes wrong while starting. */
 function nestoryStop(msg){var p=document.querySelector('#splash p');if(p){p.textContent=msg;p.style.cssText='color:#B83360;max-width:320px;margin:12px auto 0;font-weight:600'}throw new Error('Nestory stopped: '+msg)}
-window.addEventListener('error',function(e){var sp=document.getElementById('splash');var p=document.querySelector('#splash p');if(!sp||sp.style.display==='none'||!p||/Nestory stopped/.test(e.message||''))return;p.textContent='Nestory could not start: '+(e.message||'unknown error')+(e.lineno?' (line '+e.lineno+')':'')+'. If you just edited index.html, check the setup lines.';p.style.color='#B83360'});
+window.addEventListener('error',function(e){var sp=document.getElementById('splash');var p=document.querySelector('#splash p');if(!sp||sp.style.display==='none'||!p||/Nestory stopped/.test(e.message||''))return;p.textContent='Nestory could not start: '+(e.message||'unknown error')+(e.lineno?' (line '+e.lineno+')':'')+'. If you just edited config.js, check its quotes and commas.';p.style.color='#B83360'});
 window.addEventListener('unhandledrejection',function(e){var sp=document.getElementById('splash');var p=document.querySelector('#splash p');if(!sp||sp.style.display==='none'||!p)return;var m=(e.reason&&e.reason.message)||String(e.reason||'');if(/Nestory stopped/.test(m))return;p.textContent='Nestory could not start: '+m;p.style.color='#B83360'});
 </script>
-<script>
-/* ===================== ONLINE SETUP =====================
-   Paste your two Supabase values between the quotes below.
-   Keep the quotes and the comma exactly as they are.       */
-window.NESTORY_SETUP = {
-  url: "https://oxyncmbgaobcntrpbkwf.supabase.co",
-  key: "sb_publishable_wzmiklMjkJfyKxH9UgmEbg_9qa8MU85"
-};
-/* ======================================================== */
-window.NESTORY_SETUP_OK = true;
-</script>
+<script src="config.js"></script>
 <div id="veil"><div id="sheet" role="dialog" aria-modal="true"></div></div>
 <div id="toast" role="status"></div>
 <div id="ring" role="alertdialog" aria-label="Alarm"></div>
@@ -243,10 +263,10 @@ window.NESTORY_SETUP_OK = true;
 
 <script>
 "use strict";
-if(!window.NESTORY_SETUP_OK){nestoryStop('The setup lines near the top of index.html have a typo, so Nestory cannot start. Check that the URL and key each sit between two straight double quotes "like this", and that the comma after the URL line is still there.')}
-const NESTORY_SUPABASE={url:String((window.NESTORY_SETUP||{}).url||'').trim(),key:String((window.NESTORY_SETUP||{}).key||'').trim()};
-if(NESTORY_SUPABASE.url&&!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(NESTORY_SUPABASE.url))nestoryStop('The Supabase URL in index.html does not look right. It should look like https://abcdefgh.supabase.co with nothing after .co');
-if(NESTORY_SUPABASE.key&&!/^sb_publishable_[\w-]+$/.test(NESTORY_SUPABASE.key)&&!/^eyJ[\w-]+\.[\w-]+\.[\w-]+$/.test(NESTORY_SUPABASE.key))nestoryStop('The Supabase key in index.html does not look right. Use the Publishable key, which starts with sb_publishable_ and has no spaces.');
+if(!window.NESTORY_SETUP_OK){nestoryStop('Nestory could not read config.js. Make sure config.js is uploaded next to index.html, and that the URL and key each sit between two straight double quotes "like this", with the commas still there.')}
+const NESTORY_SUPABASE={url:String((window.NESTORY_SETUP||{}).url||'').trim(),key:String((window.NESTORY_SETUP||{}).key||'').trim(),push:String((window.NESTORY_SETUP||{}).push||'').trim()};
+if(NESTORY_SUPABASE.url&&!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(NESTORY_SUPABASE.url))nestoryStop('The Supabase URL in config.js does not look right. It should look like https://abcdefgh.supabase.co with nothing after .co');
+if(NESTORY_SUPABASE.key&&!/^sb_publishable_[\w-]+$/.test(NESTORY_SUPABASE.key)&&!/^eyJ[\w-]+\.[\w-]+\.[\w-]+$/.test(NESTORY_SUPABASE.key))nestoryStop('The Supabase key in config.js does not look right. Use the Publishable key, which starts with sb_publishable_ and has no spaces.');
 /* ---------- tiny helpers ---------- */
 const $=(s,r=document)=>r.querySelector(s);
 function h(tag,a,...kids){
@@ -302,8 +322,8 @@ const K={
     f:[['name','Name','text',{req:1,ph:'Our flat'}],['type','We','select',{o:['Rent it','Own it','Family home']}],['address','Address','area'],['landlord','Landlord or agent'],['landlordPhone','Their phone','tel'],['rent','Rent amount','number'],['rentCycle','Rent paid','select',{o:['Monthly','Quarterly','Half-yearly','Yearly','In cheques']}],['rentDue','Next rent due','date'],['start','Contract start','date'],['renewal','Contract renewal','date'],['deposit','Deposit paid','number'],['utilities','Electricity, water, internet account details','area'],['note','Note','area']],
     row:i=>[i.name,j(i.type,i.renewal&&'renews '+nice(i.renewal)),i.rent?money(i.rent):'']},
   document:{name:'document',plural:'Documents',icon:'🪪',blurb:'Passports, IDs, visas and licences with expiry dates.',empty:'Add a document so you never miss an expiry.',sort:soon('expiry'),
-    f:[['name','Document','text',{req:1,ph:'Passport'}],['type','Type','select',{o:['Passport','National ID','Residence visa','Driving licence','Certificate','Other']}],['person','Whose','person'],['expiry','Expires on','date'],['where','Where it is kept'],['note','Note','area']],
-    row:i=>[i.name,j(i.person,i.expiry&&'expires '+nice(i.expiry),i.where)]},
+    f:[['name','Document','text',{req:1,ph:'Passport'}],['type','Type','select',{o:['Passport','National ID','Residence visa','Driving licence','Certificate','Other']}],['person','Whose','person'],['expiry','Expires on','date'],['files','Photos or PDFs of the document','files'],['where','Where it is kept'],['note','Note','area']],
+    row:i=>[i.name,j(i.person,i.expiry&&'expires '+nice(i.expiry),i.where,Array.isArray(i.files)&&i.files.length&&'📎 '+i.files.length+(i.files.length===1?' file':' files'))]},
   vehicle:{name:'vehicle',plural:'Vehicles',icon:'🚗',blurb:'Registration, insurance and service dates.',empty:'Add your car or bike.',
     f:[['name','Vehicle','text',{req:1}],['plate','Plate number'],['regExpiry','Registration expires','date'],['insExpiry','Insurance expires','date'],['service','Next service due','date'],['note','Note','area']],
     row:i=>[i.name,j(i.plate,i.regExpiry&&'registration '+nice(i.regExpiry))]},
@@ -373,6 +393,16 @@ const K={
     f:[['weight','Weight (kg)','number',{req:1}],['who','Who','person',{req:1,def:()=>me().nick}],['date','Date','date',{def:today}],['waist','Waist (cm, optional)','number'],['note','Note','area']],
     row:i=>[i.weight+' kg',j(i.who,niceDay(i.date),i.waist&&'waist '+i.waist+' cm')],
     top:l=>weightChart(l)},
+  essential:{name:'item',plural:'Home essentials',icon:'🧺',blurb:'Rice, vegetables, cleaning things… get reminded before they run out. Tap the circle when you buy something.',empty:'Add the things your home always needs, or tap the ideas below.',
+    sort:(a,b)=>essDays(a)-essDays(b)||String(a.name).localeCompare(String(b.name)),check:'_never',tickIcon:'✓',tickLabel:'Bought today',
+    tickFn:i=>{Store.put('items',i.id,{...i,lastBought:today(),status:'Enough',upd:Date.now()});toast(i.name+' marked as bought today')},
+    ideaKey:'category',ideas:[['Rice','Groceries'],['Atta / flour','Groceries'],['Cooking oil','Groceries'],['Sugar','Groceries'],['Tea','Groceries'],['Coffee','Groceries'],['Bread','Groceries'],['Milk','Dairy & eggs'],['Eggs','Dairy & eggs'],['Vegetables','Vegetables & fruits'],['Fruits','Vegetables & fruits'],['Onions','Vegetables & fruits'],['Drinking water','Groceries'],['Detergent','Cleaning'],['Dish soap','Cleaning'],['Toilet paper','Toiletries'],['Toothpaste','Toiletries']],
+    f:[['name','Item','text',{req:1,ph:'Rice'}],['category','Type','select',{o:['Groceries','Vegetables & fruits','Dairy & eggs','Meat & fish','Cleaning','Toiletries','Other'],def:'Groceries'}],['every','Usually lasts (days)','select',{o:['2','3','5','7','10','14','21','30','45','60'],def:'7'}],['lastBought','Last bought','date',{def:today}],['status','Right now','select',{o:['Enough','Running low','Out'],def:'Enough'}],['qty','Usual amount','text',{ph:'5 kg'}],['note','Note','area']],
+    row:i=>[i.name,j(i.category,i.qty,i.lastBought&&'bought '+niceDay(i.lastBought).toLowerCase()),essLabel(i)],
+    top:l=>{const need=l.filter(essNeed);return need.length?h('div',{class:'card'},h('h2',null,'Time to buy ('+need.length+')'),h('p',{class:'note'},need.map(i=>i.name).join(', ')),!S.readonly&&h('button',{class:'btn mint wide',onclick:()=>addToShopping(need.map(i=>i.name))},'Add these to the shopping list')):null}},
+  plan:{name:'plan',plural:'Plans',icon:'🗓️',blurb:'Your own plans. They show in the calendar and can remind you.',empty:'Add a plan from the calendar.',sort:(a,b)=>((nextPlanDate(a)||{getTime:()=>9e15}).getTime()-(nextPlanDate(b)||{getTime:()=>9e15}).getTime()),
+    f:[['title','What','text',{req:1,ph:'Dinner with friends'}],['date','Date','date',{req:1,def:today}],['time','Time (optional)','time'],['remind','Remind me','select',{o:['At the time','15 minutes before','1 hour before','1 day before','No reminder'],def:'15 minutes before'}],['repeat','Repeat','select',{o:['Once','Weekly','Monthly','Yearly'],def:'Once'}],['who','Who','person'],['where','Where'],['note','Note','area']],
+    row:i=>[i.title,j(nice(i.date),i.time,i.repeat&&i.repeat!=='Once'&&i.repeat,i.where)]},
   note:{name:'note',plural:'Personal space',icon:'🔐',priv:1,blurb:'Only you can see what is written here. Not even your partner.',empty:'Write a thought, a wish list, a surprise plan.',
     f:[['title','Title','text',{req:1}],['body','Write here','area',{tall:1}]],
     row:i=>[i.title,(i.body||'').slice(0,70)]},
@@ -382,11 +412,12 @@ const PAGES={
   chat:['💬','Our chat','Just the two of you'],memory:['📸','Memories','Photos and stories'],
   water:['💧','Water','Glasses today'],reminders:['🔔','Coming up','Every date in one list'],ask:['✨','Ask Nestory','Questions about your own details'],
   yearly:['📊','Year in money','Month by month'],mealplan:['🗓️','Meal planner','Plan the week'],emergency:['🚑','Emergency card','Show a doctor'],lovenote:['💌','Love notes','Little surprises'],
+  calendar:['📅','Calendar','Plan your days'],feed:['📰','Our wall','Moments and photos'],
 };
 const TABS=[
   {id:'home',icon:'🏡',label:'Home'},
   {id:'money',icon:'💰',label:'Money',title:'Money',sub:'Spending, plans and what you own.',tiles:['expenses','budget','yearly','saving','loan','subscription','remit','owe','asset']},
-  {id:'us',icon:'💞',label:'Us',title:'Us',sub:'The two of you.',tiles:['chat','lovenote','memory','trip','bucket','gift','chore','shopping','note','reminders']},
+  {id:'us',icon:'💞',label:'Us',title:'Us',sub:'The two of you.',tiles:['calendar','feed','chat','lovenote','memory','shopping','essential','chore','trip','bucket','gift','note','reminders']},
   {id:'life',icon:'🌿',label:'Life',title:'Life',sub:'Food, water, health and alarms.',tiles:['emergency','medicine','health','medical','weight','period','water','alarm','food','mealplan','recipe']},
   {id:'book',icon:'📖',label:'Book',title:'Our book',sub:'Everything about your family, in one place.',tiles:['member','date','insurance','house','warranty','maintenance','document','vehicle','contact','ask']},
 ];
@@ -394,7 +425,7 @@ const AVATARS=['🐻','🐰','🦊','🐼','🐨','🐯','🐧','🐥','🦋','�
 
 /* ---------- state + storage ---------- */
 const S={items:new Map(),priv:new Map(),chat:new Map(),photos:new Map(),uid:'me',hasPriv:true,readonly:false,ready:false,tab:'home',page:null,month:today().slice(0,7),sample:null,local:false};
-S.year=today().slice(0,4);S.week=ymd(monday(new Date()));
+S.year=today().slice(0,4);S.week=ymd(monday(new Date()));S.calMonth=today().slice(0,7);S.calDay=today();
 const LS='nestory.v1';
 const Store={
   db:null,
@@ -406,7 +437,7 @@ const Store={
     if(!db&&!window.claude&&NESTORY_SUPABASE.url&&NESTORY_SUPABASE.key){
       const slow=setTimeout(()=>{const p=$('#splash p');if(p&&$('#splash').style.display!=='none'&&!$('#veil').classList.contains('open'))p.textContent='Still connecting… If this does not finish, check your internet, and in supabase.com check the project is not paused.'},20000);
       try{const on=await supaConnect(NESTORY_SUPABASE);db=on.db;lanUid=on.uid;clearTimeout(slow)}
-      catch(e){clearTimeout(slow);$('#splash p').textContent='Could not connect: '+((e&&e.message)||e)+' Check the Supabase URL and key in the file, then reload.';return}
+      catch(e){clearTimeout(slow);$('#splash p').textContent='Could not connect: '+((e&&e.message)||e)+' Check the Supabase URL and key in config.js, then reload.';return}
     }
     if(!db&&!window.claude&&/^http/.test(location.protocol)){const lan=await lanConnect();if(lan){db=lan.db;lanUid=lan.uid}}
     if(db){
@@ -414,7 +445,7 @@ const Store={
       try{if(user)uid=await user.id();const w=user?await user.can('data.write'):null;S.readonly=(w===false)}catch{}
       S.uid=uid||'guest';S.hasPriv=!!uid;this.db=db;
       const m=s=>new Map(s.docs.map(d=>[d.id,{...d.data(),id:d.id}]));
-      db.collection('items').onSnapshot(s=>{S.items=m(s);const first=!S.ready;S.ready=true;refresh();if(first)welcome()},e=>{S.ready=true;refresh();toast(e.message||'Could not load your data.')});
+      db.collection('items').onSnapshot(s=>{S.items=m(s);const first=!S.ready;S.ready=true;refresh();if(first){welcome();if(location.hash.length>1){routeTo(location.hash);try{history.replaceState(null,'',location.pathname+location.search)}catch{}}}},e=>{S.ready=true;refresh();toast(e.message||'Could not load your data.')});
       if(uid)db.collection('data/users/'+uid).onSnapshot(s=>{S.priv=m(s);refresh()},()=>{});
       db.collection('chat').orderBy('day','desc').limit(30).onSnapshot(s=>{S.chat=m(s);refresh()},()=>{});
     }else{
@@ -437,9 +468,9 @@ const Store={
     try{if(this.db)await this.ref(scope,id).delete();else{S[scope].delete(id);this.persist();refresh()}}catch(e){toast('Could not delete. '+((e&&e.message)||''))}
   },
   async photo(id){
-    if(S.photos.has(id))return S.photos.get(id).d;
-    if(!this.db)return null;
-    try{const s=await this.db.collection('photos').doc(id).get();if(s.exists){S.photos.set(id,s.data());return s.data().d}}catch{}
+    if(S.photos.has(id)){const p=S.photos.get(id);if(!p.exp||p.exp>Date.now())return p.d}
+    if(this.db){try{const s=await this.db.collection('photos').doc(id).get();if(s.exists&&s.data()&&s.data().d){S.photos.set(id,s.data());return s.data().d}}catch{}}
+    if(S.files){try{const u=await S.files.url('photos/'+id+'.jpg');S.photos.set(id,{d:u,exp:Date.now()+50*60000});return u}catch{}}
     return null;
   }
 };
@@ -511,8 +542,12 @@ async function supaConnect(cfg){
   while(!session)session=await supaLogin(sb);
   const uid=session.user.id;
   S.signOut=async()=>{await sb.auth.signOut();location.reload()};
+  let nest=await supaNest(sb,uid);            // undefined = database not updated for nests yet; null = no nest yet
+  while(nest===null)nest=await nestSetup(sb,uid);
+  S.nest=nest||null;
+  const nid=nest?nest.id:null,inNest=t=>nid?t.eq('nest_id',nid):t;
   const load=async()=>{const out={items:new Map(),chat:new Map(),priv:new Map()};
-    for(let from=0;;from+=1000){const{data,error}=await sb.from('docs').select('scope,id,data').in('scope',['items','chat','priv']).order('id').range(from,from+999);
+    for(let from=0;;from+=1000){const{data,error}=await inNest(sb.from('docs').select('scope,id,data').in('scope',['items','chat','priv'])).order('id').range(from,from+999);
       if(error)throw new Error(error.message);for(const r of data)out[r.scope]&&out[r.scope].set(r.id,r.data);if(data.length<1000)break}
     return out};
   let cols=await load();const subs={items:[],chat:[],priv:[]};
@@ -522,28 +557,100 @@ async function supaConnect(cfg){
   const col=p=>{const s=scope(p);const c={orderBy:()=>c,limit:()=>c,
     onSnapshot(fn){subs[s].push(fn);setTimeout(()=>emit(s),0);return()=>{}},
     doc:id=>({
-      async set(d){if(cols[s]){cols[s].set(id,d);emit(s)}chk(await sb.from('docs').upsert({scope:s,id,owner:s==='priv'?uid:null,data:d,updated_at:new Date().toISOString()}))},
-      async delete(){if(cols[s]){cols[s].delete(id);emit(s)}chk(await sb.from('docs').delete().eq('scope',s).eq('id',id))},
-      async get(){const r=chk(await sb.from('docs').select('data').eq('scope',s).eq('id',id).maybeSingle());return{id,exists:!!r.data,data:()=>r.data&&r.data.data}}})};return c};
+      async set(d){if(cols[s]){cols[s].set(id,d);emit(s)}chk(await sb.from('docs').upsert({...(nid?{nest_id:nid}:{}),scope:s,id,owner:s==='priv'?uid:null,data:d,updated_at:new Date().toISOString()},nid?{onConflict:'nest_id,scope,id'}:undefined))},
+      async delete(){if(cols[s]){cols[s].delete(id);emit(s)}chk(await inNest(sb.from('docs').delete()).eq('scope',s).eq('id',id))},
+      async get(){const r=chk(await inNest(sb.from('docs').select('data')).eq('scope',s).eq('id',id).maybeSingle());return{id,exists:!!r.data,data:()=>r.data&&r.data.data}}})};return c};
   let live=false;
-  sb.channel('nestory-docs').on('postgres_changes',{event:'*',schema:'public',table:'docs'},p=>{
+  sb.channel('nestory-docs').on('postgres_changes',{event:'*',schema:'public',table:'docs',...(nid?{filter:'nest_id=eq.'+nid}:{})},p=>{
     const del=p.eventType==='DELETE',r=del?p.old:p.new;if(!r||!cols[r.scope])return;
+    if(nid&&r.nest_id&&r.nest_id!==nid)return;
     if(del)cols[r.scope].delete(r.id);else cols[r.scope].set(r.id,r.data);emit(r.scope);
   }).subscribe(async st=>{if(st==='SUBSCRIBED'){if(live){try{cols=await load();for(const k in subs)emit(k)}catch{}}live=true}});
   document.addEventListener('visibilitychange',async()=>{if(!document.hidden){try{cols=await load();for(const k in subs)emit(k)}catch{}}});
+  const bucket=()=>sb.storage.from('nestory-files'),pre=(nid||'shared')+'/';
+  S.files={
+    async upload(path,blob,type){const r=await bucket().upload(pre+path,blob,{contentType:type,upsert:true});if(r.error)throw new Error(/bucket not found/i.test(r.error.message)?'File storage is not set up yet. Run the notifications and files setup script.':r.error.message)},
+    async url(path,download){const r=await bucket().createSignedUrl(pre+path,3600,download?{download}:undefined);if(r.error)throw new Error(r.error.message);return r.data.signedUrl},
+    async remove(paths){if(paths.length)await bucket().remove(paths.map(x=>pre+x))}
+  };
+  if(cfg.push&&'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window){
+    S.push={key:cfg.push,
+      async save(sub,prefs){const r=await sb.from('push_subs').upsert({endpoint:sub.endpoint,user_id:uid,sub,tz:(Intl.DateTimeFormat().resolvedOptions().timeZone)||'Asia/Dubai',prefs,updated_at:new Date().toISOString()});if(r.error)throw new Error(/push_subs/.test(r.error.message)?'Notifications are not set up in Supabase yet. Run the notifications and files setup script.':r.error.message)},
+      async prefs(endpoint){const r=await sb.from('push_subs').select('prefs').eq('endpoint',endpoint).maybeSingle();return r.data?r.data.prefs:null},
+      async remove(endpoint){await sb.from('push_subs').delete().eq('endpoint',endpoint)},
+      async send(body){const r=await sb.functions.invoke('nestory-push',{body});if(r.error)throw new Error(r.error.message||'The notification service did not answer.');return r.data}};
+    S.notify=b=>S.push.send(b).catch(()=>{});
+    navigator.serviceWorker.register('sw.js').then(async reg=>{try{const sub=await reg.pushManager.getSubscription();S.pushOn=!!sub&&Notification.permission==='granted'}catch{}}).catch(()=>{});
+    navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.go)routeTo(e.data.go)});
+  }
   return{db:{collection:col},uid};
 }
+function routeTo(hash){const m=/^#?(\w+)(?:\/(\w+))?/.exec(hash||'');if(m&&TABS.some(t=>t.id===m[1])&&(!m[2]||K[m[2]]||PAGES[m[2]]))go(m[1],m[2]||null)}
+function lockedSheet(title,body){sheetLock=false;openSheet(title,body);const x=$('#sheet .x');x&&x.remove();sheetLock=true}
 function supaLogin(sb){
   return new Promise(resolve=>{
+    let mode='in';
     const email=h('input',{type:'email',placeholder:'you@example.com',autocomplete:'username'}),pw=h('input',{type:'password',autocomplete:'current-password'});
+    const note=h('p',{class:'note'}),pwLabel=h('span',null,'Password');
     const btn=h('button',{class:'btn wide',onclick:async()=>{
+      const em=email.value.trim();if(!em||!pw.value){toast('Enter your email and password.');return}
       btn.disabled=true;
-      const{data,error}=await sb.auth.signInWithPassword({email:email.value.trim(),password:pw.value});
+      if(mode==='up'){
+        if(pw.value.length<8){toast('Use at least 8 characters for the password.');btn.disabled=false;return}
+        const{data,error}=await sb.auth.signUp({email:em,password:pw.value});
+        if(error){toast(/not allowed|disabled/i.test(error.message)?'New accounts are switched off. Ask the person who set up Nestory to add you.':error.message);btn.disabled=false;return}
+        if(!data.session){toast('Check your email to confirm your account, then sign in here.');mode='in';paint();btn.disabled=false;return}
+        sheetLock=false;closeSheet();resolve(data.session);return;
+      }
+      const{data,error}=await sb.auth.signInWithPassword({email:em,password:pw.value});
       if(error||!data.session){toast(error?error.message:'Could not sign in.');btn.disabled=false;return}
       sheetLock=false;closeSheet();resolve(data.session);
-    }},'Sign in');
-    openSheet('Sign in to Nestory',h('div',null,h('p',{class:'note'},'Use the email and password that were set up for you.'),h('label',{class:'f'},h('span',null,'Email'),email),h('label',{class:'f'},h('span',null,'Password'),pw),btn));
-    const x=$('#sheet .x');x&&x.remove();sheetLock=true;
+    }});
+    const toggle=h('button',{style:'color:var(--berry);font-weight:600;margin-top:14px;display:block',onclick:()=>{mode=mode==='in'?'up':'in';paint()}});
+    const paint=()=>{const up=mode==='up';note.textContent=up?'Create your own account. You and your partner each make one, then share a nest.':'Sign in with your email and password.';
+      pwLabel.textContent=up?'Choose a password (8 or more characters)':'Password';pw.autocomplete=up?'new-password':'current-password';btn.textContent=up?'Create account':'Sign in';toggle.textContent=up?'Already have an account? Sign in':'New here? Create an account'};
+    paint();
+    lockedSheet('Welcome to Nestory',h('div',null,note,h('label',{class:'f'},h('span',null,'Email'),email),h('label',{class:'f'},pwLabel,pw),btn,toggle));
+  });
+}
+/* ---------- couple nests: each couple gets its own private space ---------- */
+async function supaNest(sb,uid){
+  const m=await sb.from('nest_members').select('nest_id').eq('user_id',uid).maybeSingle();
+  if(m.error){if(m.error.code==='42P01'||m.error.code==='PGRST205'||/does not exist|could not find the table|schema cache/i.test(m.error.message||''))return undefined;throw new Error(m.error.message)}
+  if(!m.data)return null;
+  const n=await sb.from('nests').select('id,name,invite_code').eq('id',m.data.nest_id).maybeSingle();
+  if(n.error||!n.data)throw new Error(n.error?n.error.message:'Your nest could not be found.');
+  const c=await sb.from('nest_members').select('user_id',{count:'exact',head:true}).eq('nest_id',m.data.nest_id);
+  return{...n.data,members:c.count||1};
+}
+function copyText(t){try{navigator.clipboard.writeText(t).then(()=>toast('Code copied'),()=>toast('Code: '+t))}catch{toast('Code: '+t)}}
+function nestSetup(sb,uid){
+  return new Promise(resolve=>{
+    const nameI=h('input',{placeholder:'Our nest',maxLength:40});
+    const codeI=h('input',{placeholder:'8-letter code',autocomplete:'off',autocapitalize:'characters',maxLength:12,style:'text-transform:uppercase;letter-spacing:.15em'});
+    const create=h('button',{class:'btn wide',onclick:async()=>{
+      create.disabled=true;
+      const{data,error}=await sb.rpc('create_nest',{nest_name:nameI.value.trim()});
+      if(error||!data){toast(error?error.message:'Could not create the nest.');create.disabled=false;return}
+      const code=data.invite_code;
+      lockedSheet('Your nest is ready',h('div',null,
+        h('p',{class:'note'},'Share this code with your partner. They sign in, tap "Join my partner\'s nest" and type it in. Only the two of you will ever see what you add.'),
+        h('div',{class:'big',style:'text-align:center;letter-spacing:.2em;margin:10px 0 14px'},code),
+        h('div',{class:'actions'},h('button',{class:'btn soft',onclick:()=>copyText(code)},'Copy code'),h('button',{class:'btn',onclick:async()=>{sheetLock=false;closeSheet();resolve(await supaNest(sb,uid))}},'Continue')),
+        h('p',{class:'note',style:'margin-top:12px'},'You can find this code again later in your settings.')));
+    }},'Start our nest');
+    const join=h('button',{class:'btn mint wide',onclick:async()=>{
+      const code=codeI.value.replace(/\s/g,'').toUpperCase();if(code.length<6){toast('Type the code your partner shared.');return}
+      join.disabled=true;
+      const{error}=await sb.rpc('join_nest',{code});
+      if(error){toast(error.message);join.disabled=false;return}
+      sheetLock=false;closeSheet();toast('You have joined your partner\'s nest');resolve(await supaNest(sb,uid));
+    }},'Join');
+    lockedSheet('Set up your nest',h('div',null,
+      h('p',{class:'note'},'A nest is the private space for you and your partner. One of you starts it and the other joins with a code.'),
+      h('div',{class:'card',style:'background:var(--bg);box-shadow:none'},h('h2',null,'Starting fresh?'),h('label',{class:'f'},h('span',null,'Name your nest (optional)'),nameI),create),
+      h('div',{class:'card',style:'background:var(--bg);box-shadow:none'},h('h2',null,'Join my partner\'s nest'),h('label',{class:'f'},h('span',null,'Code from your partner'),codeI),join),
+      h('button',{style:'color:var(--muted);font-size:.88rem',onclick:async()=>{await sb.auth.signOut();location.reload()}},'Signed in with the wrong account? Sign out')));
   });
 }
 
@@ -571,8 +678,9 @@ async function addToShopping(lines){
   let n=0;for(const name of add){if(await Store.put('items',gid('shopping'),{kind:'shopping',name:name.slice(0,120),done:false,by:S.uid,at:Date.now(),upd:Date.now()}))n++}
   toast(n+(n===1?' item':' items')+' added to the shopping list','Open',()=>go('us','shopping'));
 }
-async function savePhoto(id,file){
-  const img=await loadImg(await readFile(file)),thumb=draw(img,360).toDataURL('image/jpeg',.7);
+async function savePhoto(id,file,tmax){
+  const img=await loadImg(await readFile(file)),thumb=draw(img,tmax||360).toDataURL('image/jpeg',.72);
+  if(S.files){const c=draw(img,1600),blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.85));if(!blob)throw new Error('Could not prepare the photo.');await S.files.upload('photos/'+id+'.jpg',blob,'image/jpeg');S.photos.delete(id);return thumb}
   let full,max=1200,q=.78;do{full=draw(img,max).toDataURL('image/jpeg',q);max-=160;q-=.05}while(full.length>225000&&max>400);
   if(Store.db)await Store.db.collection('photos').doc(id).set({d:full});
   S.photos.set(id,{d:full});
@@ -598,6 +706,62 @@ function weightChart(l){
     return h('div',null,h('small',null,h('span',{style:'color:'+cols[k%4]},'● '),n),h('b',{style:'display:block'},last+' kg'),a.length>1?h('small',null,(ch<=0?'▼ ':'▲ ')+Math.abs(ch)+' kg since '+nice(a[0].date)):null)})));
 }
 
+function deletePhoto(id){if(Store.db)Store.db.collection('photos').doc(id).delete().catch(()=>{});if(S.files)S.files.remove(['photos/'+id+'.jpg']).catch(()=>{});S.photos.delete(id)}
+function blobToDataURL(b){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(b)})}
+const fmtSize=n=>{n=num(n);return n>=1048576?(n/1048576).toFixed(1)+' MB':Math.max(1,Math.round(n/1024))+' KB'};
+const fileIcon=t=>/pdf/i.test(t||'')?'📄':/image/i.test(t||'')?'🖼️':'📎';
+const safeName=n=>String(n||'file').replace(/[^\w.\-]+/g,'_').slice(-80)||'file';
+function fileRow(f,onRemove){
+  const view=h('a',{target:'_blank',rel:'noopener'},'View'),dl=h('a',{target:'_blank',rel:'noopener'},'Download');
+  if(S.files){S.files.url(f.path).then(u=>{view.href=u}).catch(()=>{view.textContent='Not found'});S.files.url(f.path,f.name).then(u=>{dl.href=u}).catch(()=>{dl.remove()})}
+  else{view.textContent='Online only';dl.remove()}
+  return h('div',{class:'frow'},h('span',null,fileIcon(f.type)),h('span',{class:'rt'},h('b',null,f.name),h('small',null,fmtSize(f.size))),view,dl,onRemove&&!S.readonly?h('button',{class:'mini',type:'button','aria-label':'Remove '+f.name,onclick:onRemove},'✕'):null);
+}
+const ago=ts=>{const s=(Date.now()-num(ts))/1000;return s<60?'just now':s<3600?Math.floor(s/60)+' min ago':s<86400?Math.floor(s/3600)+' h ago':new Date(num(ts)).toLocaleDateString(undefined,{day:'numeric',month:'short'})};
+function viewPhoto(id,thumb){const img=h('img',{src:thumb||'',alt:'',style:'width:100%;border-radius:14px'});Store.photo(id).then(d=>{if(d)img.src=d});openSheet('Photo',h('div',null,img))}
+
+/* ---------- home essentials ---------- */
+function essDays(i){if(i.status==='Out')return -2;if(i.status==='Running low')return -1;const b=pd(i.lastBought),e=num(i.every);if(!b||!e)return 999;return Math.round((b.getTime()+e*864e5-t0().getTime())/864e5)}
+const essNeed=i=>essDays(i)<=1;
+function essLabel(i){const d=essDays(i);return i.status==='Out'?'Out':i.status==='Running low'?'Low':d<=0?'Buy now':d===1?'Tomorrow':d<999?'in '+d+' days':''}
+function syncEssential(name){const n=String(name||'').trim().toLowerCase();for(const e of all('essential'))if(String(e.name).trim().toLowerCase()===n)Store.put('items',e.id,{...e,lastBought:today(),status:'Enough',upd:Date.now()})}
+
+/* ---------- plans + calendar ---------- */
+const dim=(y,m)=>new Date(y,m+1,0).getDate();
+function occursOn(p,d){const s=pd(p.date);if(!s||d<s)return false;const r=p.repeat||'Once';
+  if(r==='Weekly')return d.getDay()===s.getDay();
+  if(r==='Monthly')return d.getDate()===Math.min(s.getDate(),dim(d.getFullYear(),d.getMonth()));
+  if(r==='Yearly')return d.getMonth()===s.getMonth()&&d.getDate()===Math.min(s.getDate(),dim(d.getFullYear(),d.getMonth()));
+  return ymd(d)===ymd(s)}
+function nextPlanDate(p){const s=pd(p.date);if(!s)return null;if(!p.repeat||p.repeat==='Once')return s;const t=t0();for(let k=0;k<400;k++){const d=new Date(t.getFullYear(),t.getMonth(),t.getDate()+k);if(occursOn(p,d))return d}return null}
+function calCollect(y,m){
+  const days={},last=dim(y,m),put=(d,e)=>{if(d>=1&&d<=last)(days[d]=days[d]||[]).push(e)};
+  const exact=(v,e)=>{const d=pd(v);if(d&&d.getFullYear()===y&&d.getMonth()===m)put(d.getDate(),e)};
+  const yearly=(v,e)=>{const d=pd(v);if(d&&d.getMonth()===m&&d.getFullYear()<=y)put(Math.min(d.getDate(),last),e)};
+  for(const i of S.items.values()){const E=(icon,title,x)=>({icon,title,item:i,...(x||{})});
+    switch(i.kind){
+      case'plan':for(let d=1;d<=last;d++)if(occursOn(i,new Date(y,m,d)))put(d,E('🗓️',i.title,{time:i.time}));break;
+      case'member':if(i.dob)yearly(i.dob,E('🎂',i.name+"'s birthday"));break;
+      case'date':(i.yearly?yearly:exact)(i.date,E(i.type==='Birthday'?'🎂':i.type==='Anniversary'?'💍':'📅',i.title));break;
+      case'insurance':exact(i.renewal,E('🛡️',i.name+' renewal'));break;
+      case'house':exact(i.renewal,E('🏠',i.name+' contract renewal'));exact(i.rentDue,E('🔑','Rent due: '+i.name));break;
+      case'document':exact(i.expiry,E('🪪',i.name+' expires'));break;
+      case'vehicle':exact(i.regExpiry,E('🚗',i.name+' registration'));exact(i.insExpiry,E('🚗',i.name+' insurance'));exact(i.service,E('🔧',i.name+' service'));break;
+      case'medical':exact(i.followUp,E('🩺','Follow-up: '+i.title));break;
+      case'subscription':exact(i.nextDue,E('🔁',i.name+' due'));break;
+      case'bucket':if(!i.done)exact(i.target,E('🌈',i.name));break;
+      case'trip':exact(i.from,E('✈️','Trip: '+i.name));if(i.to)exact(i.to,E('🏡','Back from '+i.name));break;
+      case'saving':exact(i.maturity,E('🐷',i.name+' matures'));break;
+      case'loan':{const dd=Math.round(num(i.dueDay));if(dd>=1&&dd<=31)put(Math.min(dd,last),E('💳',i.name+' payment'));exact(i.endDate,E('🎉',i.name+' last payment'));break}
+      case'warranty':exact(i.warrantyEnd,E('🧾',i.item+' warranty ends'));break;
+      case'maintenance':exact(i.nextDue,E('🛠️',i.task));break;
+      case'chore':if(!i.done)exact(i.due,E('🧹',i.task));break;
+    }}
+  const cy=cycle();if(cy&&cy.next.getFullYear()===y&&cy.next.getMonth()===m)put(cy.next.getDate(),{icon:'🌷',title:'Period expected (estimate)'});
+  for(const d in days)days[d].sort((a,b)=>String(a.time||'').localeCompare(String(b.time||'')));
+  return days;
+}
+
 /* ---------- backup, export, restore ---------- */
 const okKey=v=>typeof v==='string'&&/^[\w.\-~:@+]{1,200}$/.test(v);
 async function saveFile(name,text,type){
@@ -610,7 +774,8 @@ async function saveFile(name,text,type){
 async function backup(btn){
   const old=btn.textContent;btn.disabled=true;btn.textContent='Preparing backup…';
   try{
-    const photos=[];for(const i of S.items.values()){if(i.thumb){const d=await Store.photo(i.id);if(d)photos.push([i.id,{d}])}}
+    const photos=[],grab=async id=>{let d=await Store.photo(id);if(d&&/^https?:/.test(d)){try{d=await blobToDataURL(await (await fetch(d)).blob())}catch{d=null}}if(d)photos.push([id,{d}])};
+    for(const i of S.items.values()){if(i.thumb)await grab(i.id);if(Array.isArray(i.thumbs))for(let k=0;k<i.thumbs.length;k++)await grab(i.id+'-'+k)}
     const data={app:'nestory',v:1,exported:new Date().toISOString(),uid:S.uid,items:[...S.items],chat:[...S.chat],priv:[...S.priv],photos};
     await saveFile('nestory-backup-'+today()+'.json',JSON.stringify(data),'application/json');
   }catch(e){toast('Could not make the backup. '+((e&&e.message)||''))}
@@ -679,12 +844,19 @@ function pinSheet(){
 
 /* ---------- generic form ---------- */
 function openForm(kind,it,after){
-  it=it||{};const def=K[kind],isNew=!it.id,inputs={};let photoFile=null;
+  it=it||{};const def=K[kind],isNew=!it.id,inputs={};let photoFile=null,filesField=null;
   const rows=def.f.map(([k,label,type,o])=>{
     o=o||{};type=type||'text';
     let v=it[k];if(v==null&&isNew&&o.def!=null)v=typeof o.def==='function'?o.def():o.def;
     let el;
     if(type==='check'){el=h('input',{type:'checkbox',checked:!!v});inputs[k]=()=>el.checked;return h('label',{class:'chk'},el,label)}
+    if(type==='files'){let keep=Array.isArray(v)?[...v]:[];const added=[],removed=[];filesField={key:k,get:()=>({keep,added,removed})};
+      const list=h('div');
+      const paint=()=>list.replaceChildren(...keep.map(f=>fileRow(f,()=>{keep=keep.filter(x=>x!==f);removed.push(f);paint()})),
+        ...added.map(f=>h('div',{class:'frow'},h('span',null,fileIcon(f.type)),h('span',{class:'rt'},h('b',null,f.name),h('small',null,fmtSize(f.size)+' · uploads when you save')),h('button',{class:'mini',type:'button','aria-label':'Remove '+f.name,onclick:()=>{added.splice(added.indexOf(f),1);paint()}},'✕'))));
+      paint();
+      const addB=S.files?(!S.readonly&&h('button',{class:'btn soft',type:'button',onclick:async()=>{const fs=await pick('image/*,application/pdf',true);for(const f of fs){if(f.size>20*1024*1024){toast(f.name+' is bigger than 20 MB.');continue}added.push(f)}paint()}},'📎 Add photo or PDF')):h('p',{class:'note',style:'margin:0'},'Adding files works in the online version of Nestory.');
+      return h('div',{class:'f'},h('span',{style:'display:block;font-weight:600;font-size:.88rem;margin-bottom:6px'},label),list,addB||null)}
     if(type==='photo'){let file=null;photoFile=()=>file;
       const prev=h('img',{src:it.thumb||'',alt:'',style:'width:130px;border-radius:12px;margin-bottom:8px;display:'+(it.thumb?'block':'none')});
       const pickB=h('button',{class:'btn soft',type:'button',onclick:async()=>{const f=await pick('image/*');if(f[0]){file=f[0];prev.src=URL.createObjectURL(file);prev.style.display='block';prev.style.width='130px';pickB.textContent='Change photo'}}},it.thumb?'Change photo':'Add photo');
@@ -706,12 +878,16 @@ function openForm(kind,it,after){
     save.disabled=true;
     const id=it.id||gid(kind);
     if(photoFile&&photoFile()){try{save.textContent='Saving photo…';data.thumb=await savePhoto(id,photoFile())}catch(e){toast((e&&e.message)||'Could not save the photo.');save.disabled=false;save.textContent='Save';return}}
+    if(filesField){const{keep,added,removed}=filesField.get(),up=[];
+      try{for(let n=0;n<added.length;n++){const f=added[n];save.textContent='Uploading '+(n+1)+' of '+added.length+'…';const path='docs/'+id+'/'+Date.now()+'-'+n+'-'+safeName(f.name);await S.files.upload(path,f,f.type||'application/octet-stream');up.push({path,name:f.name,type:f.type||'',size:f.size})}}
+      catch(e){toast('Upload failed: '+((e&&e.message)||'')+'. Nothing was changed.');if(up.length)S.files.remove(up.map(f=>f.path)).catch(()=>{});save.disabled=false;save.textContent='Save';return}
+      data[filesField.key]=[...keep,...up];if(removed.length)S.files.remove(removed.map(f=>f.path)).catch(()=>{})}
     const ok=await Store.put(scopeOf(kind),id,{...it,...data,kind,by:it.by||S.uid,at:it.at||Date.now(),upd:Date.now()});
     if(ok){closeSheet();toast('Saved');after&&after()}else save.disabled=false;
   }},'Save');
   const del=!isNew&&h('button',{class:'btn soft',onclick:async()=>{
     if(!armed){armed=true;del.textContent='Tap again to delete';return}
-    await Store.del(scopeOf(kind),it.id);if(it.thumb){if(Store.db)Store.db.collection('photos').doc(it.id).delete().catch(()=>{});S.photos.delete(it.id)}closeSheet();toast('Deleted');
+    await Store.del(scopeOf(kind),it.id);if(it.thumb)deletePhoto(it.id);if(Array.isArray(it.files)&&it.files.length&&S.files)S.files.remove(it.files.map(f=>f.path)).catch(()=>{});closeSheet();toast('Deleted');
   }},'Delete');
   openSheet((isNew?'Add ':'Edit ')+def.name,h('div',null,rows,def.extra?def.extra(it,isNew):null,S.readonly?h('p',{class:'note'},'You can view this but not change it.'):h('div',{class:'actions'},del,save)));
 }
@@ -741,6 +917,7 @@ function events(){
       case'subscription':add('🔁',i.name+' due',pd(i.nextDue),i.amount&&money(i.amount));break;
       case'bucket':if(!i.done)add('🌈','Bucket list: '+i.name,pd(i.target),i.type);break;
       case'trip':add('✈️','Trip: '+i.name,pd(i.from),j(i.who,i.ticket));if(i.to)add('🏡','Back from '+i.name,pd(i.to));break;
+      case'plan':add('🗓️',i.title,nextPlanDate(i),j(i.time,i.where));break;
       case'saving':add('🐷',i.name+' matures',pd(i.maturity),i.where);break;
       case'loan':add('💳',i.name+' payment',nextDay(i.dueDay),i.emi&&money(i.emi));add('🎉',i.name+' last payment',pd(i.endDate));break;
       case'warranty':add('🧾',i.item+' warranty ends',pd(i.warrantyEnd),i.brand);break;
@@ -867,12 +1044,7 @@ function memoryForm(it){
     save.disabled=true;save.textContent='Saving…';
     const id=it.id||gid('memory');let thumb=it.thumb||'';
     try{
-      if(file){
-        const img=await loadImg(await readFile(file));thumb=draw(img,360).toDataURL('image/jpeg',.7);
-        let full,max=1200,q=.78;do{full=draw(img,max).toDataURL('image/jpeg',q);max-=160;q-=.05}while(full.length>225000&&max>400);
-        if(Store.db)await Store.db.collection('photos').doc(id).set({d:full});
-        S.photos.set(id,{d:full});
-      }
+      if(file)thumb=await savePhoto(id,file);
       const ok=await Store.put('items',id,{...it,kind:'memory',title:title.value.trim(),date:date.value,story:story.value.trim(),thumb,by:it.by||S.uid,at:it.at||Date.now(),upd:Date.now()});
       if(ok){closeSheet();toast('Saved')}else{save.disabled=false;save.textContent='Save'}
     }catch(e){save.disabled=false;save.textContent='Save';toast(e.message||'Could not save the photo.')}
@@ -886,7 +1058,7 @@ function viewMemory(m){
   Store.photo(m.id).then(d=>{if(d){img.src=d;img.style.display='block'}});
   let armed=false;
   const del=h('button',{class:'btn soft',onclick:async()=>{if(!armed){armed=true;del.textContent='Tap again to delete';return}
-    await Store.del('items',m.id);if(Store.db)Store.db.collection('photos').doc(m.id).delete().catch(()=>{});S.photos.delete(m.id);if(!Store.db)Store.persist();closeSheet();toast('Deleted')}},'Delete');
+    await Store.del('items',m.id);deletePhoto(m.id);if(!Store.db)Store.persist();closeSheet();toast('Deleted')}},'Delete');
   openSheet(m.title,h('div',null,img,h('p',{class:'note',style:'margin-top:10px'},j(nice(m.date),'added by '+nameOf(m.by))),m.story&&h('p',{style:'white-space:pre-wrap'},m.story),
     !S.readonly&&h('div',{class:'actions'},del,h('button',{class:'btn',onclick:()=>memoryForm(m)},'Edit'))));
 }
@@ -898,7 +1070,7 @@ function sendChat(text){
   const day=today(),id=day+'_'+S.uid,c=S.chat.get(id);
   const data={day,uid:S.uid,msgs:[...((c&&c.msgs)||[]),{t:Date.now(),x:text.slice(0,2000)}]};
   S.chat.set(id,{...data,id});chatDraft='';render();
-  chatQ=chatQ.then(()=>Store.put('chat',id,data));
+  chatQ=chatQ.then(()=>Store.put('chat',id,data)).then(ok=>{if(ok&&S.notify)S.notify({type:'chat',text:text.slice(0,140)})});
 }
 function pageChat(){
   const msgs=[];for(const d of S.chat.values())for(const m of d.msgs||[])msgs.push({...m,uid:d.uid});
@@ -958,6 +1130,13 @@ function tick(){
     const n=num(m.perDose)||1;beep(3);
     toast('💊 Time for '+m.name+' · '+n+(n===1?' tablet':' tablets')+(m.food&&m.food!=='Any time'?', '+m.food.toLowerCase():''),'Took it',()=>takeMed(m.id));
   }
+  if(!S.pushOn)for(const p of all('plan')){
+    if(!p.time||p.remind==='No reminder')continue;const off={'At the time':0,'15 minutes before':15,'1 hour before':60,'1 day before':1440}[p.remind||'15 minutes before']||0;
+    const [hh,mm]=p.time.split(':').map(Number),at=new Date(n.getFullYear(),n.getMonth(),n.getDate(),hh,mm),when_=new Date(at.getTime()+off*60000);
+    if(when_.getHours()!==n.getHours()||when_.getMinutes()!==n.getMinutes())continue;
+    const target=new Date(when_.getFullYear(),when_.getMonth(),when_.getDate());if(!occursOn(p,target))continue;
+    const key='plan'+p.id+ymd(target)+p.time;if(fired.has(key))continue;fired.add(key);beep(2);toast('🗓️ '+p.title+(off?' at '+p.time:' now')+(off===1440?' tomorrow':''));
+  }
   const every=me().waterEvery===0?0:(num(me().waterEvery)||60);
   if(every&&me().nick&&n.getHours()>=8&&n.getHours()<22&&glasses()<goal()){
     const last=Math.max(lastPing,num((S.items.get(waterId())||{}).last));
@@ -990,7 +1169,7 @@ const empty=(em,text)=>h('div',{class:'empty'},h('span',{class:'em'},em),text);
 const head=(title,blurb,action)=>h('div',{class:'head'},h('div',null,h('h2',null,title),blurb&&h('p',null,blurb)),action||null);
 function rowEl(kind,it){
   const def=K[kind],[t,s,r]=def.row(it);
-  const tick=def.check&&h('button',{class:'tick'+(it[def.check]?' on':''),'aria-label':def.tickLabel||(it[def.check]?'Switch off':'Switch on'),title:def.tickLabel||null,onclick:e=>{e.stopPropagation();if(S.readonly)return;if(def.tickFn)def.tickFn(it);else Store.put(scopeOf(kind),it.id,{...it,[def.check]:!it[def.check]})}},it[def.check]?'✓':def.tickIcon?h('span',{class:'ti'},def.tickIcon):'');
+  const tick=def.check&&h('button',{class:'tick'+(it[def.check]?' on':''),'aria-label':def.tickLabel||(it[def.check]?'Switch off':'Switch on'),title:def.tickLabel||null,onclick:e=>{e.stopPropagation();if(S.readonly)return;if(def.tickFn)def.tickFn(it);else{Store.put(scopeOf(kind),it.id,{...it,[def.check]:!it[def.check]});if(kind==='shopping'&&!it.done)syncEssential(it.name)}}},it[def.check]?'✓':def.tickIcon?h('span',{class:'ti'},def.tickIcon):'');
   const main=h('button',{class:'rt',style:'text-align:left',onclick:()=>openForm(kind,it)},h('b',{style:kind==='alarm'?'font-family:var(--display);font-size:1.4rem':''},t||'Untitled'),s&&h('small',null,s));
   return h('div',{class:'row'+((kind==='shopping'||def.strike)&&it.done?' done':'')},tick||h('span',{class:'ic'},def.icon),main,r&&h('span',{class:'rr'},r));
 }
@@ -1007,7 +1186,7 @@ function pageList(kind){
     def.top?def.top(list):null,
     kind==='bucket'&&list.length?h('div',{class:'card'},h('div',{class:'big'},list.filter(i=>i.done).length+' of '+list.length+' done'),bar(list.filter(i=>i.done).length,list.length)):null,
     total?h('div',{class:'card'},h('small',{style:'color:var(--muted)'},kind==='saving'?'Saved in total':'Worth in total'),h('div',{class:'big'},money(total))):null,body,
-    def.ideas&&!S.readonly?(()=>{const left=def.ideas.filter(([n])=>!list.some(i=>i.name===n));return left.length?[h('div',{class:'day'},'Need ideas? Tap one to add it'),h('div',{class:'chips'},left.map(([n,t])=>h('button',{class:'btn soft',onclick:()=>openForm(kind,{name:n,type:t})},n)))]:null})():null);
+    def.ideas&&!S.readonly?(()=>{const left=def.ideas.filter(([n])=>!list.some(i=>i.name===n));return left.length?[h('div',{class:'day'},'Need ideas? Tap one to add it'),h('div',{class:'chips'},left.map(([n,t])=>h('button',{class:'btn soft',onclick:()=>openForm(kind,{name:n,[def.ideaKey||'type']:t})},n)))]:null})():null);
 }
 function pageYear(){
   const y=S.year,ex=all('expense').filter(e=>String(e.date||'').startsWith(y)),rm=all('remit').filter(e=>String(e.date||'').startsWith(y));
@@ -1057,12 +1236,57 @@ function pageLove(){
   const ta=h('textarea',{value:loveDraft,placeholder:'Write something that will make them smile…',oninput:e=>loveDraft=e.target.value});
   const send=h('button',{class:'btn',onclick:async()=>{const t=ta.value.trim();if(!t){toast('Write a little something first.');return}
     send.disabled=true;const ok=await Store.put('items',gid('lovenote'),{kind:'lovenote',text:t.slice(0,600),from:S.uid,at:Date.now(),seen:false});send.disabled=false;
-    if(ok){loveDraft='';ta.value='';toast('Sent 💌')}}},'Send note');
+    if(ok){loveDraft='';ta.value='';toast('Sent 💌');S.notify&&S.notify({type:'love',text:t.slice(0,140)})}}},'Send note');
   return h('div',null,head('Love notes','Your note pops up on their Home screen the next time they open Nestory.'),
     !S.readonly&&h('div',{class:'card'},ta,h('div',{class:'emojis',style:'margin:10px 0'},['❤️','😘','🥰','🌹','☕','🌙','🤗','✨'].map(e=>h('button',{onclick:()=>{ta.value+=e;loveDraft=ta.value;ta.focus()},'aria-label':'Add '+e},e))),send),
     list.length?h('div',{class:'list'},list.map(n=>{const mine=n.from===S.uid;
       return h('div',{class:'row'},h('span',{class:'ic'},mine?'📤':'💌'),h('span',{class:'rt'},h('b',{style:'white-space:pre-wrap;font-weight:500'},n.text),h('small',null,(mine?'You':nameOf(n.from))+' · '+new Date(n.at).toLocaleDateString(undefined,{day:'numeric',month:'short'})+(mine?(n.seen?' · seen ❤️':' · not seen yet'):''))),
         mine&&!S.readonly?h('button',{style:'height:32px;min-width:32px;padding:0 8px;border-radius:16px;background:var(--bg);font-size:.85rem','aria-label':'Delete note',onclick:e=>{const b=e.currentTarget;if(b.dataset.armed)Store.del('items',n.id);else{b.dataset.armed='1';b.textContent='Delete?'}}},'✕'):null)})):empty('💌','No notes yet. Send the first one!'));
+}
+function pageCalendar(){
+  const [y,mm]=S.calMonth.split('-').map(Number),m=mm-1,days=calCollect(y,m),first=new Date(y,m,1),lead=(first.getDay()+6)%7,last=dim(y,m),td=today();
+  const shift=n=>{const d=new Date(y,m+n,1);S.calMonth=ymd(d).slice(0,7);S.calDay=S.calMonth===td.slice(0,7)?td:ymd(d);render()};
+  const cells=[];for(let k=0;k<lead;k++)cells.push(h('span'));
+  for(let d=1;d<=last;d++){const ds=y+'-'+pad(mm)+'-'+pad(d),ev=days[d]||[];
+    cells.push(h('button',{class:'cday'+(ds===td?' today':'')+(ds===S.calDay?' sel':''),'aria-label':new Date(y,m,d).toDateString()+(ev.length?', '+ev.length+(ev.length===1?' thing':' things'):''),onclick:()=>{S.calDay=ds;render()}},h('b',null,d),h('span',{class:'cev'},ev.slice(0,3).map(e=>e.icon).join('')+(ev.length>3?'+':''))))}
+  const sel=pd(S.calDay),selEv=sel&&sel.getFullYear()===y&&sel.getMonth()===m?(days[sel.getDate()]||[]):[];
+  return h('div',null,head('Calendar','Everything with a date, plus your own plans.'),
+    h('div',{class:'month'},h('button',{onclick:()=>shift(-1),'aria-label':'Previous month'},'‹'),h('b',null,first.toLocaleDateString(undefined,{month:'long',year:'numeric'})),h('button',{onclick:()=>shift(1),'aria-label':'Next month'},'›')),
+    h('div',{class:'cal'},['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(w=>h('span',{class:'cwk'},w)),cells),
+    h('div',{class:'day',style:'display:flex;justify-content:space-between;align-items:center;gap:8px'},h('span',null,sel?sel.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'}):''),!S.readonly&&h('button',{class:'btn',style:'padding:7px 14px;font-size:.88rem',onclick:()=>openForm('plan',{date:S.calDay,remind:'15 minutes before',repeat:'Once'})},'Add plan')),
+    selEv.length?h('div',{class:'list'},selEv.map(e=>h('button',{class:'row',onclick:()=>{if(e.item&&K[e.item.kind])openForm(e.item.kind,e.item)}},h('span',{class:'ic'},e.icon),h('span',{class:'rt'},h('b',null,e.title),h('small',null,j(e.time,e.item&&e.item.where,e.item&&e.item.who)))))):h('p',{class:'note'},'Nothing on this day.'));
+}
+let postDraft='',postFiles=[];
+function pageFeed(){
+  const posts=all('post').sort((a,b)=>(b.at||0)-(a.at||0));
+  const ta=h('textarea',{value:postDraft,placeholder:"What's on your mind?",style:'min-height:70px',oninput:e=>postDraft=e.target.value});
+  const prev=h('div',{class:'pgrid'}),paintPrev=()=>prev.replaceChildren(...postFiles.map((f,i)=>h('div',{style:'position:relative'},h('img',{src:f.url,alt:'Photo to post'}),h('button',{class:'rm','aria-label':'Remove photo',onclick:()=>{postFiles.splice(i,1);paintPrev()}},'✕'))));paintPrev();
+  const addP=h('button',{class:'btn soft',onclick:async()=>{if(postFiles.length>=4){toast('Up to 4 photos per post.');return}const fs=await pick('image/*',true);for(const f of fs.slice(0,4-postFiles.length))postFiles.push({file:f,url:URL.createObjectURL(f)});paintPrev()}},'📷 Photo');
+  const post=h('button',{class:'btn',onclick:async()=>{
+    const t=ta.value.trim();if(!t&&!postFiles.length){toast('Write something or add a photo.');return}
+    post.disabled=true;post.textContent='Posting…';const id=gid('post');
+    try{const thumbs=[];for(let k=0;k<postFiles.length;k++)thumbs.push(await savePhoto(id+'-'+k,postFiles[k].file,480));
+      if(await Store.put('items',id,{kind:'post',text:t.slice(0,3000),thumbs,by:S.uid,at:Date.now(),likes:{},comments:[]})){postDraft='';postFiles=[];toast('Posted');S.notify&&S.notify({type:'post',text:t.slice(0,140)||'📷 New photo'});render();return}}
+    catch(e){toast((e&&e.message)||'Could not post.')}
+    post.disabled=false;post.textContent='Post'}},'Post');
+  return h('div',null,head('Our wall','Share moments, thoughts and photos with each other.'),
+    !S.readonly&&h('div',{class:'card'},ta,prev,h('div',{style:'display:flex;justify-content:space-between;gap:8px;margin-top:10px'},addP,post)),
+    posts.length?posts.map(postCard):empty('📰','Nothing here yet. Share the first moment!'));
+}
+function postCard(p){
+  const mine=p.by===S.uid,likes=Object.keys(p.likes||{}),liked=!!(p.likes||{})[S.uid],pr=profile(p.by)||{},cm=p.comments||[],th=p.thumbs||[];
+  const cin=h('input',{placeholder:'Write a comment…','aria-label':'Write a comment',onkeydown:e=>{if(e.key==='Enter')sendC()}});
+  const sendC=async()=>{const t=cin.value.trim();if(!t||S.readonly)return;cin.value='';const c=S.items.get(p.id)||p;
+    if(await Store.put('items',p.id,{...c,comments:[...(c.comments||[]),{by:S.uid,at:Date.now(),text:t.slice(0,1000)}]})&&S.notify)S.notify({type:'comment',text:t.slice(0,140)})};
+  const like=h('button',{class:'pact'+(liked?' on':''),'aria-pressed':String(liked),onclick:()=>{if(S.readonly)return;const c=S.items.get(p.id)||p,l={...(c.likes||{})};if(l[S.uid])delete l[S.uid];else l[S.uid]=1;Store.put('items',p.id,{...c,likes:l})}},(liked?'❤️':'🤍')+(likes.length?' '+likes.length:''));
+  const del=mine&&!S.readonly&&h('button',{class:'pact',style:'margin-left:auto','aria-label':'Delete post',onclick:async e=>{const b=e.currentTarget;if(!b.dataset.armed){b.dataset.armed='1';b.textContent='Delete?';return}await Store.del('items',p.id);th.forEach((_,k)=>deletePhoto(p.id+'-'+k))}},'🗑');
+  return h('div',{class:'card post'},
+    h('div',{class:'phead'},h('span',{class:'avatar',style:'box-shadow:none;background:var(--bg)'},pr.emoji||'🙂'),h('span',null,h('b',null,mine?'You':pr.nick||'Someone'),h('small',null,ago(p.at)))),
+    p.text?h('p',{class:'ptext'},p.text):null,
+    th.length?h('div',{class:'pgrid n'+Math.min(4,th.length)},th.map((t,k)=>h('button',{onclick:()=>viewPhoto(p.id+'-'+k,t),'aria-label':'Open photo'},h('img',{src:t,alt:''})))):null,
+    h('div',{class:'pbar'},like,h('span',{class:'pact',style:'cursor:default'},'💬'+(cm.length?' '+cm.length:'')),del||null),
+    cm.length?h('div',{class:'pcom'},cm.map(c=>h('div',null,h('b',null,(c.by===S.uid?'You':nameOf(c.by))+' '),c.text,h('small',null,' · '+ago(c.at))))):null,
+    !S.readonly&&h('div',{style:'display:flex;gap:8px;margin-top:8px'},cin,h('button',{class:'btn soft',onclick:sendC},'Send')));
 }
 function pageReminders(){const ev=events();return h('div',null,head('Coming up','Birthdays, renewals, expiries and dues for the next 12 months.'),ev.length?h('div',{class:'list'},ev.map(evRow)):empty('🔔','Nothing coming up yet. Add birthdays, insurance renewals and documents, and they will show here.'))}
 function tileEl(key,ix){
@@ -1095,13 +1319,15 @@ function pageHome(){
   const cdCard=picks.length?h('div',{class:'card'},h('h2',null,'Counting down'),h('div',{class:'cd'},picks.map(e=>h('div',null,h('span',{style:'font-size:1.3rem'},e.icon),h('b',null,e.days===0?'🎉':e.days),h('small',null,e.days===0?'Today!':e.days===1?'day to go':'days to go'),h('small',{style:'color:var(--ink);font-weight:600;margin-top:4px;overflow-wrap:anywhere'},e.title.replace(/^Trip: /,'')))))):null;
   const md=today().slice(5),yr=+today().slice(0,4),otd=all('memory').filter(x=>String(x.date||'').slice(5)===md&&+String(x.date).slice(0,4)<yr);
   const otdCard=otd.length?h('div',{class:'card'},h('h2',null,'On this day'),h('div',{class:'otd'},otd.map(x=>{const ago=yr-+x.date.slice(0,4);return h('button',{onclick:()=>viewMemory(x)},x.thumb?h('img',{src:x.thumb,alt:x.title||''}):h('div',{class:'ph'},'💗'),h('small',{style:'display:block;color:var(--muted);margin-top:4px'},ago+(ago===1?' year ago':' years ago')))}))):null;
+  const need=all('essential').filter(essNeed);
+  const essCard=need.length?h('div',{class:'card'},h('h2',null,'🧺 Time to buy',h('button',{onclick:()=>go('us','essential')},'Open')),h('p',{class:'note'},need.slice(0,8).map(i=>i.name).join(', ')+(need.length>8?' and '+(need.length-8)+' more':'')),!S.readonly&&h('button',{class:'btn mint',onclick:()=>addToShopping(need.map(i=>i.name))},'Add to shopping list')):null;
   return h('div',null,
     S.local&&h('div',{class:'banner'},'Saved on this device only. Open Nestory in Claude to share it with your partner.'),
     S.readonly&&h('div',{class:'banner'},'You can look around but not make changes. Ask the owner to share Nestory with you as a Contributor.'),
     h('h2',{class:'hello'},(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+(nick?', '+nick:'')),
     h('p',{class:'sub'},new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})),
-    !S.readonly&&h('div',{class:'chips'},h('button',{class:'btn',onclick:()=>openForm('expense')},'Add expense'),S.sample&&h('button',{class:'btn mint',onclick:scanBill},'Scan a bill'),h('button',{class:'btn soft',onclick:()=>openForm('food')},'Log a meal'),h('button',{class:'btn soft',onclick:()=>go('life','emergency')},'🚑 Emergency card')),
-    loveCard,cdCard,
+    !S.readonly&&h('div',{class:'chips'},h('button',{class:'btn',onclick:()=>openForm('expense')},'Add expense'),S.sample&&h('button',{class:'btn mint',onclick:scanBill},'Scan a bill'),h('button',{class:'btn soft',onclick:()=>openForm('food')},'Log a meal'),h('button',{class:'btn soft',onclick:()=>go('us','calendar')},'📅 Calendar'),h('button',{class:'btn soft',onclick:()=>go('life','emergency')},'🚑 Emergency card')),
+    loveCard,essCard,cdCard,
     h('div',{class:'card'},h('h2',null,'Coming up',h('button',{onclick:()=>go('us','reminders')},'See all')),ev.length?h('div',{class:'list'},ev.map(e=>{const r=evRow(e);r.style.boxShadow='none';r.style.padding='6px 0';return r})):h('p',{class:'note',style:'margin:0'},'Add birthdays, renewals and documents in Book and they will appear here before they are due.')),
     h('div',{class:'card'},h('h2',null,'This month',h('button',{onclick:()=>{S.month=m;go('money','expenses')}},'Open')),h('div',{class:'big'},money(spent)),bud?[bar(spent,bud),h('small',{style:'color:var(--muted)'},spent<=bud?money(bud-spent)+' left in the budget':money(spent-bud)+' over budget')]:h('small',{style:'color:var(--muted)'},'spent so far. Set a budget to see what is left.')),
     otdCard,
@@ -1115,6 +1341,7 @@ function view(){
   switch(S.page){
     case'expenses':return pageExpenses();case'budget':return pageBudget();case'chat':return pageChat();case'memory':return pageMemories();
     case'water':return pageWater();case'reminders':return pageReminders();case'ask':return pageAsk();
+    case'calendar':return pageCalendar();case'feed':return pageFeed();
     case'yearly':return pageYear();case'mealplan':return pageMealPlan();case'emergency':return pageEmergency();case'lovenote':return pageLove();
     default:return pageList(S.page);
   }
@@ -1137,6 +1364,32 @@ function render(){
   $('#tabs').replaceChildren(...TABS.map(t=>h('button',{'aria-current':t.id===S.tab?'page':null,onclick:()=>go(t.id)},h('span',null,t.icon),t.label)));
 }
 
+/* ---------- phone notifications ---------- */
+function b64u(s){const p='='.repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(b,c=>c.charCodeAt(0))}
+async function fillPush(box){
+  const ios=/iPhone|iPad|iPod/.test(navigator.userAgent),standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone;
+  const say=(...k)=>box.replaceChildren(...k);
+  if(ios&&!standalone){say(h('p',{class:'note',style:'margin:0'},'On iPhone, open Nestory from its Home Screen icon to turn on notifications.'));return}
+  if(Notification.permission==='denied'){say(h('p',{class:'note',style:'margin:0'},'Notifications are blocked for Nestory. Allow them in your phone\'s Settings, then come back here.'));return}
+  let reg,sub=null;try{reg=await navigator.serviceWorker.ready;sub=await reg.pushManager.getSubscription()}catch{}
+  if(!sub||Notification.permission!=='granted'){
+    const on=h('button',{class:'btn wide',onclick:async()=>{on.disabled=true;on.textContent='Turning on…';
+      try{const perm=await Notification.requestPermission();if(perm!=='granted')throw new Error('Permission was not given.');
+        reg=reg||await navigator.serviceWorker.ready;const s2=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(S.push.key)});
+        await S.push.save(s2.toJSON(),{messages:true,reminders:true,digest:'09:00',nudge:'21:00'});S.pushOn=true;toast('Notifications are on 🔔');fillPush(box)}
+      catch(e){toast((e&&e.message)||'Could not turn on notifications.');on.disabled=false;on.textContent='Turn on notifications'}}},'Turn on notifications');
+    say(h('p',{class:'note'},'Get messages from your partner, reminders, a morning summary and a nudge to add the day\'s expenses, even when Nestory is closed.'),on);return}
+  S.pushOn=true;
+  const pr=Object.assign({messages:true,reminders:true,digest:'09:00',nudge:'21:00'},(await S.push.prefs(sub.endpoint).catch(()=>null))||{});
+  const save=async()=>{try{await S.push.save(sub.toJSON(),pr);toast('Saved')}catch(e){toast(e.message)}};
+  const chk=(k,label)=>h('label',{class:'tgl'},h('span',null,label),h('input',{type:'checkbox',checked:pr[k]!==false,onchange:e=>{pr[k]=e.target.checked;save()}}));
+  const tim=(k,label)=>{const t=h('input',{type:'time',value:pr[k]||'',disabled:!pr[k],onchange:e=>{pr[k]=e.target.value;save()}});
+    return h('label',{class:'tgl'},h('span',null,label),h('span',{style:'display:flex;gap:8px;align-items:center'},h('input',{type:'checkbox',checked:!!pr[k],'aria-label':label+' on or off',onchange:e=>{pr[k]=e.target.checked?(t.value||(k==='digest'?'09:00':'21:00')):'';t.disabled=!e.target.checked;t.value=pr[k];save()}}),t))};
+  const test=h('button',{class:'btn soft',onclick:async()=>{test.disabled=true;try{const r=await S.push.send({type:'test'});toast(r&&r.sent?'Test sent. It should arrive in a few seconds.':'Nothing was sent. Check the setup steps.')}catch(e){toast('Test failed: '+e.message)}test.disabled=false}},'Send a test');
+  const off=h('button',{class:'btn soft',onclick:async()=>{try{await S.push.remove(sub.endpoint);await sub.unsubscribe()}catch{}S.pushOn=false;toast('Notifications are off on this phone');fillPush(box)}},'Turn off');
+  say(chk('messages','Messages, love notes and wall posts'),chk('reminders','Alarms, medicines and plans'),tim('digest','Morning summary'),tim('nudge','Reminder to add expenses'),h('div',{class:'actions'},test,off));
+}
+
 /* ---------- settings + welcome ---------- */
 function openSettings(){profileSheet(false)}
 function welcome(){if(!S.readonly&&!me().nick)profileSheet(true)}
@@ -1155,6 +1408,12 @@ function profileSheet(first){
   openSheet(first?'Welcome to Nestory':'Your settings',h('div',null,first&&h('p',{class:'note'},'A cosy little book for the two of you. First, who are you?'),
     h('label',{class:'f'},h('span',null,'Your name here'),nick),h('div',{class:'f'},h('span',{style:'display:block;font-weight:600;font-size:.88rem;margin-bottom:4px'},'Pick your face')),em,
     h('label',{class:'f'},h('span',null,'Currency (shared)'),curI),h('label',{class:'f'},h('span',null,'Glasses of water a day'),goalI),h('label',{class:'f'},h('span',null,'Water reminder every (minutes)'),everyI),save,
+    !first&&S.nest?(()=>{const joined=Math.max(S.nest.members||1,[...S.items.values()].filter(i=>i.kind==='profile').length)>=2;
+      return[h('div',{class:'day',style:'margin-top:20px'},'Your nest'),h('div',{class:'card',style:'background:var(--bg);box-shadow:none'},
+        h('b',{style:'display:block'},S.nest.name||'Our nest'),
+        joined?h('p',{class:'note',style:'margin:4px 0 0'},'You and your partner are both in. Nobody else can see this nest.')
+          :[h('p',{class:'note',style:'margin:4px 0 8px'},'Waiting for your partner. They sign in and join with this code:'),h('div',{style:'display:flex;gap:10px;align-items:center'},h('span',{class:'big',style:'font-size:1.5rem;letter-spacing:.15em'},S.nest.invite_code),h('button',{class:'btn soft',onclick:()=>copyText(S.nest.invite_code)},'Copy'))])]})():null,
+    !first&&S.push?(()=>{const box=h('div',{class:'card',style:'background:var(--bg);box-shadow:none'},h('p',{class:'note',style:'margin:0'},'Checking…'));fillPush(box);return[h('div',{class:'day',style:'margin-top:20px'},'Notifications on this phone'),box]})():null,
     !first?[h('div',{class:'day',style:'margin-top:20px'},'Your data'),
       (()=>{const b=h('button',{class:'btn soft wide',style:'margin-bottom:8px',onclick:()=>backup(b)},'💾 Download full backup');return b})(),
       h('button',{class:'btn soft wide',style:'margin-bottom:8px',onclick:exportCSV},'📊 Export expenses for Excel'),
