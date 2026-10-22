@@ -175,7 +175,7 @@ label.chk input{width:22px;height:22px;accent-color:var(--berry)}
 .actions{display:flex;gap:10px;margin-top:6px}
 .actions .btn{flex:1}
 .note{font-size:.84rem;color:var(--muted);margin:0 0 12px}
-#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:16px;z-index:40;max-width:min(92%,480px);display:none;gap:12px;align-items:center;font-size:.92rem}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:16px;z-index:40;width:max-content;max-width:min(92%,480px);display:none;gap:12px;align-items:center;font-size:.92rem}
 #toast.open{display:flex}
 #toast button{color:var(--sun);font-weight:700;white-space:nowrap}
 #ring{position:fixed;inset:0;background:var(--berry);color:#fff;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px}
@@ -431,6 +431,59 @@ h1,h2,h3,.big,.hello{font-family:var(--display);font-weight:700;letter-spacing:-
 .wheel{max-width:300px;margin:0 auto 14px}
 .wsvg{width:100%;height:auto;display:block}
 .wrot{transform-box:fill-box;transform-origin:center}
+.row .mini{padding:6px 10px;border-radius:999px;background:var(--bg);color:var(--muted);font-weight:700}
+.tick.big{width:40px;height:40px;font-size:1.1rem}
+.moods{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.moods button{display:grid;justify-items:center;gap:2px;padding:8px 2px;border-radius:14px;background:var(--bg);border:2px solid transparent}
+.moods button span{font-size:1.6rem;line-height:1.2}.moods button small{font-size:.72rem;color:var(--muted);font-weight:600}
+.moods button[aria-pressed="true"]{border-color:var(--sec);background:var(--sec-soft)}
+.mstrip{display:grid;grid-template-columns:repeat(14,1fr);gap:2px;text-align:center;font-size:1.05rem;color:var(--line)}
+.hdots{display:flex;gap:3px}.hdots i{width:9px;height:9px;border-radius:50%;background:var(--line)}.hdots i.on{background:var(--sec)}
+.rvs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rv{background:var(--card);border-radius:18px;padding:12px;display:grid;gap:2px;box-shadow:var(--shadow)}
+.rv .i{font-size:1.4rem}.rv b{font-size:1.2rem;font-family:var(--display)}.rv small{color:var(--muted);font-size:.78rem}
+.env{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px;border-radius:18px;background:var(--card);box-shadow:var(--shadow);margin-bottom:10px;border:2px solid transparent}
+.env .env-ic{font-size:1.9rem}.env .rt small{display:block;color:var(--muted);font-size:.8rem}.env .rr{font-weight:700;color:var(--sec-ink);white-space:nowrap}
+.env.sealed{background:repeating-linear-gradient(135deg,var(--card) 0 14px,var(--sec-soft) 14px 16px)}.env.ready{border-color:var(--sun);animation:pop .4s ease}
+.letter{background:var(--paper);border-radius:14px;padding:4px 2px}
+.coupon{display:flex;border-radius:18px;background:var(--card);box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden;border:2px dashed var(--berry-soft)}
+.coupon .cp-l{width:78px;flex:none;display:grid;place-items:center;font-size:2.2rem;background:var(--berry-soft);border-right:2px dashed var(--berry)}
+.coupon .cp-r{padding:12px 14px;min-width:0;flex:1}.coupon .cp-r b{display:block;font-size:1.05rem;font-family:var(--display)}
+.coupon.redeemed .cp-l{background:var(--sun-soft)}.coupon.used{opacity:.55}.coupon.used .cp-l{filter:grayscale(1)}
+.pmap{height:300px;width:100%;background:var(--sec-soft)}
+.wx .wxmain{display:flex;align-items:center;gap:12px}.wxem{font-size:2.6rem;line-height:1}.wx .big{font-size:1.9rem;line-height:1.1}.wx small{color:var(--muted)}
+.wxside{margin-left:auto;display:grid;gap:2px;text-align:right;font-size:.8rem}
+.wxtips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.wxtips span{background:var(--sec-soft);color:var(--sec-ink);border-radius:12px;padding:6px 10px;font-size:.82rem;font-weight:600}
+.wxdays{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.wxdays div{background:var(--bg);border-radius:12px;padding:8px 10px;display:flex;align-items:center;gap:8px;font-size:.85rem}.wxdays small{color:var(--muted);min-width:62px}
+.fest{display:block;width:100%;text-align:center;border-radius:20px;padding:0 14px 12px;margin-bottom:14px;background:linear-gradient(135deg,var(--sun-soft),var(--berry-soft));overflow:hidden;position:relative}
+.fest .garland{white-space:nowrap;font-size:1.25rem;letter-spacing:6px;padding:8px 0 4px;animation:sway 3s ease-in-out infinite alternate}
+.fest b{display:block;font-family:var(--display);font-size:1.15rem;color:var(--ink)}.fest small{color:var(--muted);font-size:.78rem}
+.fest.fx-snow{background:linear-gradient(135deg,#E8F3FF,#FFF1F1)}.fest.fx-sparkle{background:linear-gradient(135deg,#FFF6DD,#FFE9D6)}.fest.fx-petals{background:linear-gradient(135deg,#FFF7D6,#FFE7EF)}.fest.fx-stars{background:linear-gradient(135deg,#E7EEFF,#FFF6DD)}
+@keyframes sway{from{transform:translateX(-14px)}to{transform:translateX(0)}}
+.fall{position:fixed;inset:0;pointer-events:none;z-index:45;overflow:hidden}
+.fall span{position:absolute;top:-30px;animation:fall 6s linear forwards}
+@keyframes fall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(110vh) rotate(260deg);opacity:.2}}
+@keyframes floatup{0%{transform:translateY(0)}100%{transform:translateY(-115vh)}}
+@media (prefers-reduced-motion:reduce){.fall,.fest .garland{animation:none;display:none}}
+.leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile-container,.leaflet-pane>svg,.leaflet-pane>canvas,.leaflet-zoom-box,.leaflet-image-layer,.leaflet-layer{position:absolute;left:0;top:0}
+.leaflet-container{overflow:hidden;-webkit-tap-highlight-color:transparent;outline:0;touch-action:none;position:relative;font:12px/1.4 var(--body,sans-serif)}
+.leaflet-container img,.leaflet-container svg{max-width:none!important;max-height:none!important}
+.leaflet-tile,.leaflet-marker-icon{user-select:none;-webkit-user-drag:none}.leaflet-tile{filter:inherit;visibility:hidden}.leaflet-tile-loaded{visibility:inherit}
+.leaflet-container img.leaflet-tile{width:256px;height:256px;padding:0;border:0}
+.leaflet-pane{z-index:400}.leaflet-tile-pane{z-index:200}.leaflet-overlay-pane{z-index:400}.leaflet-marker-pane{z-index:600}.leaflet-popup-pane{z-index:700}
+.leaflet-pane>svg path{pointer-events:none}.leaflet-pane>svg path.leaflet-interactive{pointer-events:auto;cursor:pointer}
+.leaflet-zoom-animated{transform-origin:0 0}.leaflet-zoom-anim .leaflet-zoom-animated{transition:transform .25s cubic-bezier(0,0,.25,1)}.leaflet-zoom-anim .leaflet-tile,.leaflet-pan-anim .leaflet-tile{transition:none}
+.leaflet-control{position:relative;z-index:800;pointer-events:auto;float:left;clear:both}
+.leaflet-top,.leaflet-bottom{position:absolute;z-index:1000;pointer-events:none}.leaflet-top{top:0}.leaflet-bottom{bottom:0}.leaflet-left{left:0}.leaflet-right{right:0}
+.leaflet-top .leaflet-control{margin-top:10px}.leaflet-left .leaflet-control{margin-left:10px}.leaflet-right .leaflet-control{float:right;margin-right:0}
+.leaflet-control-zoom{border-radius:10px;overflow:hidden;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+.leaflet-control-zoom a{display:block;width:32px;height:32px;line-height:32px;text-align:center;background:#fff;color:#222;text-decoration:none;font:bold 18px sans-serif;border-bottom:1px solid #ddd}
+.leaflet-control-attribution{background:rgba(255,255,255,.85);font-size:10px;padding:0 5px;color:#333}.leaflet-control-attribution a{color:#1A5FB4}
+.leaflet-popup{position:absolute;text-align:center;margin-bottom:20px}.leaflet-popup-content-wrapper{padding:1px;text-align:left;border-radius:12px;background:#fff;color:#222;box-shadow:0 3px 14px rgba(0,0,0,.3)}
+.leaflet-popup-content{margin:10px 14px;font-size:13px;line-height:1.4;font-weight:600}.leaflet-popup-tip-container{width:40px;height:20px;position:absolute;left:50%;margin-left:-20px;overflow:hidden;pointer-events:none}
+.leaflet-popup-tip{width:17px;height:17px;padding:1px;margin:-10px auto 0;transform:rotate(45deg);background:#fff}
+.leaflet-popup-close-button{position:absolute;top:0;right:0;width:24px;height:24px;font:16px/24px sans-serif;color:#757575;text-decoration:none;text-align:center}
+.leaflet-fade-anim .leaflet-popup{opacity:0;transition:opacity .2s linear}.leaflet-fade-anim .leaflet-map-pane .leaflet-popup{opacity:1}
 </style>
 </head>
 <body>
@@ -646,11 +699,11 @@ const PAGES={
 };
 const TABS=[
   {id:'home',icon:'🏡',label:'Home'},
-  {id:'money',icon:'💰',label:'Money',title:'Money',sub:'Spending, plans and what you own.',tiles:['expenses','budget','yearly','saving','loan','subscription','remit','owe','asset']},
-  {id:'us',icon:'💞',label:'Us',title:'Us',sub:'The two of you.',tiles:['calendar','feed','chat','lovenote','memory','shopping','essential','chore','trip','bucket','gift','note','reminders']},
-  {id:'life',icon:'🌿',label:'Life',title:'Life',sub:'Food, water, health and alarms.',tiles:['fitness','emergency','medicine','health','medical','weight','period','water','alarm','food','mealplan','recipe']},
-  {id:'fun',icon:'🎲',label:'Fun',title:'Fun',sub:'Games, polls and all about you two.',tiles:['about','favs','milestone','daily','quiz','tot','poll','wheel']},
-  {id:'book',icon:'📖',label:'Book',title:'Our book',sub:'Everything about your family, in one place.',tiles:['member','date','insurance','house','warranty','maintenance','document','vehicle','contact','ask']},
+  {id:'money',icon:'💰',label:'Money',title:'Money',sub:'Spending, plans and what you own.',tiles:['expenses','budget','fixed','review','goal','yearly','saving','loan','subscription','remit','owe','asset']},
+  {id:'us',icon:'💞',label:'Us',title:'Us',sub:'The two of you.',tiles:['calendar','feed','chat','lovenote','memory','shopping','essential','chore','trip','places','pack','bucket','gift','note','reminders']},
+  {id:'life',icon:'🌿',label:'Life',title:'Life',sub:'Food, water, health and alarms.',tiles:['mood','habit','fitness','emergency','medicine','health','medical','weight','period','water','alarm','food','mealplan','recipe']},
+  {id:'fun',icon:'🎲',label:'Fun',title:'Fun',sub:'Games, polls and all about you two.',tiles:['about','favs','milestone','capsule','coupon','daily','quiz','tot','poll','wheel']},
+  {id:'book',icon:'📖',label:'Book',title:'Our book',sub:'Everything about your family, in one place.',tiles:['member','date','insurance','house','warranty','maintenance','document','vehicle','stash','contact','ask']},
 ];
 const AVATARS=['🐻','🐰','🦊','🐼','🐨','🐯','🐧','🐥','🦋','🌸','🌻','⭐'];
 
@@ -715,7 +768,7 @@ const people=()=>{const p=[...S.items.values()].filter(i=>i.kind==='profile').ma
 /* ---------- toast, sheet ---------- */
 let toastT;
 function toast(text,action,fn){
-  const t=$('#toast');t.replaceChildren(h('span',null,text),action&&h('button',{onclick:()=>{t.classList.remove('open');fn()}},action));
+  const t=$('#toast');t.replaceChildren(...[h('span',null,text),action?h('button',{onclick:()=>{t.classList.remove('open');fn()}},action):null].filter(Boolean));
   t.classList.add('open');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('open'),action?12000:4200);
 }
 function openSheet(title,body){
@@ -1119,7 +1172,7 @@ let popsDone=false,popsTries=0;
 function popsBlocked(){return $('#lock').classList.contains('open')||$('#veil').classList.contains('open')}
 function dailyPops(){
   if(popsDone||S.readonly)return;if(!me().nick||popsBlocked()){if(++popsTries<120)setTimeout(dailyPops,2500);return}
-  popsDone=true;specialPops();budgetPop();cardPops();checkPolls();
+  popsDone=true;autoFixed();specialPops();budgetPop();cardPops();reviewPop();capsulePops();festPop();checkPolls();couponPops();
   const t=today();if(!flagged('welcome-'+t)){setFlag('welcome-'+t);popup(welcomePop())}
 }
 function maybeNudge(){
@@ -1312,7 +1365,7 @@ function pageExpenses(){
   const groups=[];for(const e of ex){const g=groups[groups.length-1];if(g&&g[0]===e.date)g[1].push(e);else groups.push([e.date,[e]])}
   return h('div',null,monthNav(),
     h('div',{class:'card'},h('div',{class:'big'},money(total)),h('small',{style:'color:var(--muted)'},bud?(total<=bud?money(bud-total)+' left of your '+money(bud)+' budget':money(total-bud)+' over your '+money(bud)+' budget'):'spent this month'),bud?bar(total,bud):null),
-    !S.readonly&&h('div',{class:'chips'},h('button',{class:'btn',onclick:()=>openForm('expense',{date:S.month===today().slice(0,7)?today():S.month+'-01'})},'Add expense'),S.sample&&h('button',{class:'btn mint',onclick:scanBill},'Scan a bill'),h('button',{class:'btn soft',onclick:openStatement},icon('card'),' Import card statement')),
+    !S.readonly&&h('div',{class:'chips'},h('button',{class:'btn',onclick:()=>openForm('expense',{date:S.month===today().slice(0,7)?today():S.month+'-01'})},'Add expense'),h('button',{class:'btn mint',onclick:()=>S.sample?scanBill():scanBillOCR()},icon('camera'),' Scan a bill'),h('button',{class:'btn soft',onclick:openStatement},icon('card'),' Import card statement')),
     cats.length?h('div',{class:'card'},h('h2',null,'Where it went'),cats.map(([c,v])=>h('div',{class:'catrow'},h('div',{class:'l'},h('span',{class:'cl'},icon(CATI[c]||'tag'),c),h('b',null,money(v))),bar(v,budgetOf(c)||cats[0][1])))):null,
     ex.length?groups.map(([d,list])=>[h('div',{class:'day'},niceDay(d)),h('div',{class:'list'},list.map(e=>h('button',{class:'row',onclick:()=>openForm('expense',e)},h('span',{class:'ic'},icon(CATI[e.category]||'tag')),h('span',{class:'rt'},h('b',null,e.title||'Expense'),h('small',null,j(e.category,e.paidBy,e.method))),h('span',{class:'rr'},money(e.amount)))))]):empty('🧾','Nothing spent in '+monthName()+' yet. Add an expense, or snap a photo of a bill.'));
 }
@@ -1651,7 +1704,7 @@ const ASK_SYN={insurance:['insurance','policy','policies','cover','premium','ren
   loan:['loan','emi','card','credit','payment','pay','due','visa','master','amex'],subscription:['subscription','netflix','renew','spotify','bill'],medicine:['medicine','tablet','tablets','pill','dose','vitamin'],
   health:['blood','allergy','allergies','group','health'],medical:['doctor','checkup','hospital','report','follow'],house:['rent','house','flat','tenancy','ejari','landlord','contract'],warranty:['warranty','guarantee','bill'],
   maintenance:['service','servicing','maintenance','ac','filter'],trip:['trip','travel','flight','holiday','vacation'],saving:['saving','savings','deposit','fd','gold','invest','maturity'],asset:['asset','gold','property','own'],
-  recipe:['recipe','cook','ingredients'],gift:['gift','present'],bucket:['dream','bucket','someday'],plan:['plan','plans','dinner','meeting','event'],essential:['rice','buy','stock','groceries','essential'],owe:['owe','lent','borrowed','borrow','lend']};
+  recipe:['recipe','cook','ingredients'],gift:['gift','present'],bucket:['dream','bucket','someday'],plan:['plan','plans','dinner','meeting','event'],essential:['rice','buy','stock','groceries','essential'],owe:['owe','lent','borrowed','borrow','lend'],stash:['kept','keep','stored','spare','key','keys','box','find'],goal:['goal','goals','saving','save','fund'],fixed:['rent','fixed','school','fees','internet']};
 const ASK_DATES=['renewal','expiry','dueDay','nextDue','dob','date','from','to','warrantyEnd','regExpiry','insExpiry','maturity','followUp','endDate','due','rentDue','target'];
 const stem=w=>w.replace(/'s$/,'').replace(/(ies)$/,'y').replace(/(ing|ed|es|s)$/,'')||w;
 function askTokens(q){return q.toLowerCase().replace(/[^a-z0-9ഀ-ൿ؀-ۿ ]+/g,' ').split(/\s+/).filter(w=>w&&w.length>1&&!ASK_STOP.has(w))}
@@ -1676,7 +1729,7 @@ function askMoney(q){
 }
 function askSearch(q){
   const toks=askTokens(q),st=toks.map(stem);if(!toks.length)return null;
-  const kindBoost={};for(const [k,ws] of Object.entries(ASK_SYN))for(const w of toks)if(ws.includes(w))kindBoost[k]=(kindBoost[k]||0)+1;
+  const kindBoost=/^\s*where\b/i.test(q)?{stash:2}:{};for(const [k,ws] of Object.entries(ASK_SYN))for(const w of toks)if(ws.includes(w))kindBoost[k]=(kindBoost[k]||0)+1;
   const skip=new Set(['profile','water','settings','lovenote','mealplan','catrule','note','tot','dq','wheel','aboutus','quizq','poll']);
   const scored=[];
   for(const i of S.items.values()){if(skip.has(i.kind)||!K[i.kind]||!K[i.kind].row)continue;
@@ -1687,7 +1740,7 @@ function askSearch(q){
   scored.sort((a,b)=>b[0]-a[0]);const best=scored.filter(x=>x[0]>=Math.max(1.2,(scored[0]||[0])[0]*.5)).slice(0,6).map(x=>x[1]);
   if(!best.length)return{text:'I could not find anything about that. Try other words, or add it in the right section first.',rows:[]};
   const it=best[0],def=K[it.kind],[t]=def.row(it);
-  const facts=(def.f||[]).filter(([k,,type])=>it[k]!==undefined&&it[k]!==''&&it[k]!==false&&!['photo','files','area'].includes(type)&&k!==(def.f[0]||[])[0]).slice(0,6).map(([k,l,type])=>{let v=it[k];if(type==='date')v=nice(v);else if(type==='check')v='Yes';else if(type==='number'&&/amount|price|emi|minPay|outstanding|premium|value|rent/i.test(k))v=money(v);else if(k==='dueDay'||k==='statementDay')v=ordinal(v)+' of every month';return l.replace(/\s*\(.*\)\s*$/,'')+': '+v});
+  const facts=(def.f||[]).filter(([k,,type])=>it[k]!==undefined&&it[k]!==''&&it[k]!==false&&!['photo','files','area'].includes(type)&&k!==(def.f[0]||[])[0]).slice(0,6).map(([k,l,type])=>{let v=it[k];if(type==='date')v=nice(v);else if(type==='check')v='Yes';else if(type==='number'&&/amount|price|emi|minPay|outstanding|premium|value|rent|target|saved/i.test(k))v=money(v);else if(k==='dueDay'||k==='statementDay')v=ordinal(v)+' of every month';return l.replace(/\s*\(.*\)\s*$/,'')+': '+v});
   const tl=String(t||'').toLowerCase(),ev=tl?events().filter(e=>e.days>=0&&e.title.toLowerCase().includes(tl))[0]:null;
   return{text:(t||def.name)+(facts.length?' — '+facts.join(' · '):'')+(ev?'. Next: '+ev.title+' '+when(ev.days).toLowerCase()+' ('+nice(ymd(ev.date))+')':'')+'.',rows:best.map(i=>rowEl(i.kind,i))};
 }
@@ -1706,7 +1759,7 @@ function pageAsk(){
   const run=async q=>{askQ=q;inp.value=q;if(!q.trim())return;card.style.display='';
     if(S.sample){btn.disabled=true;ansT.textContent='Thinking…';list.replaceChildren();askRes=null;
       const data={};const cut=ymd(new Date(Date.now()-92*864e5));
-      for(const i of S.items.values()){if(['profile','water','settings','lovenote','mealplan','catrule'].includes(i.kind))continue;if(i.kind==='expense'&&String(i.date)<cut)continue;const{thumb,id,by,at,upd,kind,...rest}=i;(data[kind]=data[kind]||[]).push(rest)}
+      for(const i of S.items.values()){if(['profile','water','settings','lovenote','mealplan','catrule','capsule','coupon','mood'].includes(i.kind))continue;if(i.kind==='expense'&&String(i.date)<cut)continue;const{thumb,id,by,at,upd,kind,...rest}=i;(data[kind]=data[kind]||[]).push(rest)}
       try{const r=await S.sample('You are Nestory, a warm family organiser. Answer the question using only the family data below. Be short and specific. If the answer is not in the data, say so and say which section to add it in. Today is '+today()+'. Currency: '+cur()+'.\n\nFAMILY DATA (JSON):\n'+JSON.stringify(data).slice(0,120000)+'\n\nQUESTION: '+q,{cache:false,onText:u=>{ansT.textContent=u.text}});askA=r.text;ansT.textContent=askA}
       catch(e){const r=askLocal(q);askRes=r;ansT.textContent=r.text;list.replaceChildren(...r.rows)}
       btn.disabled=false;return}
@@ -1718,6 +1771,402 @@ function pageAsk(){
 }
 
 /* ---------- pages ---------- */
+/* ---------- extras: goals, fixed costs, month review, mood, habits, packing, where-is-it, exchange rate, receipt scan ---------- */
+Object.assign(ICONS,{smile:'<circle cx="12" cy="12" r="8.5" fill="var(--sun)"/><circle cx="9.2" cy="10.4" r="1" fill="var(--stk)"/><circle cx="14.8" cy="10.4" r="1" fill="var(--stk)"/><path d="M8.6 13.8C9.8 15.8 14.2 15.8 15.4 13.8" fill="none"/>',
+  box:'<path d="M4 8.5 12 5 20 8.5V17L12 20.5 4 17Z" fill="var(--sun)"/><path d="M4 8.5 12 12 20 8.5M12 12V20.5" fill="none"/><path d="M8 6.8 16 10.3V13" fill="none"/>'});
+Object.assign(KI,{goal:'trophy',fixed:'clip',review:'chart',mood:'smile',habit:'fire',pack:'bag',stash:'box'});
+Object.assign(PAGES,{review:['📊','Month in review','How last month went'],mood:['🙂','Mood check-in','How you both feel'],habit:['🔥','Habits','Little daily wins'],pack:['🧳','Packing lists','Never forget the charger']});
+/* savings goals */
+const goalPct=i=>num(i.target)>0?Math.min(100,Math.round(num(i.saved)*100/num(i.target))):0;
+function goalNeed(i){const left=num(i.target)-num(i.saved),d=pd(i.deadline);if(left<=0||!d)return '';const t=t0(),mo=Math.max(1,(d.getFullYear()-t.getFullYear())*12+d.getMonth()-t.getMonth());return money(Math.ceil(left/mo))+' a month to make it'}
+function goalAdd(i){
+  const a=h('input',{type:'number',inputMode:'decimal',placeholder:'500'}),n=h('input',{placeholder:'Bonus, salary…'});
+  const save=h('button',{class:'btn wide',onclick:async()=>{const v=num(a.value);if(!v){toast('Enter an amount.');return}save.disabled=true;const c=S.items.get(i.id)||i,before=goalPct(c),saved=Math.round((num(c.saved)+v)*100)/100,adds=[...(c.adds||[]),{a:v,d:today(),by:S.uid,n:n.value.trim().slice(0,60)}].slice(-200);
+    if(await Store.put('items',i.id,{...c,saved,adds,upd:Date.now()})){closeSheet();const nw=goalPct({...c,saved});
+      if(nw>=100&&before<100)popup({sec:'money',il:'party',eb:'Goal reached',title:c.name+' 🎉',body:'You saved '+money(saved)+'. Well done, you two!',confetti:true,ok:'Yay!'});else toast(money(v)+' added. '+nw+'% there.')}else save.disabled=false}},'Add');
+  openSheet('Add to '+i.name,h('div',null,h('label',{class:'f'},h('span',null,'Amount (use minus to take out)'),a),h('label',{class:'f'},h('span',null,'Note (optional)'),n),save,
+    (i.adds||[]).length?[h('div',{class:'day'},'Recent'),h('div',{class:'list'},(i.adds||[]).slice(-8).reverse().map(x=>h('div',{class:'row'},h('span',{class:'rt'},h('b',null,money(x.a)),h('small',null,j(nice(x.d),nameOf(x.by),x.n))))))]:null));
+}
+K.goal={name:'goal',plural:'Savings goals',icon:'🏆',blurb:'Save up for something together. Tap ➕ to add money and see how close you are.',empty:'Add a goal like a holiday, a car or an emergency fund.',
+  sort:(a,b)=>(goalPct(a)>=100)-(goalPct(b)>=100)||String(a.deadline||'9').localeCompare(String(b.deadline||'9')),
+  f:[['name','Saving for','text',{req:1,ph:'Holiday, new car, emergency fund…'}],['target','Target amount','number',{req:1}],['saved','Saved so far','number',{def:'0'}],['deadline','Target date','date'],['where','Kept in','text',{ph:'Savings account, gold, cash'}],['note','Note','area']],
+  check:'_never',tickIcon:'➕',tickLabel:'Add money',tickFn:i=>goalAdd(i),
+  ideas:[['Emergency fund'],['Holiday'],['New car'],['Our own home'],['Gold'],['Wedding anniversary trip']],
+  row:i=>{const p=goalPct(i);return[i.name,j(money(num(i.saved))+' of '+money(i.target),p>=100?'reached 🎉':p+'%',p<100&&goalNeed(i)),'']},
+  top:l=>l.length?h('div',{class:'card'},h('div',{class:'two'},h('div',null,h('small',null,'Saved in all goals'),h('div',{class:'big'},money(sum(l,i=>i.saved)))),h('div',null,h('small',null,'Still to go'),h('div',{class:'big'},money(sum(l,i=>Math.max(0,num(i.target)-num(i.saved))))))),
+    h('div',{style:'display:grid;gap:10px;margin-top:12px'},l.map(i=>h('div',null,h('div',{style:'display:flex;justify-content:space-between;font-size:.85rem;font-weight:600'},h('span',null,i.name),h('span',null,goalPct(i)+'%')),bar(num(i.saved),num(i.target)))))):null};
+/* fixed monthly costs */
+K.fixed={name:'fixed cost',plural:'Fixed monthly costs',icon:'📌',blurb:'Rent, internet, school fees… added to Expenses by themselves every month on their day.',empty:'Add something you pay every month, like rent or internet.',sort:(a,b)=>num(a.day)-num(b.day),
+  f:[['title','What','text',{req:1,ph:'Rent, internet, school fees'}],['amount','Amount','number',{req:1}],['day','Day of the month (1-31)','number',{req:1,def:'1'}],['category','Category','select',{o:CATS,def:'Rent & home'}],['paidBy','Paid by','person'],['method','Paid with','select',{o:['Card','Cash','Bank transfer','Wallet']}],['on','Add to expenses automatically','check',{def:true}],['note','Note','area']],
+  row:i=>[i.title,j('on the '+ordinal(i.day||1),i.category,i.on===false?'paused':i.lastAdded===today().slice(0,7)&&'✓ added this month'),money(i.amount)],
+  top:l=>l.length?h('div',{class:'card'},h('small',null,'Every month'),h('div',{class:'big'},money(sum(l.filter(i=>i.on!==false),i=>i.amount)))):null};
+function autoFixed(){
+  if(S.readonly||!S.ready)return;const t=t0(),ym=today().slice(0,7),dmax=dim(t.getFullYear(),t.getMonth()),added=[];
+  for(const i of all('fixed')){if(i.on===false||i.lastAdded===ym||!num(i.amount))continue;const day=Math.min(dmax,Math.max(1,Math.round(num(i.day)||1)));if(t.getDate()<day)continue;
+    const id='exp_fx_'+i.id+'_'+ym;
+    if(!S.items.get(id))Store.put('items',id,{kind:'expense',title:i.title,amount:num(i.amount),date:ym+'-'+pad(day),category:i.category||'Other',paidBy:i.paidBy||'',method:i.method||'',note:'Added automatically (fixed monthly cost)',fixed:i.id,by:S.uid,at:Date.now()});
+    Store.put('items',i.id,{...i,lastAdded:ym,upd:Date.now()});added.push(i.title)}
+  if(added.length)toast('Added '+added.length+(added.length===1?' fixed cost':' fixed costs')+' to this month: '+added.join(', '));
+}
+/* month in review */
+let reviewMonth=null;
+function monthData(ym){
+  const ex=all('expense').filter(e=>String(e.date||'').startsWith(ym)),spent=sum(ex,e=>e.amount),bud=sum(CATS,budgetOf);
+  const by={};for(const e of ex)by[e.category||'Other']=(by[e.category||'Other']||0)+num(e.amount);
+  const [y,m]=ym.split('-').map(Number),prev=ymd(new Date(y,m-2,1)).slice(0,7),pspent=sum(all('expense').filter(e=>String(e.date||'').startsWith(prev)),e=>e.amount);
+  const inM=v=>String(v||'').startsWith(ym),tsM=ts=>ts&&ymd(new Date(num(ts))).startsWith(ym);
+  const wk=all('workout').filter(w=>inM(w.date)),km=sum(wk.filter(w=>w.type==='Run'||w.type==='Walk'),w=>w.distance);
+  const big=ex.slice().sort((a,b)=>num(b.amount)-num(a.amount))[0];
+  return{ym,label:new Date(y,m-1,1).toLocaleDateString(undefined,{month:'long',year:'numeric'}),spent,bud,pspent,count:ex.length,top:Object.entries(by).sort((a,b)=>b[1]-a[1]),big,
+    workouts:wk.length,km:Math.round(km*10)/10,memories:all('memory').filter(x=>inM(x.date)).length,notes:all('lovenote').filter(x=>tsM(x.at)).length,posts:all('post').filter(x=>tsM(x.at)).length,
+    trips:all('trip').filter(x=>inM(x.from)).map(x=>x.name),saved:sum(all('goal'),g=>sum((g.adds||[]).filter(a=>inM(a.d)),a=>a.a)),
+    dq:all('dq').filter(d=>inM(d.date)&&Object.keys(d.answers||{}).length>=2).length,
+    moods:all('mood').filter(x=>inM(x.date))};
+}
+function pageReview(){
+  const last=ymd(new Date(t0().getFullYear(),t0().getMonth()-1,1)).slice(0,7);reviewMonth=reviewMonth||last;const d=monthData(reviewMonth);
+  const shift=n=>{const [y,m]=reviewMonth.split('-').map(Number);reviewMonth=ymd(new Date(y,m-1+n,1)).slice(0,7);render()};
+  const diff=d.pspent?Math.round((d.spent-d.pspent)*100/d.pspent):null;
+  const tile=(ic,v,l)=>h('div',{class:'rv'},icon(ic),h('b',null,v),h('small',null,l));
+  const myM=d.moods.filter(x=>x.uid===S.uid),avg=myM.length?MOODS[Math.min(4,Math.round(sum(myM,x=>x.v)/myM.length))]:null;
+  return h('div',null,head('Month in review','A look back at the month, for both of you.'),
+    h('div',{class:'card'},h('div',{class:'month',style:'margin-bottom:6px'},h('button',{onclick:()=>shift(-1),'aria-label':'Previous month'},'‹'),h('b',null,d.label),h('button',{onclick:()=>shift(1),disabled:reviewMonth>=today().slice(0,7),'aria-label':'Next month'},'›')),
+      h('div',{class:'big',style:'margin-top:6px'},money(d.spent)),h('small',{style:'color:var(--muted)'},d.count+' expenses'+(diff!=null?' · '+(diff>0?diff+'% more':Math.abs(diff)+'% less')+' than the month before':'')+(d.bud?' · budget '+money(d.bud):'')),
+      d.bud?bar(d.spent,d.bud):null,
+      d.top.length?h('div',{style:'display:grid;gap:8px;margin-top:12px'},d.top.slice(0,5).map(([c,v])=>h('div',null,h('div',{style:'display:flex;justify-content:space-between;font-size:.85rem;font-weight:600'},h('span',null,(CI[c]||'')+' '+c),h('span',null,money(v))),bar(v,d.top[0][1])))):null,
+      d.big?h('p',{class:'note',style:'margin:12px 0 0'},'Biggest single spend: ',h('b',null,d.big.title||d.big.category),' · '+money(d.big.amount)):null),
+    h('div',{class:'rvs'},tile('shoe',d.workouts,'workouts'+(d.km?' · '+d.km+' km':'')),tile('trophy',money(d.saved),'added to goals'),tile('camera',d.memories,'memories'),tile('mail',d.notes,'love notes'),tile('image',d.posts,'wall posts'),tile('chat',d.dq,'questions you both answered'),
+      avg?tile('smile',avg[0],'your usual mood'):null,d.trips.length?tile('plane',d.trips.length,d.trips.join(', ')):null));
+}
+function reviewPop(){
+  const t=t0();if(t.getDate()>6)return;const last=ymd(new Date(t.getFullYear(),t.getMonth()-1,1)).slice(0,7),k='review-'+last;if(flagged(k))return;const d=monthData(last);if(!d.count&&!d.workouts&&!d.memories)return;setFlag(k);
+  popup({sec:'money',il:'money',eb:'Month in review',title:d.label,body:'You spent '+money(d.spent)+(d.top[0]?', most on '+d.top[0][0]:'')+'.'+(d.workouts?' '+d.workouts+' workouts.':'')+(d.memories?' '+d.memories+' memories saved.':''),actions:[{label:'See the review',primary:true,fn:()=>{reviewMonth=last;go('money','review')}},{label:'Later'}]});
+}
+/* mood check-in */
+const MOODS=[['😄','Great'],['🙂','Good'],['😐','Okay'],['😔','Low'],['😫','Stressed']];
+const moodOf=(uid,d)=>S.items.get('mood_'+d+'_'+uid);
+async function setMood(v,note){const id='mood_'+today()+'_'+S.uid,c=S.items.get(id)||{};if(await Store.put('items',id,{...c,kind:'mood',date:today(),uid:S.uid,v,note:note!=null?String(note).slice(0,200):(c.note||''),at:Date.now()}))toast('Thanks for checking in '+MOODS[v][0])}
+function moodPicker(cur){return h('div',{class:'moods'},MOODS.map(([e,l],v)=>h('button',{'aria-pressed':String(cur===v),'aria-label':l,onclick:()=>setMood(v)},h('span',null,e),h('small',null,l))))}
+function moodHomeCard(){
+  if(S.readonly)return null;const mine=moodOf(S.uid,today()),pp=partnerProfile(),theirs=pp&&moodOf(pp.uid,today());
+  if(!mine)return h('div',{class:'card'},h('h2',null,ttl('smile','How are you today?')),moodPicker(null));
+  const low=theirs&&theirs.v>=3;
+  return h('div',{class:'card'},h('h2',null,ttl('smile','Today\'s mood'),h('button',{onclick:()=>go('life','mood')},'Open')),h('p',{style:'margin:0'},'You: '+MOODS[mine.v][0]+' '+MOODS[mine.v][1]+(pp?' · '+pp.nick+': '+(theirs?MOODS[theirs.v][0]+' '+MOODS[theirs.v][1]:'not yet'):'')),
+    low?h('div',{class:'chips',style:'margin:10px 0 0'},h('button',{class:'btn soft',onclick:()=>go('us','lovenote')},icon('mail'),' Send '+pp.nick+' a little note')):null);
+}
+function pageMood(){
+  const mine=moodOf(S.uid,today()),pp=partnerProfile(),days=[...Array(14)].map((_,k)=>ymd(new Date(t0().getFullYear(),t0().getMonth(),t0().getDate()-13+k)));
+  const note=h('input',{value:(mine&&mine.note)||'',placeholder:'Anything on your mind? (optional)'});
+  const strip=(uid,nick)=>h('div',null,h('div',{class:'day',style:'margin-top:4px'},nick),h('div',{class:'mstrip'},days.map(d=>{const m=moodOf(uid,d);return h('span',{title:nice(d)},m?MOODS[m.v][0]:'·')})));
+  const notes=all('mood').filter(m=>m.note).sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,12);
+  return h('div',null,head('Mood check-in','One tap a day. You both see how the other is doing.'),
+    !S.readonly&&h('div',{class:'card'},h('h2',null,ttl('smile','Today')),moodPicker(mine?mine.v:null),h('div',{style:'display:flex;gap:8px;margin-top:12px'},note,h('button',{class:'btn soft',onclick:()=>{if(!mine){toast('Pick a mood first.');return}setMood(mine.v,note.value.trim())}},'Save'))),
+    h('div',{class:'card'},h('h2',null,ttl('calendar','Last 2 weeks')),strip(S.uid,'You'),pp?strip(pp.uid,pp.nick):null),
+    notes.length?[h('div',{class:'day'},'Notes'),h('div',{class:'list'},notes.map(m=>h('div',{class:'row'},h('span',{class:'ic',style:'font-size:1.3rem'},MOODS[m.v][0]),h('span',{class:'rt'},h('b',null,m.note),h('small',null,j(m.uid===S.uid?'You':nameOf(m.uid),nice(m.date)))))))]:null);
+}
+/* habits */
+const HABIT_IDEAS=['Drink 8 glasses of water','Read 10 pages','Walk 30 minutes','No sugar','Sleep by 11','Call our parents','No phone at dinner','Gratitude: one good thing'];
+function habitStreak(hb,uid){const d=hb.days||{};let n=0,x=t0();if(!(d[today()]||[]).includes(uid))x=new Date(x.getFullYear(),x.getMonth(),x.getDate()-1);while((d[ymd(x)]||[]).includes(uid)){n++;x=new Date(x.getFullYear(),x.getMonth(),x.getDate()-1)}return n}
+async function habitTick(hb){const c=S.items.get(hb.id)||hb,d={...(c.days||{})},t=today(),l=new Set(d[t]||[]);l.has(S.uid)?l.delete(S.uid):l.add(S.uid);d[t]=[...l];
+  const cut=ymd(new Date(Date.now()-400*864e5));for(const k in d)if(k<cut)delete d[k];await Store.put('items',hb.id,{...c,days:d,upd:Date.now()});
+  if(l.has(S.uid)){const s=habitStreak({...c,days:d},S.uid);if(s&&s%7===0)popup({sec:'life',il:'fit',eb:'Habit streak',title:s+' days in a row!',body:c.name+'. Keep it going.',confetti:true,ok:'Yay!'})}}
+function habitSheet(hb){hb=hb||{};const n=h('input',{value:hb.name||'',placeholder:'Read 10 pages'}),who=select(['Both of us',...people().filter(p=>p!=='Both of us')],hb.who||'Both of us',false);
+  const save=h('button',{class:'btn wide',onclick:async()=>{if(!n.value.trim()){toast('Name the habit.');return}save.disabled=true;const id=hb.id||gid('habit');if(await Store.put('items',id,{days:{},...hb,kind:'habit',name:n.value.trim().slice(0,60),who:who.value,at:hb.at||Date.now(),by:hb.by||S.uid}))closeSheet();else save.disabled=false}},'Save');
+  const del=hb.id&&h('button',{class:'btn soft wide',style:'margin-top:8px',onclick:e=>{const b=e.currentTarget;if(b.dataset.armed){Store.del('items',hb.id);closeSheet()}else{b.dataset.armed=1;b.textContent='Tap again to delete'}}},'Delete habit');
+  openSheet(hb.id?'Edit habit':'New habit',h('div',null,h('label',{class:'f'},h('span',null,'Habit'),n),h('label',{class:'f'},h('span',null,'Whose habit'),who),save,del||null,
+    !hb.id?[h('div',{class:'day'},'Ideas'),h('div',{class:'chips'},HABIT_IDEAS.map(x=>h('button',{class:'btn soft',type:'button',onclick:()=>{n.value=x}},x)))]:null))}
+function pageHabits(){
+  const pp=partnerProfile(),list=all('habit').sort((a,b)=>(a.at||0)-(b.at||0)),days=[...Array(7)].map((_,k)=>ymd(new Date(t0().getFullYear(),t0().getMonth(),t0().getDate()-6+k)));
+  const mineH=list.filter(hb=>!hb.who||hb.who==='Both of us'||hb.who===me().nick),done=mineH.filter(hb=>((hb.days||{})[today()]||[]).includes(S.uid)).length;
+  return h('div',null,head('Habits',mineH.length?done+' of '+mineH.length+' done today.':'Small things you want to do every day.',!S.readonly?h('button',{class:'btn',onclick:()=>habitSheet()},'New habit'):null),
+    list.length?list.map(hb=>{const forMe=!hb.who||hb.who==='Both of us'||hb.who===me().nick,on=((hb.days||{})[today()]||[]).includes(S.uid),st=habitStreak(hb,S.uid),pst=pp&&(!hb.who||hb.who==='Both of us'||hb.who===pp.nick)?habitStreak(hb,pp.uid):null;
+      const dots=uid=>h('div',{class:'hdots'},days.map(d=>h('i',{class:((hb.days||{})[d]||[]).includes(uid)?'on':'',title:nice(d)})));
+      return h('div',{class:'card habit'},h('div',{style:'display:flex;align-items:center;gap:12px'},forMe&&!S.readonly?h('button',{class:'tick big'+(on?' on':''),'aria-label':on?'Undo today':'Done today',onclick:()=>habitTick(hb)},on?'✓':''):null,
+        h('button',{class:'rt',style:'text-align:left;flex:1;min-width:0',onclick:()=>!S.readonly&&habitSheet(hb)},h('b',{style:'display:block'},hb.name),h('small',{style:'color:var(--muted)'},j(hb.who&&hb.who!=='Both of us'?hb.who:'Both of us',st?'🔥 '+st+(st===1?' day':' days'):''))),
+        h('div',{style:'display:grid;gap:4px;justify-items:end'},forMe?dots(S.uid):null,pst!=null?dots(pp.uid):null)),
+        pst!=null&&forMe?h('small',{class:'note',style:'display:block;margin-top:6px'},'Top row: you · bottom: '+pp.nick+(pst?' (🔥 '+pst+')':'')):null)}):empty('🔥','Add a habit to tick off every day. You will see your streaks and your partner\'s.'));
+}
+/* packing lists */
+const PACK_T={'Flight essentials':['Passports','Emirates IDs','Tickets / boarding passes','Phone chargers','Power bank','Headphones','Medicines','Some cash in local currency','Pen for forms','Neck pillow'],
+  'Visit home':['Gifts for family','Chocolates and dates','Clothes for functions','Umbrella','Medicines','Passports and Emirates IDs','Phone chargers','Plug adapter','Some rupees','House keys','Toiletries'],
+  'Beach holiday':['Swimwear','Sunscreen','Sunglasses','Hats','Flip-flops','Beach towels','Water bottles','After-sun lotion','Light clothes','Snacks','Toiletries','Chargers'],
+  'Business trip':['Laptop and charger','Business cards','Formal clothes','Ironed shirts','Notebook and pen','Toiletries','Medicines','Chargers'],
+  'Weekend away':['2 sets of clothes','Nightwear','Toiletries','Chargers','Snacks','Water','Sunglasses','Medicines']};
+let packOpen=null;
+async function packSave(p){return Store.put('items',p.id,{...p,upd:Date.now()})}
+function newPack(){const n=h('input',{placeholder:'Kerala trip, December'}),tpl=select(['Blank',...Object.keys(PACK_T)],'Visit home',false),
+  trips=all('trip').filter(t=>String(t.to||t.from)>=today()),tr=trips.length?select(trips.map(t=>t.name),'',true):null;
+  const save=h('button',{class:'btn wide',onclick:async()=>{const name=n.value.trim()||(tr&&tr.value)||tpl.value;save.disabled=true;const id=gid('pack');
+    const items=(PACK_T[tpl.value]||[]).map(t=>({t,done:false}));if(await Store.put('items',id,{kind:'pack',name:name.slice(0,60),trip:tr?tr.value:'',items,at:Date.now(),by:S.uid})){closeSheet();packOpen=id;render()}else save.disabled=false}},'Create list');
+  openSheet('New packing list',h('div',null,h('label',{class:'f'},h('span',null,'Name'),n),tr?h('label',{class:'f'},h('span',null,'For a trip (optional)'),tr):null,h('label',{class:'f'},h('span',null,'Start from'),tpl),save))}
+function pagePack(){
+  const lists=all('pack').sort((a,b)=>(b.at||0)-(a.at||0)),p=packOpen&&S.items.get(packOpen);
+  if(p){const items=p.items||[],dn=items.filter(x=>x.done).length;const ni=h('input',{placeholder:'Add an item',onkeydown:e=>{if(e.key==='Enter')add.click()}});
+    const add=h('button',{class:'btn',onclick:()=>{const v=ni.value.trim();if(!v)return;packSave({...p,items:[...items,{t:v.slice(0,60),done:false}]})}},'Add');
+    return h('div',null,h('div',{class:'chips'},h('button',{class:'btn soft',onclick:()=>{packOpen=null;render()}},'‹ All lists')),head(p.name,dn+' of '+items.length+' packed'+(p.trip?' · for '+p.trip:'')),
+      h('div',{class:'card'},bar(dn,items.length||1),!S.readonly&&h('div',{style:'display:flex;gap:8px;margin-top:12px'},ni,add)),
+      h('div',{class:'list'},items.map((x,k)=>h('div',{class:'row'+(x.done?' done':'')},h('button',{class:'tick'+(x.done?' on':''),'aria-label':x.done?'Unpack':'Packed',onclick:()=>{if(S.readonly)return;const it=[...items];it[k]={...x,done:!x.done};packSave({...p,items:it})}},x.done?'✓':''),h('span',{class:'rt'},h('b',null,x.t)),!S.readonly&&h('button',{class:'mini','aria-label':'Remove '+x.t,onclick:()=>packSave({...p,items:items.filter((_,i)=>i!==k)})},'✕')))),
+      !S.readonly&&h('div',{class:'chips',style:'margin-top:14px'},h('button',{class:'btn soft',onclick:()=>packSave({...p,items:items.map(x=>({...x,done:false}))})},'Untick all'),h('button',{class:'btn soft',onclick:e=>{const b=e.currentTarget;if(b.dataset.armed){Store.del('items',p.id);packOpen=null;render()}else{b.dataset.armed=1;b.textContent='Tap again to delete'}}},'Delete list')))}
+  return h('div',null,head('Packing lists','Start from a ready list, tick things off together.',!S.readonly?h('button',{class:'btn',onclick:newPack},'New list'):null),
+    lists.length?h('div',{class:'list'},lists.map(l=>{const it=l.items||[],dn=it.filter(x=>x.done).length;return h('button',{class:'row',style:'text-align:left;width:100%',onclick:()=>{packOpen=l.id;render()}},h('span',{class:'ic'},icon('bag')),h('span',{class:'rt'},h('b',null,l.name),h('small',null,dn+' of '+it.length+' packed'+(l.trip?' · '+l.trip:''))),h('span',{class:'rr'},it.length&&dn===it.length?'✓':''))})):empty('🧳','Make a list for your next trip. Ready lists: flight essentials, visit home, beach, business, weekend.'));
+}
+/* where is it? */
+K.stash={name:'thing',plural:'Where is it?',icon:'📦',blurb:'Where you keep things you rarely need, so neither of you has to hunt for them.',empty:'Add something and where it is kept.',sort:(a,b)=>String(a.name).localeCompare(String(b.name)),
+  f:[['name','What','text',{req:1,ph:'Spare car key'}],['place','Where it is','text',{req:1,ph:'Bedroom cupboard, top shelf, blue box'}],['room','Room','select',{o:['Bedroom','Living room','Kitchen','Store room','Balcony','Car','Office','Parents\' home','Other']}],['photo','Photo','photo'],['note','Note','area']],
+  ideaKey:'room',ideas:[['Spare car key','Bedroom'],['Spare house key','Bedroom'],['Warranty cards','Store room'],['Tool kit','Store room'],['Winter clothes','Bedroom'],['First aid box','Kitchen'],['Original certificates','Bedroom'],['Extension cord','Store room'],['Suitcases','Store room']],
+  row:i=>[i.name,j(i.place,i.room,i.thumb&&'📷'),'']};
+/* exchange rate on the transfers page */
+const FX={};const FX_TO=['INR','PKR','PHP','LKR','BDT','NPR','EGP','USD','EUR','GBP','SAR'];
+function fxCard(){
+  const base=cur().toUpperCase();let to='INR';try{to=localStorage.getItem('nestory.fxto')||'INR'}catch{}if(to===base)to=base==='USD'?'INR':'USD';
+  const out=h('div',{class:'big'},'…'),info=h('small',{style:'color:var(--muted)'},'Getting today\'s rate…'),amt=h('input',{type:'number',inputMode:'decimal',value:'1000',style:'max-width:140px'}),conv=h('b'),sel=select(FX_TO.filter(x=>x!==base),to,false);
+  const paint=()=>{const r=FX[base];if(!r||r.err){out.textContent='—';info.textContent='Could not get the rate right now. Check your internet.';return}const v=r.rates[sel.value];if(!v){out.textContent='—';return}
+    out.textContent='1 '+base+' = '+(v<10?v.toFixed(3):v.toFixed(2))+' '+sel.value;info.textContent='Updated '+new Date(r.at).toLocaleDateString(undefined,{day:'numeric',month:'short'})+'. Banks and exchange houses differ a little.';conv.textContent=' = '+(num(amt.value)*v).toLocaleString(undefined,{maximumFractionDigits:0})+' '+sel.value};
+  sel.onchange=()=>{try{localStorage.setItem('nestory.fxto',sel.value)}catch{}paint()};amt.oninput=paint;
+  if(FX[base]&&!FX[base].err)setTimeout(paint,0);
+  else if(!FX[base]&&typeof fetch!=='function'){FX[base]={err:1};setTimeout(paint,0)}
+  else if(!FX[base]){FX[base]={loading:1};fetch('https://open.er-api.com/v6/latest/'+encodeURIComponent(base)).then(r=>r.json()).then(d=>{if(d&&d.rates)FX[base]={rates:d.rates,at:(d.time_last_update_unix||Date.now()/1000)*1000};else FX[base]={err:1};paint()}).catch(()=>{FX[base]={err:1};paint()})}
+  else setTimeout(paint,0);
+  return h('div',{class:'card'},h('h2',null,ttl('send','Today\'s rate'),sel),out,info,h('div',{style:'display:flex;align-items:center;gap:8px;margin-top:10px'},amt,h('span',null,base),conv));
+}
+{const old=K.remit.top;K.remit.top=l=>h('div',null,fxCard(),old?old(l):null)}
+/* receipt scanning without AI (reads the text on the photo) */
+function parseReceipt(text){
+  const lines=String(text||'').split(/\n/).map(s=>s.trim()).filter(Boolean),nums=s=>[...s.matchAll(/(\d{1,3}(?:[,\s]\d{3})+|\d+)[.,](\d{2})(?!\d)/g)].map(m=>+(m[1].replace(/[,\s]/g,'')+'.'+m[2]));
+  let best=null;
+  lines.forEach((l,k)=>{const low=l.toLowerCase();if(/sub\s*-?\s*total|total\s*(items|qty|quantity)|vat|tax\b|discount|saving|change|tendered|cash\s*paid|round/.test(low))return;
+    let pr=/grand\s*total|net\s*total|total\s*amount|amount\s*due|total\s*payable|net\s*payable|net\s*amount|total\s*due|amount\s*payable|total\s*(aed|inr|incl)/.test(low)?3:/\btotal\b/.test(low)?2:/\b(amount|balance|paid|card|visa|mastercard)\b/.test(low)?1:0;if(!pr)return;
+    let v=nums(l);if(!v.length&&lines[k+1])v=nums(lines[k+1]);if(!v.length)return;const val=Math.max(...v);if(val<=0||val>500000)return;
+    if(!best||pr>best.pr||(pr===best.pr&&val>best.val))best={pr,val}});
+  let amount=best?best.val:null;if(amount==null){const all=nums(text).filter(v=>v>0&&v<100000);amount=all.length?Math.max(...all):''}
+  const fd=findDate(text);let date=fd?fd.date:today();if(date>ymd(new Date(Date.now()+864e5))||date<ymd(new Date(Date.now()-400*864e5)))date=today();
+  const bad=/tax\s*invoice|invoice|receipt|welcome|thank|\btrn\b|tel|phone|www|http|date|time|cashier|bill\s*no|order|table|vat\s*reg|p\.?o\.?\s*box|@/i;
+  let title='';for(const l of lines.slice(0,6)){const letters=(l.match(/[a-z]/gi)||[]).length;if(letters>=3&&letters/l.length>.5&&!bad.test(l)){title=l.replace(/[^a-z0-9&'.\- ]+/gi,' ').replace(/\s{2,}/g,' ').trim();break}}
+  if(title===title.toUpperCase())title=title.toLowerCase().replace(/\b[a-z]/g,c=>c.toUpperCase());
+  return{title:title.slice(0,40),amount,date,category:guessCategory(title,catRules())};
+}
+async function scanBillOCR(){
+  const files=await pick('image/*');if(!files.length)return;const msg=h('p',{class:'note'},'Getting the reader ready (only slow the first time)…');
+  openSheet('Reading your bill',h('div',null,msg,h('p',{class:'note'},'Tip: a flat, well-lit photo of the whole bill works best.')));
+  try{
+    if(!window.Tesseract)await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js');
+    const c=draw(await loadImg(await readFile(files[0])),1800);
+    const r=await window.Tesseract.recognize(c,'eng',{logger:m=>{if(m.status==='recognizing text')msg.textContent='Reading the bill… '+Math.round(m.progress*100)+'%'}});
+    const p=parseReceipt(r.data.text);
+    openForm('expense',{title:p.title,date:p.date,amount:p.amount||'',category:p.category,method:'Card',note:''});
+    toast(p.amount?'Check the details, then save.':'Could not find the total. Please type it in.');
+  }catch(e){closeSheet();toast('Could not read that bill. '+((e&&e.message)||''))}
+}
+
+function extraTileSub(k){
+  if(k==='mood'){const m=moodOf(S.uid,today());return m?'Today '+MOODS[m.v][0]+' '+MOODS[m.v][1]:'Not checked in today'}
+  if(k==='habit'){const l=all('habit').filter(hb=>!hb.who||hb.who==='Both of us'||hb.who===me().nick);return l.length?l.filter(hb=>((hb.days||{})[today()]||[]).includes(S.uid)).length+' of '+l.length+' done today':null}
+  if(k==='pack'){const n=all('pack').length;return n?n+(n===1?' list':' lists'):null}
+  if(k==='goal'){const l=all('goal');return l.length?money(sum(l,i=>i.saved))+' saved':null}
+  if(k==='capsule'){const l=all('capsule').filter(c=>c.from===S.uid||capFor(c)),rd=l.filter(c=>capOpen(c)&&capFor(c)&&!(c.openedBy||{})[S.uid]).length,sl=l.filter(c=>!capOpen(c)).length;return rd?rd+' ready to open ✨':sl?sl+' sealed':null}
+  if(k==='coupon'){const n=all('coupon').filter(c=>c.to===S.uid&&c.status==='active').length;return n?n+(n===1?' coupon for you':' coupons for you'):null}
+  if(k==='places'){const b=all('place').filter(p=>p.status!=='Want to go');return all('place').length?b.length+' been · '+(all('place').length-b.length)+' to go':null}
+  if(k==='fixed'){const l=all('fixed').filter(i=>i.on!==false);return l.length?money(sum(l,i=>i.amount))+' a month':null}
+  return null}
+/* ---------- time capsule, love coupons, our places map, weather, festival themes ---------- */
+Object.assign(ICONS,{
+  ticket:'<path d="M3.5 7.5H20.5V10.2A1.8 1.8 0 0 0 20.5 13.8V16.5H3.5V13.8A1.8 1.8 0 0 0 3.5 10.2Z" fill="var(--berry)"/><path d="M15 8V16" stroke-dasharray="1.4 1.6" fill="none"/><path d="M9.2 10.3C8.4 9.4 6.8 10 7.2 11.3 7.6 12.5 9.2 13.6 9.2 13.6S10.8 12.5 11.2 11.3C11.6 10 10 9.4 9.2 10.3Z" fill="var(--paper)"/>',
+  capsule:'<rect x="3" y="6" width="16" height="11.5" rx="1.8" fill="var(--sky)"/><path d="M3.3 6.7 11 12.4 18.7 6.7" fill="none"/><circle cx="18" cy="17" r="3.8" fill="var(--sun)"/><path d="M18 15.2V17L19.2 17.9" fill="none"/>',
+  pin:'<path d="M12 21C12 21 5.5 14.6 5.5 9.8A6.5 6.5 0 0 1 18.5 9.8C18.5 14.6 12 21 12 21Z" fill="var(--berry)"/><circle cx="12" cy="9.8" r="2.4" fill="var(--paper)"/>',
+  weather:'<circle cx="9" cy="9" r="4" fill="var(--sun)"/><path d="M9 2.6V3.6M3.6 9H2.6M4.5 4.5 5.2 5.2M13.5 4.5 12.8 5.2" fill="none"/><path d="M8.5 19.5H18A3.4 3.4 0 0 0 18.3 12.7 5 5 0 0 0 9 13.6 3 3 0 0 0 8.5 19.5Z" fill="var(--paper)"/>'});
+Object.assign(KI,{capsule:'capsule',coupon:'ticket',places:'pin',place:'pin'});
+Object.assign(PAGES,{capsule:['💌','Time capsule','Letters for later'],coupon:['🎟️','Love coupons','Little promises'],places:['📍','Our places','Where you have been']});
+const partnerUid=()=>{const p=partnerProfile();return p?p.uid:null};
+const dayDiff=ds=>{const d=pd(ds);return d?Math.round((d-t0())/864e5):null};
+const plusDays=n=>ymd(new Date(t0().getFullYear(),t0().getMonth(),t0().getDate()+n));
+const plusMonths=n=>ymd(addMonths(t0(),n));
+/* time capsule */
+const capFor=c=>c.to==='us'||c.from!==S.uid;
+const capOpen=c=>String(c.openOn||'9')<=today();
+function nextAnniv(){const a=S.items.get('aboutus')||{},src=a.weddingDate||a.metOn;const d=pd(src);if(!d)return null;const t=t0();let n=new Date(t.getFullYear(),d.getMonth(),d.getDate());if(n<=t)n=new Date(t.getFullYear()+1,d.getMonth(),d.getDate());return ymd(n)}
+function viewCapsule(c){
+  if(!capOpen(c)){toast('Sealed until '+nice(c.openOn)+'. '+dayDiff(c.openOn)+' days to go.');return}
+  if(!(c.openedBy||{})[S.uid])Store.put('items',c.id,{...c,openedBy:{...(c.openedBy||{}),[S.uid]:Date.now()}});
+  openSheet(c.title||'A letter',h('div',{class:'letter'},h('small',{class:'eb2'},'Written by '+(c.from===S.uid?'you':nameOf(c.from))+' on '+nice(ymd(new Date(num(c.at))))+' · opened '+nice(c.openOn)),h('p',{style:'white-space:pre-wrap;font-size:1.02rem;line-height:1.6;margin:12px 0 0'},c.text)));
+}
+function writeCapsule(){
+  const pp=partnerProfile(),to=select(pp?['To '+pp.nick,'To both of us (future us)']:['To both of us (future us)'],pp?'To '+pp.nick:'To both of us (future us)',false);
+  const date=h('input',{type:'date',min:plusDays(1),value:plusMonths(12)}),title=h('input',{placeholder:'Open on our anniversary ❤️'}),text=h('textarea',{style:'min-height:200px',placeholder:'Dear future us…'});
+  const an=nextAnniv(),quick=[an&&['Our next anniversary',an],['In 6 months',plusMonths(6)],['In 1 year',plusMonths(12)],['In 5 years',plusMonths(60)]].filter(Boolean);
+  const save=h('button',{class:'btn wide',onclick:async()=>{if(!text.value.trim()){toast('Write your letter first.');return}if(!date.value||date.value<=today()){toast('Pick a day in the future.');return}save.disabled=true;
+    if(await Store.put('items',gid('capsule'),{kind:'capsule',from:S.uid,to:/both/.test(to.value)?'us':'partner',title:title.value.trim().slice(0,80)||'A letter from '+(me().nick||'me'),openOn:date.value,text:text.value.trim().slice(0,8000),at:Date.now(),openedBy:{}})){closeSheet();toast('Sealed until '+nice(date.value)+' 💌')}else save.disabled=false}},'Seal the letter');
+  openSheet('Write a time capsule letter',h('div',null,h('label',{class:'f'},h('span',null,'Who is it for'),to),h('div',{class:'f'},h('span',{style:'display:block;font-weight:600;font-size:.88rem;margin-bottom:6px'},'Opens on'),h('div',{class:'chips',style:'margin-bottom:8px'},quick.map(([l,v])=>h('button',{class:'btn soft',type:'button',style:'padding:6px 12px;font-size:.82rem',onclick:()=>{date.value=v}},l))),date),
+    h('label',{class:'f'},h('span',null,'Title on the envelope'),title),h('label',{class:'f'},h('span',null,'Your letter'),text),h('p',{class:'note'},'Once sealed, nobody can open it before that day, not even you.'),save));
+}
+function pageCapsule(){
+  const all_=all('capsule').filter(c=>c.from===S.uid||capFor(c)).sort((a,b)=>String(a.openOn).localeCompare(String(b.openOn)));
+  const ready=all_.filter(c=>capOpen(c)&&capFor(c)&&!(c.openedBy||{})[S.uid]),sealed=all_.filter(c=>!capOpen(c)),opened=all_.filter(c=>capOpen(c)&&!ready.includes(c)).reverse();
+  const env=c=>{const dd=dayDiff(c.openOn),lock=!capOpen(c);return h('button',{class:'env'+(lock?' sealed':' ready'),onclick:()=>viewCapsule(c)},h('span',{class:'env-ic'},icon('capsule')),h('span',{class:'rt'},h('b',null,c.title),h('small',null,lock?'Opens '+nice(c.openOn)+' · in '+dd+(dd===1?' day':' days'):(ready.includes(c)?'Ready since '+nice(c.openOn):'Opened '+nice(c.openOn))),
+    h('small',null,(c.from===S.uid?'From you':'From '+nameOf(c.from))+(c.to==='us'?' to both of you':c.from===S.uid?' to '+nameOf(partnerUid()||''):' to you'))),h('span',{class:'rr'},lock?'🔒':ready.includes(c)?'✨ Open':''))};
+  return h('div',null,head('Time capsule','Letters that open on a day you choose.',!S.readonly?h('button',{class:'btn',onclick:writeCapsule},'Write a letter'):null),
+    ready.length?[h('div',{class:'day'},'Ready to open'),ready.map(env)]:null,sealed.length?[h('div',{class:'day'},'Sealed'),sealed.map(env)]:null,opened.length?[h('div',{class:'day'},'Opened'),opened.map(env)]:null,
+    !all_.length?empty('💌','Write a letter to open on your next anniversary, or one to read together in 5 years.'):null);
+}
+function capsulePops(){for(const c of all('capsule')){if(!capOpen(c)||!capFor(c)||(c.openedBy||{})[S.uid]||flagged('cap-'+c.id))continue;setFlag('cap-'+c.id);
+  popup({sec:'us',il:'heartbig',eb:'Time capsule',title:'A letter is ready to open',body:'"'+c.title+'", written '+nice(ymd(new Date(num(c.at))))+(c.from===S.uid?' by you.':' by '+nameOf(c.from)+'.'),confetti:true,actions:[{label:'Open it',primary:true,fn:()=>viewCapsule(c)},{label:'Later'}]})}}
+/* love coupons */
+const COUPON_T=[['🍳','Breakfast in bed'],['💆','One foot massage'],['👩‍🍳','I cook tonight'],['🎬','Movie of your choice'],['🧹','A day off chores'],['🚗','Long drive, you pick where'],['🍦','Midnight ice cream run'],['🙌','A whole day of yes'],['🏆','You win the next argument'],['🛍️','Shopping trip, I carry the bags'],['☕','Coffee made just how you like it'],['😴','Sleep in, I handle the morning']];
+const CEMO=['🎟️','💆','🍳','👩‍🍳','🎬','🧹','🚗','🍦','🙌','🏆','🛍️','☕','😴','🌹','🍕','💐','🎮','🎤'];
+function giveCoupon(t){const pu=partnerUid();if(!pu){toast('Your partner needs to join Nestory first.');return}
+  let em=t?t[0]:'🎟️';const title=h('input',{value:t?t[1]:'',placeholder:'One foot massage'}),note=h('input',{placeholder:'Valid any evening this month 😉'}),exp=h('input',{type:'date',min:plusDays(1)});
+  const ems=h('div',{class:'emojis'}),paint=()=>ems.replaceChildren(...CEMO.map(e=>h('button',{type:'button','aria-pressed':String(e===em),onclick:()=>{em=e;paint()}},e)));paint();
+  const save=h('button',{class:'btn wide',onclick:async()=>{if(!title.value.trim()){toast('What is the coupon for?');return}save.disabled=true;
+    if(await Store.put('items',gid('coupon'),{kind:'coupon',from:S.uid,to:pu,emoji:em,title:title.value.trim().slice(0,60),note:note.value.trim().slice(0,120),expires:exp.value||'',status:'active',at:Date.now(),seen:false})){closeSheet();toast('Coupon sent 🎟️');S.notify&&S.notify({type:'love',text:'🎟️ A love coupon for you: '+title.value.trim().slice(0,60)})}else save.disabled=false}},'Give coupon');
+  openSheet('Give a love coupon',h('div',null,h('label',{class:'f'},h('span',null,'The coupon is for'),title),h('div',{class:'f'},h('span',{style:'display:block;font-weight:600;font-size:.88rem;margin-bottom:6px'},'Sticker'),ems),h('label',{class:'f'},h('span',null,'Small print (optional)'),note),h('label',{class:'f'},h('span',null,'Use before (optional)'),exp),save));
+}
+async function redeemCoupon(c){if(await Store.put('items',c.id,{...c,status:'redeemed',redeemedAt:Date.now()})){startConfetti();setTimeout(stopConfetti,2500);toast('Redeemed! '+nameOf(c.from)+' will be told.');S.notify&&S.notify({type:'love',text:'🎟️ Redeemed your coupon: '+c.title})}}
+function couponCard(c,mine){
+  const exp=c.expires&&c.status==='active'&&c.expires<today();
+  const act=S.readonly?null:mine?(c.status==='active'&&!exp?h('button',{class:'btn',onclick:e=>{const b=e.currentTarget;if(b.dataset.armed)redeemCoupon(c);else{b.dataset.armed=1;b.textContent='Tap again to redeem'}}},'Redeem'):null)
+    :(c.status==='redeemed'?h('button',{class:'btn',onclick:()=>Store.put('items',c.id,{...c,status:'done',doneAt:Date.now()}).then(()=>toast('Promise kept ❤️'))},'Mark as done'):c.status==='active'?h('button',{class:'pact',onclick:e=>{const b=e.currentTarget;if(b.dataset.armed)Store.del('items',c.id);else{b.dataset.armed=1;b.textContent='Delete?'}}},'Take back'):null);
+  const st=exp?'Expired':c.status==='active'?(c.expires?'Use before '+nice(c.expires):'Ready to use'):c.status==='redeemed'?(mine?'Redeemed. Waiting for '+nameOf(c.from):nameOf(c.to)+' redeemed this!'):'Done ✓ '+nice(ymd(new Date(num(c.doneAt||c.redeemedAt))));
+  return h('div',{class:'coupon'+(c.status==='done'||exp?' used':c.status==='redeemed'?' redeemed':'')},h('div',{class:'cp-l'},h('span',null,c.emoji||'🎟️')),h('div',{class:'cp-r'},h('small',{class:'eb2'},mine?'From '+nameOf(c.from):'For '+nameOf(c.to)),h('b',null,c.title),c.note?h('small',{style:'display:block;color:var(--muted)'},c.note):null,h('small',{style:'display:block;margin-top:4px;font-weight:700;color:var(--sec-ink)'},st),act?h('div',{style:'margin-top:8px'},act):null));
+}
+let couponTab='mine';
+function pageCoupons(){
+  const mine=all('coupon').filter(c=>c.to===S.uid).sort((a,b)=>(a.status==='done')-(b.status==='done')||(b.at||0)-(a.at||0)),gave=all('coupon').filter(c=>c.from===S.uid).sort((a,b)=>(a.status==='redeemed'?-1:0)-(b.status==='redeemed'?-1:0)||(b.at||0)-(a.at||0));
+  for(const c of mine)if(!c.seen&&!S.readonly)Store.put('items',c.id,{...c,seen:true});
+  const list=couponTab==='mine'?mine:gave;
+  return h('div',null,head('Love coupons','Little promises to cash in whenever you like.',!S.readonly?h('button',{class:'btn',onclick:()=>giveCoupon()},'Give one'):null),
+    h('div',{class:'chips'},h('button',{class:'btn'+(couponTab==='mine'?'':' soft'),onclick:()=>{couponTab='mine';render()}},'For you ('+mine.filter(c=>c.status==='active').length+')'),h('button',{class:'btn'+(couponTab==='gave'?'':' soft'),onclick:()=>{couponTab='gave';render()}},'You gave ('+gave.length+')')),
+    list.length?list.map(c=>couponCard(c,couponTab==='mine')):empty('🎟️',couponTab==='mine'?'No coupons yet. Maybe drop a hint 😉':'Give your first coupon. Tap an idea below.'),
+    !S.readonly&&couponTab==='gave'?[h('div',{class:'day'},'Ideas'),h('div',{class:'chips'},COUPON_T.map(t=>h('button',{class:'btn soft',onclick:()=>giveCoupon(t)},t[0]+' '+t[1])))]:null);
+}
+const cpSeen=new Set();
+function couponPops(){
+  if(!S.ready||S.readonly||popsBlocked())return;
+  for(const c of all('coupon')){
+    if(c.to===S.uid&&!c.seen&&c.status==='active'&&!cpSeen.has(c.id)){cpSeen.add(c.id);popup({sec:'us',il:'heartbig',eb:'A love coupon from '+nameOf(c.from),title:(c.emoji||'🎟️')+' '+c.title,body:c.note||'Redeem it whenever you like.',confetti:true,actions:[{label:'See my coupons',primary:true,fn:()=>{couponTab='mine';go('fun','coupon')}},{label:'Lovely',fn:()=>Store.put('items',c.id,{...c,seen:true})}]})}
+    if(c.from===S.uid&&c.status==='redeemed'&&!cpSeen.has(c.id+'r')&&!flagged('cpr-'+c.id)){cpSeen.add(c.id+'r');setFlag('cpr-'+c.id);popup({sec:'us',il:'heartbig',eb:nameOf(c.to)+' redeemed a coupon',title:(c.emoji||'🎟️')+' '+c.title,body:'Time to keep your promise!',actions:[{label:'Done ✓',primary:true,fn:()=>Store.put('items',c.id,{...c,status:'done',doneAt:Date.now()})},{label:'Later'}]})}
+  }
+}
+/* our places map */
+K.place={name:'place',plural:'Our places',icon:'📍',blurb:'Everywhere you have been together, and where you want to go.',empty:'Add a place.',sort:byDate('date'),
+  f:[['name','Place','text',{req:1}],['status','Been there or want to go?','select',{o:['Been there','Want to go'],def:'Been there'}],['date','When','date'],['country','Country'],['photo','Photo','photo'],['note','Memory or note','area']],
+  row:i=>[i.name,j(i.status==='Want to go'?'💭 want to go':'✓ been there',i.country,i.date&&nice(i.date)),'']};
+let placeFilter='all',placesMap=null,placesEl=null,placesLayer=null;
+function placeSearch(){
+  const q=h('input',{type:'search',placeholder:'Search a city, beach, restaurant…',onkeydown:e=>{if(e.key==='Enter')go_()}}),res=h('div',{class:'list',style:'margin-top:10px'}),msg=h('p',{class:'note',style:'margin:8px 0 0'});
+  const pickR=r=>{closeSheet();const a=r.address||{};openForm('place',{name:(r.name||String(r.display_name||'').split(',')[0]||'').slice(0,60),country:a.country||'',lat:+r.lat,lng:+r.lon,status:'Been there',date:today()})};
+  const go_=async()=>{const v=q.value.trim();if(v.length<2)return;msg.textContent='Searching…';res.replaceChildren();
+    try{const r=await (await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&accept-language=en&q='+encodeURIComponent(v))).json();msg.textContent=r.length?'':'Nothing found. Try a bigger place, like the city.';
+      res.replaceChildren(...r.map(x=>h('button',{class:'row',style:'text-align:left;width:100%',onclick:()=>pickR(x)},h('span',{class:'ic'},icon('pin')),h('span',{class:'rt'},h('b',null,x.name||String(x.display_name).split(',')[0]),h('small',null,String(x.display_name).split(',').slice(1,4).join(','))))))}
+    catch{msg.textContent='Could not search right now. Check your internet.'}};
+  const here=h('button',{class:'btn soft',onclick:()=>{if(!navigator.geolocation){toast('Location is not available on this phone.');return}msg.textContent='Finding where you are…';
+    navigator.geolocation.getCurrentPosition(async p=>{let r={lat:p.coords.latitude,lon:p.coords.longitude,name:'Here'};try{const x=await (await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14&accept-language=en&lat='+r.lat+'&lon='+r.lon)).json();if(x&&x.address)r={...x,name:x.name||x.address.suburb||x.address.city||x.address.town||'Here'}}catch{}pickR(r)},()=>{msg.textContent='Location permission was not given.'},{timeout:15000})}},icon('pin'),' We are here now');
+  openSheet('Add a place',h('div',null,h('div',{style:'display:flex;gap:8px'},q,h('button',{class:'btn',onclick:go_},'Search')),h('div',{style:'margin-top:10px'},here),msg,res,h('p',{class:'note',style:'margin-top:14px'},'Place search uses OpenStreetMap.')));
+}
+function drawPlaces(list){
+  if(!window.L||!placesMap)return;if(placesLayer)placesLayer.remove();placesLayer=window.L.layerGroup().addTo(placesMap);const pts=[];
+  for(const p of list){if(!isFinite(p.lat)||!isFinite(p.lng))continue;const want=p.status==='Want to go';pts.push([p.lat,p.lng]);
+    window.L.circleMarker([p.lat,p.lng],{radius:want?7:8,color:'#fff',weight:2,fillColor:want?'#F5A623':'#2F7FE0',fillOpacity:1}).bindPopup(esc(p.name)+(p.date&&!want?'<br><small>'+esc(nice(p.date))+'</small>':'')).addTo(placesLayer)}
+  if(pts.length>1)placesMap.fitBounds(pts,{padding:[30,30],maxZoom:6});else if(pts.length)placesMap.setView(pts[0],5);else placesMap.setView([24,55],2);
+}
+async function ensurePlacesMap(list){
+  if(!placesEl){placesEl=h('div',{class:'pmap'},h('p',{class:'note',style:'padding:14px'},'Loading the map…'))}
+  try{if(!window.L)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js');if(!window.L||!window.L.map)throw 0}catch{placesEl.replaceChildren(h('p',{class:'note',style:'padding:14px'},'The map needs internet. Your places are listed below.'));return}
+  if(!placesMap){placesEl.replaceChildren();placesMap=window.L.map(placesEl,{worldCopyJump:true,zoomControl:true}).setView([24,55],2);
+    window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap'}).addTo(placesMap)}
+  setTimeout(()=>{try{placesMap.invalidateSize()}catch{}drawPlaces(list)},60);
+}
+function pagePlaces(){
+  const all_=all('place'),been=all_.filter(p=>p.status!=='Want to go'),want=all_.filter(p=>p.status==='Want to go'),countries=new Set(been.map(p=>String(p.country||'').trim()).filter(Boolean));
+  const list=placeFilter==='been'?been:placeFilter==='want'?want:all_;
+  ensurePlacesMap(list);if(!placesEl)placesEl=h('div',{class:'pmap'});
+  return h('div',null,head('Our places','Pins for everywhere you have been together, and where you dream of going.',!S.readonly?h('button',{class:'btn',onclick:placeSearch},'Add place'):null),
+    h('div',{class:'rvs',style:'grid-template-columns:repeat(3,1fr);margin-bottom:12px'},h('div',{class:'rv'},h('b',null,been.length),h('small',null,'places been')),h('div',{class:'rv'},h('b',null,countries.size),h('small',null,countries.size===1?'country':'countries')),h('div',{class:'rv'},h('b',null,want.length),h('small',null,'on the wish list'))),
+    h('div',{class:'card',style:'padding:0;overflow:hidden'},placesEl),
+    h('div',{class:'chips'},[['all','All'],['been','🔵 Been there'],['want','🟠 Want to go']].map(([k,l])=>h('button',{class:'btn'+(placeFilter===k?'':' soft'),onclick:()=>{placeFilter=k;render()}},l))),
+    list.length?h('div',{class:'list'},list.slice().sort(byDate('date')).map(p=>rowEl('place',p))):empty('📍','Add the first place you went together.'));
+}
+/* weather on Home */
+const WX_CODES={0:['☀️','Clear sky'],1:['🌤️','Mostly clear'],2:['⛅','Partly cloudy'],3:['☁️','Cloudy'],45:['🌫️','Foggy'],48:['🌫️','Foggy'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],55:['🌧️','Heavy drizzle'],61:['🌦️','Light rain'],63:['🌧️','Rain'],65:['🌧️','Heavy rain'],66:['🌧️','Freezing rain'],67:['🌧️','Freezing rain'],71:['🌨️','Light snow'],73:['🌨️','Snow'],75:['❄️','Heavy snow'],80:['🌦️','Showers'],81:['🌧️','Showers'],82:['⛈️','Heavy showers'],95:['⛈️','Thunderstorm'],96:['⛈️','Thunderstorm, hail'],99:['⛈️','Thunderstorm, hail']};
+const wxc=c=>WX_CODES[c]||['🌡️','Weather'];
+function wxLoc(){try{const v=JSON.parse(localStorage.getItem('nestory.wx.loc')||'null');if(v&&isFinite(v.lat))return v}catch{}
+  let tz='';try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone}catch{}return tz==='Asia/Dubai'?{name:'Dubai',lat:25.2048,lon:55.2708,guess:1}:null}
+function wxSetLoc(v){try{localStorage.setItem('nestory.wx.loc',JSON.stringify(v));localStorage.removeItem('nestory.wx.data')}catch{}WX.data=null;render()}
+const WX={data:null,loading:false};
+function wxTips(d){
+  const c=d.current||{},dl=d.daily||{},mx=(dl.temperature_2m_max||[])[0],mn=(dl.temperature_2m_min||[])[0],rain=(dl.precipitation_probability_max||[])[0]||0,uv=(dl.uv_index_max||[])[0]||0,hum=c.relative_humidity_2m||0,wind=c.wind_speed_10m||0,code=(dl.weather_code||[])[0],t=[];
+  if(code>=95)t.push('⛈️ Storms today. Stay in if you can and keep phones charged');else if(rain>=50)t.push('☔ '+rain+'% chance of rain. Carry an umbrella');else if(rain>=25)t.push('🌂 Maybe a little rain later');
+  if(mx>=40)t.push('🥵 Very hot. Drink plenty of water and run before 7 am');else if(mx>=35)t.push('💧 Hot day. Keep water with you');
+  if(uv>=8)t.push('🧴 Strong sun. Sunscreen and sunglasses');
+  if(hum>=75&&(c.temperature_2m||0)>=30)t.push('💦 Very humid. Light cotton clothes');
+  if(wind>=35)t.push('🌬️ Windy, maybe dusty. Close the windows');
+  if(mn!=null&&mn<=14)t.push('🧥 Cool tonight. Take a jacket');
+  if(mx!=null&&mx<=30&&mx>=20&&rain<25&&code<51)t.push('🌅 Lovely evening for a walk or the beach');
+  return t.slice(0,3);
+}
+async function wxFetch(loc){
+  try{const c=JSON.parse(localStorage.getItem('nestory.wx.data')||'null');if(c&&c.at>Date.now()-30*60000&&c.lat===loc.lat){WX.data=c.d;return}}catch{}
+  if(WX.loading||typeof fetch!=='function')return;WX.loading=true;
+  try{const d=await (await fetch('https://api.open-meteo.com/v1/forecast?latitude='+loc.lat+'&longitude='+loc.lon+'&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto&forecast_days=3')).json();
+    if(d&&d.current){WX.data=d;try{localStorage.setItem('nestory.wx.data',JSON.stringify({at:Date.now(),lat:loc.lat,d}))}catch{}}else WX.err=1}catch{WX.err=1}
+  WX.loading=false;if(S.tab==='home'&&!S.page)refresh();
+}
+function wxPlaceSheet(){
+  const q=h('input',{type:'search',placeholder:'Your city, e.g. Sharjah'}),res=h('div',{class:'list',style:'margin-top:10px'}),msg=h('p',{class:'note'});
+  const find=async()=>{const v=q.value.trim();if(v.length<2)return;msg.textContent='Searching…';try{const r=await (await fetch('https://geocoding-api.open-meteo.com/v1/search?count=6&language=en&name='+encodeURIComponent(v))).json();const l=r.results||[];msg.textContent=l.length?'':'Not found. Try another spelling.';
+    res.replaceChildren(...l.map(x=>h('button',{class:'row',style:'text-align:left;width:100%',onclick:()=>{closeSheet();wxSetLoc({name:x.name,lat:x.latitude,lon:x.longitude})}},h('span',{class:'rt'},h('b',null,x.name),h('small',null,j(x.admin1,x.country))))))}catch{msg.textContent='Could not search right now.'}};
+  const here=h('button',{class:'btn soft',onclick:()=>{if(!navigator.geolocation)return;msg.textContent='Finding where you are…';navigator.geolocation.getCurrentPosition(p=>{closeSheet();wxSetLoc({name:'My location',lat:Math.round(p.coords.latitude*100)/100,lon:Math.round(p.coords.longitude*100)/100})},()=>{msg.textContent='Location permission was not given.'})}},icon('pin'),' Use my location');
+  openSheet('Weather for',h('div',null,h('div',{style:'display:flex;gap:8px'},q,h('button',{class:'btn',onclick:find},'Search')),h('div',{style:'margin-top:10px'},here),msg,res));
+}
+function weatherCard(){
+  const loc=wxLoc();
+  if(!loc)return h('div',{class:'card'},h('h2',null,ttl('weather','Weather')),h('p',{class:'note',style:'margin:0 0 10px'},'See today\'s weather with handy tips.'),h('button',{class:'btn soft',onclick:wxPlaceSheet},'Set your city'));
+  if(!WX.data){wxFetch(loc);return WX.err?null:h('div',{class:'card'},h('h2',null,ttl('weather',loc.name)),h('p',{class:'note',style:'margin:0'},'Getting the weather…'))}
+  const d=WX.data,c=d.current,dl=d.daily,[em,txt]=wxc(c.weather_code),tips=wxTips(d);
+  const night=c.is_day===0&&c.weather_code<=1?'🌙':em;
+  return h('div',{class:'card wx'},h('h2',null,ttl('weather',loc.name),h('button',{onclick:wxPlaceSheet},'Change')),
+    h('div',{class:'wxmain'},h('span',{class:'wxem'},night),h('div',null,h('div',{class:'big'},Math.round(c.temperature_2m)+'°'),h('small',null,txt+' · feels '+Math.round(c.apparent_temperature)+'°')),
+      h('div',{class:'wxside'},h('small',null,'↑ '+Math.round(dl.temperature_2m_max[0])+'°  ↓ '+Math.round(dl.temperature_2m_min[0])+'°'),h('small',null,'💧 '+c.relative_humidity_2m+'% · ☔ '+(dl.precipitation_probability_max[0]||0)+'%'),h('small',null,'🌬️ '+Math.round(c.wind_speed_10m)+' km/h'))),
+    tips.length?h('div',{class:'wxtips'},tips.map(t=>h('span',null,t))):null,
+    h('div',{class:'wxdays'},[1,2].map(k=>h('div',null,h('small',null,k===1?'Tomorrow':new Date(pd(dl.time[k])).toLocaleDateString(undefined,{weekday:'short'})),h('span',null,wxc(dl.weather_code[k])[0]),h('b',null,Math.round(dl.temperature_2m_max[k])+'° / '+Math.round(dl.temperature_2m_min[k])+'°')))));
+}
+/* festival themes */
+const FEST_DATES={onam:['2026-08-26','2027-09-12','2028-09-01','2029-08-22','2030-09-09'],diwali:['2026-11-08','2027-10-29','2028-10-17','2029-11-05','2030-10-26'],
+  eidf:['2027-03-09','2028-02-26','2029-02-14','2030-02-05'],eida:['2027-05-16','2028-05-05','2029-04-24','2030-04-13']};
+const FESTS={onam:{name:'Onam',greet:'Happy Onam!',deco:'🌼🌸🌺🌼🌸🌺',fx:'petals',pre:3,post:0,body:'Wishing you a sadya full of happiness and a home full of flowers.'},
+  diwali:{name:'Diwali',greet:'Happy Diwali!',deco:'🪔✨🪔✨🪔✨',fx:'sparkle',pre:2,post:2,body:'May your home be bright with lights, sweets and laughter.'},
+  eidf:{name:'Eid al-Fitr',greet:'Eid Mubarak!',deco:'🌙⭐🏮🌙⭐🏮',fx:'stars',pre:1,post:2,body:'Wishing you a joyful Eid with family and friends.'},
+  eida:{name:'Eid al-Adha',greet:'Eid Mubarak!',deco:'🌙⭐🏮🌙⭐🏮',fx:'stars',pre:1,post:3,body:'Wishing you and your family a blessed Eid.'},
+  vishu:{name:'Vishu',greet:'Happy Vishu!',deco:'🌼🪔🥭🌼🪔🥭',fx:'petals',md:'04-14',pre:1,post:1,body:'May the Vishukkani bring a year of plenty.'},
+  christmas:{name:'Christmas',greet:'Merry Christmas!',deco:'🎄⭐🎁🎄⭐🎁',fx:'snow',md:'12-25',pre:5,post:1,body:'Warm wishes for a cosy, merry Christmas together.'},
+  newyear:{name:'New Year',greet:'Happy New Year!',deco:'🎆🥂✨🎆🥂✨',fx:'sparkle',md:'01-01',pre:1,post:1,body:'Here is to a new year of adventures together.'},
+  valentine:{name:'Valentine\'s Day',greet:'Happy Valentine\'s Day!',deco:'💞🌹💕💞🌹💕',fx:'hearts',md:'02-14',pre:0,post:0,body:'Just a reminder: you two are lovely.'},
+  uae:{name:'UAE National Day',greet:'Happy National Day!',deco:'🇦🇪✨🇦🇪✨🇦🇪✨',fx:'sparkle',md:'12-02',pre:1,post:1,body:'Celebrating the UAE today.'}};
+let festTest=null;
+function festOn(){try{return localStorage.getItem('nestory.fest')!=='off'}catch{return true}}
+function festToday(){
+  if(!festOn())return null;const t=festTest||today(),T=pd(t),diff=s=>Math.round((pd(s)-T)/864e5);
+  const a=S.items.get('aboutus')||{},ann=a.weddingDate||all('date').find(d=>d.type==='Anniversary'&&d.yearly)?.date;
+  if(ann&&String(ann).slice(5)===t.slice(5))return{id:'anniv',name:'Anniversary',greet:'Happy anniversary 💞',deco:'💞💍🌹💞💍🌹',fx:'hearts',main:true,personal:true};
+  for(const p of [...S.items.values()].filter(i=>i.kind==='profile'&&i.dob))if(String(p.dob).slice(5)===t.slice(5))return{id:'bday-'+p.uid,name:'Birthday',greet:p.uid===S.uid?'Happy birthday to you! 🎂':'Happy birthday, '+p.nick+'! 🎂',deco:'🎈🎂🎉🎈🎂🎉',fx:'balloons',main:true,personal:true};
+  for(const [id,f] of Object.entries(FESTS)){
+    const days=f.md?[t.slice(0,4)+'-'+f.md,(+t.slice(0,4)+1)+'-'+f.md,(+t.slice(0,4)-1)+'-'+f.md]:FEST_DATES[id]||[];
+    for(const d of days){const n=diff(d);if(n<=f.pre&&n>=-f.post)return{id,...f,day:d,main:n===0,soon:n>0?n:0}}
+  }
+  return null;
+}
+function festBanner(f){
+  return h('button',{class:'fest fx-'+f.fx,onclick:()=>{startConfetti();setTimeout(stopConfetti,2600)}},h('div',{class:'garland','aria-hidden':'true'},f.deco+f.deco),h('b',null,f.soon?f.name+' in '+f.soon+(f.soon===1?' day':' days')+' '+f.deco.slice(0,2):f.greet),f.soon?null:h('small',null,f.personal?'Tap for a little celebration':'Tap to celebrate'));
+}
+function festFall(f){
+  if(!f||document.querySelector('.fall')||sessionStorage_get('fall-'+f.id+today()))return;sessionStorage_set('fall-'+f.id+today());
+  const ch={snow:'❄️',petals:'🌼',sparkle:'✨',stars:'⭐',hearts:'💕',balloons:'🎈'}[f.fx]||'✨';const box=h('div',{class:'fall','aria-hidden':'true'});
+  for(let k=0;k<18;k++)box.append(h('span',{style:'left:'+Math.round(Math.random()*96)+'%;animation-delay:'+(Math.random()*2.5).toFixed(2)+'s;font-size:'+(14+Math.round(Math.random()*12))+'px'+(f.fx==='balloons'?';top:auto;bottom:-40px;animation-name:floatup':'')},ch));
+  document.body.append(box);setTimeout(()=>box.remove(),9000);
+}
+function sessionStorage_get(k){try{return sessionStorage.getItem('nestory.'+k)}catch{return null}}
+function sessionStorage_set(k){try{sessionStorage.setItem('nestory.'+k,'1')}catch{}}
+function festPop(){const f=festToday();if(!f||!f.main||f.personal)return;const k='fest-'+f.id+'-'+today();if(flagged(k))return;setFlag(k);
+  popup({sec:'home',il:'festival',eb:f.name,title:f.greet,body:f.body,confetti:true,ok:'Thank you!'})}
+
 /* ---------- about us, favourites, games, polls, card reminders ---------- */
 const partnerProfile=()=>[...S.items.values()].find(i=>i.kind==='profile'&&i.uid!==S.uid)||null;
 const FAV_FIELDS=[['colour','Colour'],['food','Food'],['dessert','Dessert'],['drink','Drink'],['place','Place'],['holiday','Dream holiday'],['actor','Actor'],['actress','Actress'],['movie','Movie'],['song','Song'],['singer','Singer'],['sport','Sport'],['team','Team'],['season','Season'],['flower','Flower'],['book','Book'],['hobby','Hobby'],['app','App']];
@@ -2040,7 +2489,7 @@ function pageReminders(){const ev=events();return h('div',null,head('Coming up',
 function tileEl(key,ix){
   const p=PAGES[key],def=K[key],n=def?all(key).length:key==='expenses'?monthExp().length:key==='memory'?all('memory').length:null;
   const label=p?p[1]:def.plural,sub=key==='memory'?n+' saved':def?(n?n+' saved':'Nothing yet'):key==='expenses'?money(sum(monthExp(),e=>e.amount))+' this month':key==='water'?glasses()+' of '+goal()+' today':key==='reminders'?events().filter(e=>e.days<=30).length+' in 30 days':key==='fitness'?fitStats(myWorkouts()).wkDays+' of '+fitGoal()+' this week':key==='poll'?(c=>c?c+' to vote on':p[2])(all('poll').filter(x=>!x.closed&&x.by!==S.uid&&(x.votes||{})[S.uid]==null).length):p[2];
-  return h('button',{class:'tile',onclick:()=>go(S.tab,key)},h('span',{class:'em'},icon(KI[key]||'sparkle')),h('span',null,h('b',null,label),h('small',null,sub)));
+  return h('button',{class:'tile',onclick:()=>go(S.tab,key)},h('span',{class:'em'},icon(KI[key]||'sparkle')),h('span',null,h('b',null,label),h('small',null,extraTileSub(key)||sub)));
 }
 function hubSummary(id){
   if(id==='fun')return funSummary();
@@ -2088,8 +2537,9 @@ function pageHome(){
     (()=>{const t0n=events().filter(e=>e.days===0).length,w=events().filter(e=>e.days>=0&&e.days<=7).length;
       return hero('home',new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'}),(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+(nick?', '+nick:''),
         t0n?[h('b',null,t0n+(t0n===1?' thing':' things')+' today'),w>t0n?' · '+w+' this week':'']:w?[h('b',null,w+(w===1?' thing':' things')),' coming up this week']:'A calm week ahead. Enjoy it.')})(),
+    (()=>{const f=festToday();if(!f)return null;setTimeout(()=>festFall(f),400);return festBanner(f)})(),
     !S.readonly&&h('div',{class:'qa'},[['receipt','Add expense',()=>openForm('expense')],['shoe','Log a run',()=>{go('life','fitness');logWorkout('Run')}],['food','Log a meal',()=>openForm('food')],['calendar','Calendar',()=>go('us','calendar')],['aid','Emergency',()=>go('life','emergency')]].map(([ic,l,f],k)=>h('button',{onclick:f},h('span',{class:'qi q'+k},icon(ic)),l))),
-    loveCard,pollHomeCard(),cardDueCard(),essCard,cdCard,dqHomeCard(),
+    loveCard,weatherCard(),moodHomeCard(),pollHomeCard(),cardDueCard(),essCard,cdCard,dqHomeCard(),
     (()=>{const st=fitStats(myWorkouts()),g=fitGoal();return h('div',{class:'card'},h('h2',null,ttl('shoe','Moving this week'),h('button',{onclick:()=>go('life','fitness')},'Open')),h('div',{style:'display:flex;align-items:center;gap:14px'},ringEl(st.wkDays,g,76,'days'),h('div',{style:'min-width:0'},h('b',{style:'display:block'},st.wkDays>=g?'Weekly goal done!':(g-st.wkDays)+(g-st.wkDays===1?' more day':' more days')+' to your goal'),h('small',{style:'color:var(--muted)'},(st.streak?st.streak+'-day streak · ':'')+st.km+' km this week'))))})(),
     h('div',{class:'card'},h('h2',null,ttl('bell','Coming up'),h('button',{onclick:()=>go('us','reminders')},'See all')),ev.length?h('div',{class:'list'},ev.map(e=>{const r=evRow(e);r.style.boxShadow='none';r.style.padding='6px 0';return r})):h('p',{class:'note',style:'margin:0'},'Add birthdays, renewals and documents in Book and they will appear here before they are due.')),
     h('div',{class:'card'},h('h2',null,ttl('wallet','This month'),h('button',{onclick:()=>{S.month=m;go('money','expenses')}},'Open')),h('div',{class:'big'},money(spent)),bud?[bar(spent,bud),h('small',{style:'color:var(--muted)'},spent<=bud?money(bud-spent)+' left in the budget':money(spent-bud)+' over budget')]:h('small',{style:'color:var(--muted)'},'spent so far. Set a budget to see what is left.')),
@@ -2107,12 +2557,13 @@ function view(){
     case'calendar':return pageCalendar();case'fitness':return pageFitness();case'feed':return pageFeed();
     case'yearly':return pageYear();case'mealplan':return pageMealPlan();case'emergency':return pageEmergency();case'lovenote':return pageLove();
     case'about':return pageAbout();case'favs':return pageFavs();case'milestone':return pageTimeline();case'quiz':return pageQuiz();case'tot':return pageTot();case'daily':return pageDaily();case'poll':return pagePolls();case'wheel':return pageWheel();
+    case'review':return pageReview();case'mood':return pageMood();case'habit':return pageHabits();case'pack':return pagePack();case'capsule':return pageCapsule();case'coupon':return pageCoupons();case'places':return pagePlaces();
     default:return pageList(S.page);
   }
 }
 let pending=false,lastKey='';
 function refresh(){
-  if(S.ready&&popsDone)setTimeout(checkPolls,600);
+  if(S.ready&&popsDone)setTimeout(()=>{checkPolls();couponPops()},600);
   const a=document.activeElement;
   if(S.page!=='chat'&&a&&$('#main').contains(a)&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)){pending=true;return}
   render();
@@ -2185,6 +2636,7 @@ function profileSheet(first){
       h('button',{class:'btn soft wide',style:'margin-bottom:8px',onclick:exportCSV},'📊 Export expenses for Excel'),
       !S.readonly&&h('button',{class:'btn soft wide',style:'margin-bottom:8px',onclick:()=>restore()},'♻️ Restore from a backup'),
       h('p',{class:'note'},'Download a backup every month or so and keep it somewhere safe, like Google Drive or your email.'),
+      h('div',{class:'day'},'Look and feel'),h('label',{class:'tgl',style:'margin-bottom:12px'},h('span',null,'Festival and birthday decorations'),h('input',{type:'checkbox',checked:festOn(),onchange:e=>{try{localStorage.setItem('nestory.fest',e.target.checked?'on':'off')}catch{}render()}})),
       h('div',{class:'day'},'App lock on this phone'),
       h('button',{class:'btn soft wide',onclick:pinSheet},getPin()?'🔒 Change or turn off PIN':'🔒 Set a PIN')]:null,
     S.signOut&&!first?h('button',{class:'btn soft wide',style:'margin-top:16px',onclick:()=>S.signOut()},'Sign out'):null));
