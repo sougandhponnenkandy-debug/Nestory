@@ -1269,7 +1269,7 @@ function pageExpenses(){
   const groups=[];for(const e of ex){const g=groups[groups.length-1];if(g&&g[0]===e.date)g[1].push(e);else groups.push([e.date,[e]])}
   return h('div',null,monthNav(),
     h('div',{class:'card'},h('div',{class:'big'},money(total)),h('small',{style:'color:var(--muted)'},bud?(total<=bud?money(bud-total)+' left of your '+money(bud)+' budget':money(total-bud)+' over your '+money(bud)+' budget'):'spent this month'),bud?bar(total,bud):null),
-    !S.readonly&&h('div',{class:'chips'},h('button',{class:'btn',onclick:()=>openForm('expense',{date:S.month===today().slice(0,7)?today():S.month+'-01'})},'Add expense'),S.sample&&h('button',{class:'btn mint',onclick:scanBill},'Scan a bill'),S.sample&&h('button',{class:'btn soft',onclick:openStatement},'Import card statement')),
+    !S.readonly&&h('div',{class:'chips'},h('button',{class:'btn',onclick:()=>openForm('expense',{date:S.month===today().slice(0,7)?today():S.month+'-01'})},'Add expense'),S.sample&&h('button',{class:'btn mint',onclick:scanBill},'Scan a bill'),h('button',{class:'btn soft',onclick:openStatement},icon('card'),' Import card statement')),
     cats.length?h('div',{class:'card'},h('h2',null,'Where it went'),cats.map(([c,v])=>h('div',{class:'catrow'},h('div',{class:'l'},h('span',{class:'cl'},icon(CATI[c]||'tag'),c),h('b',null,money(v))),bar(v,budgetOf(c)||cats[0][1])))):null,
     ex.length?groups.map(([d,list])=>[h('div',{class:'day'},niceDay(d)),h('div',{class:'list'},list.map(e=>h('button',{class:'row',onclick:()=>openForm('expense',e)},h('span',{class:'ic'},icon(CATI[e.category]||'tag')),h('span',{class:'rt'},h('b',null,e.title||'Expense'),h('small',null,j(e.category,e.paidBy,e.method))),h('span',{class:'rr'},money(e.amount)))))]):empty('🧾','Nothing spent in '+monthName()+' yet. Add an expense, or snap a photo of a bill.'));
 }
@@ -1306,50 +1306,180 @@ async function scanBill(){
     toast('Check the details, then save.');
   }catch(e){closeSheet();aiError(e)}
 }
-function loadScript(src){return new Promise((res,rej)=>{const s=h('script',{src,onload:res,onerror:()=>rej(new Error('Could not load the PDF reader.'))});document.head.append(s)})}
+function loadScript(src){return new Promise((res,rej)=>{const s=h('script',{src,onload:res,onerror:()=>rej(new Error('A reading tool could not be loaded. Check your internet and try again.'))});document.head.append(s)})}
+/* ---------- card statement import: reads PDF, CSV, Excel or pasted text on the phone (no AI) ---------- */
+const MONTHS={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,sept:9,oct:10,nov:11,dec:12};
+const CAT_WORDS={
+  'Groceries':['carrefour','lulu','spinneys','choithram','union coop','coop','co-op','waitrose','viva','nesto','grandiose','al maya','almaya','safeer','west zone','supermarket','hypermarket','grocery','groceries','kibsons','instashop','talabat mart','noon minutes','geant','aswaaq','madina','baqala','fresh','vegetable','fruit','bakery','butcher','meat'],
+  'Dining out':['talabat','deliveroo','zomato','careem food','noon food','restaurant','cafe','café','coffee','starbucks','costa','tim hortons','mcdonald','kfc','burger','pizza','shawarma','domino','subway','baskin','krispy','eatery','kitchen','grill','dine','biryani','sushi','juice','tea','karak','hardees','popeyes','nandos','shake shack','five guys','papa john','dunkin'],
+  'Transport':['enoc','adnoc','emarat','eppco','petrol','fuel','salik','rta','nol','careem','uber','taxi','parking','darb','mawaqif','car wash','tyre','tire','autopro','service station','metro','bolt','hala'],
+  'Utilities':['dewa','sewa','addc','fewa','aadc','etisalat','e& ','eand','du ','du telecom','emirates integrated','empower','tabreed','lootah gas','gas','internet','recharge','telecom','water bill','electricity','virgin mobile'],
+  'Rent & home':['ejari','rent','ikea','home centre','home center','homebox','pan emirates','ace ','danube','maintenance','cleaning','maid','furniture','hardware','laundry','dry clean','housekeeping','property','real estate'],
+  'Health':['pharmacy','aster','life pharmacy','boots','bin sina','medcare','mediclinic','hospital','clinic','dental','dentist','nmc','health','medical','laboratory','optical','optician','physio','al zahra','thumbay','burjeel'],
+  'Shopping':['amazon','noon','namshi','shein','centrepoint','centerpoint','max fashion','splash','h&m','zara','mall','sharaf dg','jumbo','emax','virgin megastore','lifestyle','decathlon','sephora','faces','bath & body','nike','adidas','apple store','samsung','dragon mart','aliexpress','temu','store','shop','trading','market'],
+  'Entertainment':['vox','reel cinema','novo cinema','cinema','dubai parks','img worlds','ski dubai','theme park','playstation','steam','xbox','nintendo','ticket','platinumlist','bowling','museum','zoo','aquarium','legoland','motiongate','global village','arcade'],
+  'Travel':['emirates','flydubai','air arabia','etihad','indigo','air india','airindia','spicejet','qatar airways','saudia','booking.com','agoda','airbnb','expedia','hotel','resort','airline','airways','travel','trip.com','holiday','tours','duty free'],
+  'Subscriptions':['netflix','spotify','anghami','shahid','osn','youtube','google storage','google one','icloud','apple.com','itunes','disney','prime video','amazon prime','chatgpt','openai','microsoft','adobe','canva','linkedin','starzplay','subscription','membership'],
+  'Family':['school','nursery','tuition','education','university','college','fees','toys','mothercare','baby','kids','gems ','book'],
+  'Gifts':['gift','flowers','florist','flower','gifts'],
+};
+const STMT_SKIP=/\b(opening|closing|previous|new) balance\b|\bbalance (brought|carried) forward\b|\btotal\b|\bminimum (amount|payment)\b|\bpayment due\b|\bdue date\b|\bstatement (date|period|balance)\b|\bcredit limit\b|\bavailable (credit|limit|balance)\b|\bcash limit\b|\breward points?\b/i;
+const STMT_CREDIT=/payment received|payment - thank|thank you for (your )?payment|\bpayment thank|\brefund\b|\breversal\b|\breversed\b|cash ?back|credit adjustment|\bcredit voucher\b|\bautopay(ment)? received|\bdirect debit received/i;
+const MKEY_STOP=new Set(['pos','purchase','dubai','sharjah','abu','dhabi','ajman','uae','ae','are','llc','fze','fzco','fz','co','the','www','com','ref','card','txn','trn','debit','visa','mastercard','master','international','intl','branch','br','ltd','limited','est','establishment','trading','and','of','al','el']);
+function merchantKey(t){return String(t||'').toLowerCase().replace(/[^a-z& ]+/g,' ').split(/\s+/).filter(w=>w.length>1&&!MKEY_STOP.has(w)).slice(0,2).join(' ')}
+function guessCategory(title,rules){
+  const k=merchantKey(title),k1=k.split(' ')[0];
+  if(rules&&rules[k])return rules[k];
+  if(rules&&k1&&rules[k1])return rules[k1];
+  const t=' '+String(title||'').toLowerCase().replace(/\s+/g,' ')+' ';
+  for(const [cat,words] of Object.entries(CAT_WORDS))for(const w of words){if(t.includes(w.length<=3?' '+w.trim()+' ':w))return cat}
+  return 'Other';
+}
+function stmtYear(m,d,ref){const r=ref||new Date();let y=r.getFullYear();if(m>r.getMonth()+2)y--;return y}
+function findDate(str,ref){
+  const cands=[];let m;
+  const push=(index,len,y,mo,d)=>{if(mo>=1&&mo<=12&&d>=1&&d<=31)cands.push({index,end:index+len,date:y+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0')})};
+  const fixY=y=>y==null||y===''?null:(String(y).length<=2?2000+(+y):+y);
+  if((m=/\b(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})\b/.exec(str)))push(m.index,m[0].length,+m[1],+m[2],+m[3]);
+  if((m=/\b(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})\b/.exec(str))){let d=+m[1],mo=+m[2];if(mo>12&&d<=12){const x=d;d=mo;mo=x}push(m.index,m[0].length,fixY(m[3]),mo,d)}
+  if((m=/\b(\d{1,2})[\s\-\/]*(jan|feb|mar|apr|may|jun|jul|aug|sept|sep|oct|nov|dec)[a-z]*\.?(?:[\s\-\/,]*(\d{4}|\d{2})(?![\d.,]))?/i.exec(str))){const mo=MONTHS[m[2].toLowerCase()];const y=fixY(m[3])||stmtYear(mo,+m[1],ref);push(m.index,m[0].length,y,mo,+m[1])}
+  if((m=/\b(jan|feb|mar|apr|may|jun|jul|aug|sept|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?(?:\s*(\d{4}))?\b/i.exec(str))){const mo=MONTHS[m[1].toLowerCase()];const y=fixY(m[3])||stmtYear(mo,+m[2],ref);push(m.index,m[0].length,y,mo,+m[2])}
+  if(!cands.length)return null;
+  cands.sort((a,b)=>a.index-b.index);return cands[0];
+}
+function lastAmount(str){
+  const re=/(-|\()?\s*(?:AED|USD|EUR|GBP|INR|SAR|QAR|OMR|Dhs?\.?)?\s*(\d{1,3}(?:,\d{3})+|\d+)\.(\d{2})(?!\d)\s*(\))?\s*(CR|DR|Cr|Dr|cr|dr|C|D)?\b/g;
+  let m,last=null;while((m=re.exec(str)))last={index:m.index,value:+(m[2].replace(/,/g,'')+'.'+m[3]),neg:!!m[1],cr:/^c/i.test(m[5]||'')};
+  return last;
+}
+function cleanTitle(s){
+  return s.replace(/\b\d{1,2}[-\/.]\d{1,2}[-\/.]\d{2,4}\b/g,' ').replace(/\b\d{1,2}\s*(jan|feb|mar|apr|may|jun|jul|aug|sept|sep|oct|nov|dec)[a-z]*\.?(\s*\d{2,4})?\b/gi,' ')
+    .replace(/x{2,}\d*|\*{2,}\d*|\b\d{6,}\b|\b(AED|USD|EUR|GBP|INR|SAR)\b|\b\d+\.\d{2}\b/gi,' ').replace(/\s{2,}/g,' ').replace(/^[\s\-:|,]+|[\s\-:|,]+$/g,'').slice(0,80);
+}
+function parseStatementText(text,ref){
+  const out=[];
+  for(const raw of String(text||'').split(/\r?\n/)){
+    const line=raw.replace(/\s+/g,' ').trim();if(line.length<8)continue;
+    const d=findDate(line,ref);if(!d||d.index>20)continue;
+    const a=lastAmount(line.slice(d.end));if(!a)continue;
+    let mid=line.slice(d.end,d.end+a.index);const d2=findDate(mid,ref);if(d2&&d2.index<4)mid=mid.slice(d2.end);
+    const title=cleanTitle(mid);if(!title||!/[a-z]/i.test(title)||STMT_SKIP.test(line))continue;
+    out.push({date:d.date,title,amount:Math.abs(a.value),credit:a.cr||a.neg||STMT_CREDIT.test(line)});
+  }
+  return out;
+}
+function parseCSV(text){
+  const lines=String(text||'').replace(/^﻿/,'').split(/\r?\n/).filter(l=>l.trim());if(!lines.length)return[];
+  const sep=[',',';','\t'].map(c=>[c,(lines[0].match(new RegExp(c==='\t'?'\t':'\\'+c,'g'))||[]).length]).sort((a,b)=>b[1]-a[1])[0][0];
+  return lines.map(l=>{const row=[];let cur='',q=false;for(let i=0;i<l.length;i++){const ch=l[i];if(q){if(ch==='"'){if(l[i+1]==='"'){cur+='"';i++}else q=false}else cur+=ch}else if(ch==='"')q=true;else if(ch===sep){row.push(cur);cur=''}else cur+=ch}row.push(cur);return row.map(c=>c.trim())});
+}
+function parseRows(rows,ref){
+  rows=rows.filter(r=>r&&r.some(c=>String(c==null?'':c).trim()));if(!rows.length)return[];
+  const cell=v=>String(v==null?'':v).trim(),amt=v=>{let s=cell(v).replace(/[^\d.,\-()]/g,'');if(!/\d/.test(s))return null;const neg=/^-|\(/.test(s);s=s.replace(/[()\-]/g,'');if(/^\d{1,3}(\.\d{3})*,\d{1,2}$|^\d+,\d{1,2}$/.test(s))s=s.replace(/\./g,'').replace(',','.');else s=s.replace(/,/g,'');const n=parseFloat(s);return isFinite(n)?(neg?-n:n):null};
+  let hi=rows.findIndex(r=>r.some(c=>/date/i.test(cell(c)))&&r.some(c=>/desc|detail|narr|merchant|particular|remark|transaction/i.test(cell(c))));
+  const H=hi>=0?rows[hi].map(c=>cell(c).toLowerCase()):[],body=rows.slice(hi+1);
+  const col=(re,not)=>H.findIndex(hd=>re.test(hd)&&!(not&&not.test(hd)));
+  const ncol=Math.max(...body.map(r=>r.length));
+  let dc=col(/trans.*date|txn.*date|purchase date/);if(dc<0)dc=col(/date/,/post|value|due/);if(dc<0)dc=col(/date/);
+  if(dc<0){let best=-1,bs=0;for(let c=0;c<ncol;c++){const s=body.filter(r=>findDate(cell(r[c]),ref)).length;if(s>bs){bs=s;best=c}}dc=best}
+  let tc=col(/desc|detail|narr|merchant|particular|remark/);
+  if(tc<0){let best=-1,bl=0;for(let c=0;c<ncol;c++){if(c===dc)continue;const l=body.reduce((n,r)=>n+(/[a-z]/i.test(cell(r[c]))?cell(r[c]).length:0),0);if(l>bl){bl=l;best=c}}tc=best}
+  const deb=col(/debit|withdraw|spent|purchase amount/),cre=col(/credit|deposit|payment/,/date|card/);
+  let ac=col(/amount|aed|value/,/credit|debit|date/);
+  if(ac<0&&deb<0){let best=-1,bs=0;for(let c=0;c<ncol;c++){if(c===dc||c===tc)continue;const s=body.filter(r=>amt(r[c])!=null&&/\.\d{2}\b|\d/.test(cell(r[c]))).length;if(s>bs){bs=s;best=c}}ac=best}
+  const vals=ac>=0?body.map(r=>amt(r[ac])).filter(v=>v!=null&&v!==0):[];
+  const flip=vals.length&&vals.filter(v=>v<0).length>vals.length/2;
+  const out=[];
+  for(const r of body){
+    const d=findDate(cell(r[dc]),ref);if(!d)continue;const title=cleanTitle(cell(r[tc]))||cell(r[tc]).slice(0,80);if(!title)continue;
+    let value,credit=false;
+    if(deb>=0){const dv=amt(r[deb]),cv=cre>=0?amt(r[cre]):null;if(dv){value=Math.abs(dv)}else if(cv){value=Math.abs(cv);credit=true}else continue}
+    else{const v=amt(r[ac]);if(v==null||v===0)continue;const cr=/\bcr\b/i.test(r.join(' '));value=Math.abs(v);credit=cr||(flip?v>0:v<0)}
+    if(STMT_SKIP.test(title))continue;
+    out.push({date:d.date,title,amount:value,credit:credit||STMT_CREDIT.test(title)});
+  }
+  return out;
+}
+function catRules(){const r={};for(const x of all('catrule'))if(x.key&&CATS.includes(x.category))r[x.key]=x.category;return r}
 async function pdfText(file,password){
-  if(!window.pdfjsLib){await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js');
+  if(!window.pdfjsLib){await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
     try{window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'}catch{}}
   let doc;
   try{doc=await window.pdfjsLib.getDocument({data:await file.arrayBuffer(),password:password||undefined}).promise}
-  catch(e){throw new Error(e&&e.name==='PasswordException'?'This PDF is locked. Type its password in the box and try again.':'Could not open that PDF. Try screenshots of the statement instead.')}
+  catch(e){throw new Error(e&&e.name==='PasswordException'?'This PDF is locked. Type its password in the box and try again.':'That PDF could not be opened. Try the CSV or Excel download from your bank instead.')}
   let out='';
-  for(let p=1;p<=Math.min(doc.numPages,25);p++){const tc=await (await doc.getPage(p)).getTextContent();out+=tc.items.map(i=>i.str+(i.hasEOL?'\n':' ')).join('')+'\n'}
+  for(let p=1;p<=Math.min(doc.numPages,30);p++){
+    const tc=await (await doc.getPage(p)).getTextContent(),rows=[];
+    for(const it of tc.items){if(!it.str||!it.str.trim())continue;const y=it.transform[5],x=it.transform[4];let r=rows.find(r=>Math.abs(r.y-y)<3);if(!r){r={y,items:[]};rows.push(r)}r.items.push([x,it.str])}
+    rows.sort((a,b)=>b.y-a.y);out+=rows.map(r=>r.items.sort((a,b)=>a[0]-b[0]).map(i=>i[1]).join(' ')).join('\n')+'\n';
+  }
+  if(out.replace(/\s/g,'').length<40)throw new Error('This PDF looks like a scanned picture, so its text cannot be read. Use the CSV or Excel download from your bank instead.');
   return out;
 }
-function openStatement(){
-  if(!S.sample){toast('Statement reading is not switched on in this version.');return}
-  let files=[];
-  const info=h('p',{class:'note'},'No file chosen.');
-  const pw=h('input',{type:'password',placeholder:'Only if the PDF is locked',autocomplete:'off'});
-  const text=h('textarea',{placeholder:'…or paste the transaction lines here'});
-  const go=h('button',{class:'btn wide',onclick:async()=>{
-    go.disabled=true;go.textContent='Finding transactions…';
-    try{
-      let body=text.value.trim();const imgs=[];
-      for(const f of files){if(f.type==='application/pdf'||/\.pdf$/i.test(f.name))body+='\n'+await pdfText(f,pw.value);else imgs.push(await toBlob(f,1800))}
-      if(!body&&!imgs.length)throw new Error('Choose a statement file or paste its text first.');
-      const r=await S.sample.json('Below (or in the attached pictures) is a credit card or bank statement. List every purchase or debit. Skip payments received, refunds, credits, opening and closing balances. Reply with ONLY JSON: {"transactions":[{"date":"YYYY-MM-DD","title": short merchant name,"amount": positive number,"category": one of '+JSON.stringify(CATS)+'}]}. Today is '+today()+'.\n\n'+body.slice(0,90000),{images:imgs.length?imgs.slice(0,6):undefined,cache:false,modelTier:'default'});
-      reviewStatement((r&&r.transactions)||[]);
-    }catch(e){go.disabled=false;go.textContent='Find transactions';if(e&&e.code)aiError(e);else toast(e.message||'Something went wrong.')}
-  }},'Find transactions');
-  openSheet('Import card statement',h('div',null,
-    h('p',{class:'note'},'Choose the statement as a PDF or as screenshots. Nestory lists the purchases and you pick which ones to add.'),
-    h('button',{class:'btn soft wide',style:'margin-bottom:8px',onclick:async()=>{files=await pick('application/pdf,image/*',true);info.textContent=files.length?files.map(f=>f.name).join(', '):'No file chosen.'}},'Choose statement file'),info,
-    h('label',{class:'f'},h('span',null,'PDF password'),pw),h('label',{class:'f'},h('span',null,'Paste text instead'),text),go));
+async function excelRows(file){
+  if(!window.XLSX)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+  const wb=window.XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:true});
+  let best=[];for(const n of wb.SheetNames){const r=window.XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:false,dateNF:'yyyy-mm-dd'});if(r.length>best.length)best=r}
+  return best;
 }
-function reviewStatement(tx){
-  tx=tx.filter(t=>num(t.amount)>0).map(t=>({date:/^\d{4}-\d{2}-\d{2}$/.test(t.date)?t.date:today(),title:String(t.title||'Card purchase').slice(0,80),amount:num(t.amount),category:CATS.includes(t.category)?t.category:'Other'}));
-  if(!tx.length){closeSheet();toast('No purchases found in that statement.');return}
+function openStatement(){
+  let files=[];
+  const info=h('p',{class:'note',style:'margin:6px 0 12px'},'No file chosen yet.');
+  const pw=h('input',{type:'password',placeholder:'Only if the PDF is locked',autocomplete:'off'});
+  const card=h('input',{placeholder:'Visa ending 4417',maxLength:40});
+  const text=h('textarea',{placeholder:'Or paste the transaction lines from your statement'});
+  const read=h('button',{class:'btn wide',onclick:async()=>{
+    read.disabled=true;read.textContent='Reading your statement…';
+    try{
+      if(!files.length&&!text.value.trim())throw new Error('Choose your statement file, or paste its lines first.');
+      let tx=[];
+      for(const f of files){
+        if(/\.pdf$/i.test(f.name)||f.type==='application/pdf')tx=tx.concat(parseStatementText(await pdfText(f,pw.value)));
+        else if(/\.xlsx?$/i.test(f.name))tx=tx.concat(parseRows(await excelRows(f)));
+        else{const t=await f.text();let r=parseRows(parseCSV(t));if(!r.length)r=parseStatementText(t);tx=tx.concat(r)}
+      }
+      if(text.value.trim()){let r=parseStatementText(text.value);if(!r.length)r=parseRows(parseCSV(text.value));tx=tx.concat(r)}
+      if(!tx.some(t=>!t.credit))throw new Error('No purchases were found. Try the CSV or Excel download from your bank\'s app, or paste the transaction lines.');
+      reviewImport(tx,card.value.trim());
+    }catch(e){toast((e&&e.message)||'That statement could not be read.');read.disabled=false;read.textContent='Read statement'}
+  }},'Read statement');
+  openSheet('Import card statement',h('div',null,
+    h('p',{class:'note'},'Use your PDF statement, or the CSV or Excel file from your bank\'s app. The file is read on this phone and not uploaded; only the expenses you choose are saved.'),
+    h('button',{class:'btn soft wide',onclick:async()=>{files=await pick('application/pdf,.pdf,.csv,text/csv,.txt,.xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',true);info.textContent=files.length?files.map(f=>f.name).join(', '):'No file chosen yet.'}},icon('file'),' Choose statement file'),info,
+    h('label',{class:'f'},h('span',null,'PDF password'),pw),h('label',{class:'f'},h('span',null,'Which card (optional)'),card),h('label',{class:'f'},h('span',null,'Paste instead'),text),read));
+}
+function reviewImport(tx,cardName){
+  const rules=catRules(),spends=tx.filter(t=>!t.credit&&t.amount>0),left=tx.length-spends.length;
   const have=new Set(all('expense').map(e=>e.date+'|'+num(e.amount)));
-  const rows=tx.map(t=>{const dup=have.has(t.date+'|'+t.amount);const cb=h('input',{type:'checkbox',checked:!dup});const sel=select(CATS,t.category,false);
-    return{t,cb,sel,el:h('div',{class:'rev'},cb,h('span',null,h('b',null,t.title),h('small',null,' '+nice(t.date)+(dup?' · looks already added':''))),h('b',null,money(t.amount)),sel)}});
+  const seen=new Set();let paint=()=>{};
+  const rows=spends.map(t=>{
+    const sig=t.date+'|'+t.amount+'|'+t.title,dup=have.has(t.date+'|'+t.amount)||seen.has(sig);seen.add(sig);
+    const r={t,key:merchantKey(t.title),changed:false};
+    r.cb=h('input',{type:'checkbox',checked:!dup,'aria-label':'Add '+t.title,onchange:()=>paint()});
+    r.sel=select(CATS,guessCategory(t.title,rules),false);r.sel.setAttribute('aria-label','Category for '+t.title);
+    r.sel.onchange=()=>{for(const o of rows)if(o.key&&o.key===r.key){o.sel.value=r.sel.value;o.changed=true}r.changed=true;paint()};
+    r.el=h('div',{class:'rev'},r.cb,h('span',null,h('b',null,t.title),h('small',null,' '+nice(t.date)+(dup?' · looks already added':''))),h('b',null,money(t.amount)),r.sel);
+    return r});
+  const summary=h('div',{class:'card',style:'background:var(--bg);box-shadow:none'});
   const add=h('button',{class:'btn wide',style:'margin-top:14px',onclick:async()=>{
-    const chosen=rows.filter(r=>r.cb.checked);add.disabled=true;let n=0;
-    for(const r of chosen){add.textContent='Adding '+(++n)+' of '+chosen.length+'…';await Store.put('items',gid('expense'),{kind:'expense',...r.t,category:r.sel.value,method:'Card',by:S.uid,at:Date.now(),upd:Date.now()})}
-    closeSheet();toast(chosen.length+' expenses added');
-  }},'Add ticked expenses');
-  openSheet('Found '+tx.length+' purchases',h('div',null,h('p',{class:'note'},'Untick anything you do not want. Change a category if it looks wrong.'),rows.map(r=>r.el),add));
+    const chosen=rows.filter(r=>r.cb.checked);if(!chosen.length){toast('Tick at least one purchase to add.');return}
+    add.disabled=true;sheetLock=true;let n=0;const months={};
+    for(const r of chosen){add.textContent='Adding '+(++n)+' of '+chosen.length+'…';months[r.t.date.slice(0,7)]=(months[r.t.date.slice(0,7)]||0)+1;
+      if(!(await Store.put('items',gid('expense'),{kind:'expense',title:r.t.title,amount:r.t.amount,date:r.t.date,category:r.sel.value,method:'Card',note:'From card statement'+(cardName?' · '+cardName:''),by:S.uid,at:Date.now(),upd:Date.now()}))){sheetLock=false;add.disabled=false;add.textContent='Stopped. Tap to try again';return}}
+    const learned=new Map();for(const r of rows)if(r.changed&&r.key)learned.set(r.key,r.sel.value);
+    for(const [key,category] of learned)await Store.put('items','catrule_'+key.replace(/[^a-z&]+/g,'_'),{kind:'catrule',key,category,upd:Date.now()});
+    sheetLock=false;closeSheet();
+    const cats=new Set(chosen.map(r=>r.sel.value)).size;S.month=Object.entries(months).sort((a,b)=>b[1]-a[1])[0][0];go('money','expenses');
+    toast(chosen.length+(chosen.length===1?' expense':' expenses')+' added across '+cats+(cats===1?' category':' categories'));
+  }},'Add expenses');
+  paint=()=>{const by={};let tot=0,n=0;for(const r of rows)if(r.cb.checked){by[r.sel.value]=(by[r.sel.value]||0)+r.t.amount;tot+=r.t.amount;n++}
+    summary.replaceChildren(h('div',{class:'catrow'},h('div',{class:'l'},h('b',null,n+(n===1?' purchase ticked':' purchases ticked')),h('b',null,money(tot)))),
+      ...Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([c,v])=>h('div',{class:'catrow'},h('div',{class:'l'},h('span',{class:'cl'},icon(CATI[c]||'tag'),c),h('b',null,money(v))),bar(v,tot))));
+    add.textContent='Add '+n+(n===1?' expense':' expenses')};
+  openSheet('Found '+spends.length+(spends.length===1?' purchase':' purchases'),h('div',null,
+    h('p',{class:'note'},(left?left+(left===1?' payment or refund was':' payments and refunds were')+' left out. ':'')+'Untick anything you don\'t want. Change a category and every purchase from that shop follows, now and in future statements.'),
+    summary,rows.map(r=>r.el),add));
+  paint();
 }
 
 /* ---------- memories ---------- */
@@ -1478,7 +1608,7 @@ function pageAsk(){
     if(!askQ.trim())return;if(!S.sample){toast('Ask Nestory is not switched on in this version.');return}
     btn.disabled=true;ans.textContent='Thinking…';
     const data={};const cut=ymd(new Date(Date.now()-92*864e5));
-    for(const i of S.items.values()){if(['profile','water','settings','lovenote','mealplan'].includes(i.kind))continue;if(i.kind==='expense'&&String(i.date)<cut)continue;const{thumb,id,by,at,upd,kind,...rest}=i;(data[kind]=data[kind]||[]).push(rest)}
+    for(const i of S.items.values()){if(['profile','water','settings','lovenote','mealplan','catrule'].includes(i.kind))continue;if(i.kind==='expense'&&String(i.date)<cut)continue;const{thumb,id,by,at,upd,kind,...rest}=i;(data[kind]=data[kind]||[]).push(rest)}
     try{const r=await S.sample('You are Nestory, a warm family organiser. Answer the question using only the family data below. Be short and specific. If the answer is not in the data, say so and say which section to add it in. Today is '+today()+'. Currency: '+cur()+'.\n\nFAMILY DATA (JSON):\n'+JSON.stringify(data).slice(0,120000)+'\n\nQUESTION: '+askQ,{cache:false,onText:u=>{ans.textContent=u.text}});askA=r.text;ans.textContent=askA}
     catch(e){ans.textContent='';aiError(e)}
     btn.disabled=false;
