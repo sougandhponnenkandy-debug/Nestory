@@ -176,6 +176,27 @@ label.chk input{width:22px;height:22px;accent-color:var(--berry)}
 .rev input[type=checkbox]{width:22px;height:22px;accent-color:var(--berry)}
 .rev select{grid-column:2/4;min-height:38px;padding:6px 10px}
 .rev small{color:var(--muted)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.two small{color:var(--muted);font-size:.82rem}
+.two .big{font-size:1.5rem}
+.ec h3{font-size:1.25rem;margin-bottom:4px}
+.ec dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:8px 0 4px;font-size:1.02rem}
+.ec dt{color:var(--muted)}
+.ec dd{margin:0;font-weight:600;white-space:pre-wrap;overflow-wrap:anywhere}
+.mp{display:grid;grid-template-columns:76px 1fr;gap:6px 10px;align-items:center}
+.mp input{min-height:40px!important;padding:7px 10px!important}
+.cd{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:10px}
+.cd>div{background:var(--bg);border-radius:16px;padding:10px 8px;text-align:center}
+.cd b{font-family:var(--display);font-size:1.9rem;display:block;line-height:1.05}
+.cd small{color:var(--muted);font-size:.78rem;display:block}
+.otd{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.otd button{flex:none;width:100px;text-align:center}
+.otd img,.otd .ph{width:100px;height:100px;object-fit:cover;border-radius:14px;display:grid;place-items:center;background:var(--bg);font-size:2rem}
+.tick .ti{opacity:.55;font-size:.95rem}
+#lock{position:fixed;inset:0;background:var(--bg);z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center}
+#lock.open{display:flex}
+#lock input{max-width:220px;text-align:center;font-size:1.4rem;letter-spacing:.3em}
 @media (prefers-reduced-motion:reduce){#ring .bell{animation:none}}
 </style>
 </head>
@@ -191,6 +212,7 @@ label.chk input{width:22px;height:22px;accent-color:var(--berry)}
 <div id="veil"><div id="sheet" role="dialog" aria-modal="true"></div></div>
 <div id="toast" role="status"></div>
 <div id="ring" role="alertdialog" aria-label="Alarm"></div>
+<div id="lock" role="dialog" aria-modal="true" aria-label="Nestory is locked"></div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="logo" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="20" fill="var(--berry-soft)"/>
   <path d="M32 17.5c-2-3.6-7.2-1.7-5.8 2.5 1 3 5.8 5.8 5.8 5.8s4.8-2.800 5.800-5.800c1.400-4.200-3.800-6.100-5.800-2.500z" fill="var(--berry)"/>
@@ -206,8 +228,8 @@ label.chk input{width:22px;height:22px;accent-color:var(--berry)}
 "use strict";
 /* ===== ONLINE SETUP: paste your two Supabase values between the quotes ===== */
 const NESTORY_SUPABASE={
-  url:"https://oxyncmbgaobcntrpbkwf.supabase.co",   // Project URL, looks like https://abcdefgh.supabase.co
-  key:"sb_publishable_wzmiklMjkJfyKxH9UgmEbg_9qa8MU85"    // Publishable key, starts with sb_publishable_
+  url:"https://oxyncmbgaobcntrpbkwf.supabase.co",  // Project URL, looks like https://abcdefgh.supabase.co
+  key:"sb_publishable_...your full key..."    // Publishable key, starts with sb_publishable_
 };
 /* ========================================================================== */
 /* ---------- tiny helpers ---------- */
@@ -298,6 +320,44 @@ const K={
   trip:{name:'trip',plural:'Trips',icon:'✈️',blurb:'Travel dates, tickets and stays.',empty:'Add your next trip and its travel dates.',sort:(a,b)=>{const t=today(),ua=String(a.to||a.from)>=t,ub=String(b.to||b.from)>=t;return ua!==ub?(ua?-1:1):ua?String(a.from).localeCompare(String(b.from)):String(b.from).localeCompare(String(a.from))},
     f:[['name','Where to','text',{req:1,ph:'Visiting family, beach holiday…'}],['from','Leaving on','date',{req:1}],['to','Coming back on','date'],['who','Who is going','person'],['mode','Going by','select',{o:['Flight','Car','Train','Bus','Ship']}],['ticket','Flight / ticket details','text',{ph:'Flight number, time, booking reference'}],['stay','Where you are staying'],['budget','Trip budget','number'],['note','Packing list and notes','area']],
     row:i=>[i.name,j(nice(i.from)+(i.to?' to '+nice(i.to):''),i.who,i.mode),String(i.to||i.from)<today()?'Done':'']},
+  loan:{name:'loan or card',plural:'Loans & cards',icon:'💳',blurb:'EMIs and credit card due dates, with a reminder before each payment.',empty:'Add a loan or credit card and its due day.',sort:(a,b)=>ndTs(a.dueDay)-ndTs(b.dueDay),
+    f:[['name','Name','text',{req:1,ph:'Car loan, Visa card…'}],['type','Type','select',{o:['Personal loan','Car loan','Home loan','Credit card','Gold loan','Other']}],['lender','Bank or lender'],['emi','Monthly payment','number'],['dueDay','Due on day of the month (1-31)','number'],['outstanding','Balance left','number'],['endDate','Last payment on','date'],['autopay','Paid automatically','check'],['note','Note','area']],
+    row:i=>[i.name,j(i.type,i.lender,i.dueDay&&'due on the '+ordinal(i.dueDay),i.autopay&&'auto-paid'),i.emi?money(i.emi):''],
+    top:l=>l.length?h('div',{class:'card'},h('div',{class:'two'},h('div',null,h('small',null,'Paid every month'),h('div',{class:'big'},money(sum(l,i=>i.emi)))),h('div',null,h('small',null,'Balance left'),h('div',{class:'big'},money(sum(l,i=>i.outstanding)))))):null},
+  owe:{name:'entry',plural:'Lent & borrowed',icon:'🤝',blurb:'Who owes whom, so nothing is forgotten. Tick it when settled.',empty:'Add money you lent or borrowed.',sort:(a,b)=>(!!a.settled-!!b.settled)||String(b.date||'').localeCompare(String(a.date||'')),check:'settled',strike:1,
+    f:[['name','Who','text',{req:1}],['dir','Which way','select',{o:['They owe us','We owe them'],def:'They owe us'}],['amount','Amount','number',{req:1}],['date','Date','date',{def:today}],['reason','What for'],['settled','Settled','check']],
+    row:i=>[i.name,j(i.dir,i.reason,nice(i.date)),money(i.amount)],
+    top:l=>{const o=l.filter(i=>!i.settled);return o.length?h('div',{class:'card'},h('div',{class:'two'},h('div',null,h('small',null,'People owe us'),h('div',{class:'big',style:'color:var(--mint)'},money(sum(o.filter(i=>i.dir!=='We owe them'),i=>i.amount)))),h('div',null,h('small',null,'We owe'),h('div',{class:'big',style:'color:var(--berry)'},money(sum(o.filter(i=>i.dir==='We owe them'),i=>i.amount)))))):null}},
+  remit:{name:'transfer',plural:'Money to family',icon:'💸',blurb:'Money sent to family, with monthly and yearly totals.',empty:'Add a transfer you sent.',sort:byDate('date'),
+    f:[['to','Sent to','text',{req:1,ph:'Parents, home account…'}],['amount','Amount sent','number',{req:1}],['date','Date','date',{def:today}],['via','Sent through','select',{o:['Bank transfer','Exchange house','App','Cash','Other']}],['received','Amount received there (optional)','text',{ph:'45,000 INR'}],['note','Note','area']],
+    row:i=>[i.to,j(nice(i.date),i.via,i.received&&'received '+i.received),money(i.amount)],
+    top:l=>{if(!l.length)return null;const m=today().slice(0,7),y=today().slice(0,4);return h('div',{class:'card'},h('div',{class:'two'},h('div',null,h('small',null,'This month'),h('div',{class:'big'},money(sum(l.filter(i=>String(i.date).startsWith(m)),i=>i.amount)))),h('div',null,h('small',null,'This year'),h('div',{class:'big'},money(sum(l.filter(i=>String(i.date).startsWith(y)),i=>i.amount))))))}},
+  warranty:{name:'warranty',plural:'Warranties',icon:'🧾',blurb:'Appliances and gadgets, with warranty end dates and a photo of the bill.',empty:'Add an appliance with its warranty date and a photo of the bill.',sort:soon('warrantyEnd'),
+    f:[['item','Item','text',{req:1,ph:'Washing machine'}],['brand','Brand and model'],['bought','Bought on','date'],['warrantyEnd','Warranty ends','date'],['price','Price','number'],['shop','Bought from'],['service','Service centre / helpline'],['photo','Bill photo','photo'],['note','Note','area']],
+    row:i=>[i.item,j(i.brand,i.warrantyEnd&&(i.warrantyEnd<today()?'warranty ended ':'warranty till ')+nice(i.warrantyEnd),i.thumb&&'📎 bill'),i.price?money(i.price):'']},
+  maintenance:{name:'job',plural:'Home maintenance',icon:'🛠️',blurb:'AC servicing, pest control and repairs. Tap the circle when a job is done and the next date is set for you.',empty:'Add a job like AC servicing with how often it is due.',sort:soon('nextDue'),check:'_never',tickIcon:'✓',tickLabel:'Mark done today',
+    tickFn:i=>{const n=i.every?ymd(addMonths(t0(),num(i.every))):'';Store.put('items',i.id,{...i,lastDone:today(),nextDue:n||i.nextDue||'',upd:Date.now()});toast(n?'Done. Next due '+nice(n):'Marked as done today')},
+    f:[['task','Job','text',{req:1,ph:'AC servicing'}],['every','Repeat every (months)','select',{o:['1','2','3','4','6','12']}],['lastDone','Last done','date'],['nextDue','Next due','date'],['vendor','Company or technician'],['phone','Their phone','tel'],['cost','Usual cost','number'],['note','Note','area']],
+    row:i=>[i.task,j(i.nextDue&&'next '+nice(i.nextDue),i.lastDone&&'last '+nice(i.lastDone),i.vendor),i.cost?money(i.cost):'']},
+  recipe:{name:'recipe',plural:'Our recipes',icon:'📒',blurb:'Dishes you love, with ingredients you can send to the shopping list.',empty:'Save your first favourite recipe.',sort:(a,b)=>String(a.name).localeCompare(String(b.name)),
+    f:[['name','Dish','text',{req:1}],['type','Meal','select',{o:['Breakfast','Lunch','Dinner','Snack','Dessert','Drink']}],['time','Time to make','text',{ph:'30 min'}],['ingredients','Ingredients (one per line)','area'],['steps','How to make it','area',{tall:1}]],
+    row:i=>[i.name,j(i.type,i.time)],
+    extra:(it,isNew)=>!isNew&&it.ingredients&&!S.readonly?h('button',{class:'btn mint wide',style:'margin-bottom:12px',onclick:()=>addToShopping(String(it.ingredients).split('\n'))},'Add ingredients to shopping list'):null},
+  chore:{name:'chore',plural:'Chores & to-dos',icon:'🧹',blurb:'Shared jobs around the house. Repeating chores move to their next date when ticked.',empty:'Add a chore and whose job it is.',sort:(a,b)=>(!!a.done-!!b.done)||String(a.due||'9').localeCompare(String(b.due||'9')),check:'done',strike:1,
+    tickFn:i=>{if(!i.done&&i.repeat&&i.repeat!=='Once'){const b=t0(),n=i.repeat==='Daily'?new Date(b.getFullYear(),b.getMonth(),b.getDate()+1):i.repeat==='Weekly'?new Date(b.getFullYear(),b.getMonth(),b.getDate()+7):addMonths(b,1);Store.put('items',i.id,{...i,due:ymd(n),lastDone:today(),upd:Date.now()});toast('Done. Next on '+nice(ymd(n)))}else Store.put('items',i.id,{...i,done:!i.done,upd:Date.now()})},
+    f:[['task','Chore or to-do','text',{req:1}],['who','Whose job','person'],['due','Due on','date'],['repeat','Repeat','select',{o:['Once','Daily','Weekly','Monthly'],def:'Once'}],['done','Done','check']],
+    row:i=>[i.task,j(i.who,i.due&&'due '+niceDay(i.due),i.repeat&&i.repeat!=='Once'&&i.repeat)]},
+  gift:{name:'gift idea',plural:'Gift ideas',icon:'🎁',blurb:'Ideas saved through the year, ready for the next birthday.',empty:'Save a gift idea the moment you think of it.',sort:(a,b)=>(!!a.bought-!!b.bought)||String(a.forWhom||'').localeCompare(String(b.forWhom||'')),check:'bought',strike:1,
+    f:[['idea','Gift idea','text',{req:1}],['forWhom','For','person'],['occasion','Occasion','select',{o:['Birthday','Anniversary','Festival','Just because','Other']}],['price','Rough price','number'],['link','Where to buy / link'],['bought','Bought','check']],
+    row:i=>[i.idea,j(i.forWhom&&'for '+i.forWhom,i.occasion),i.price?money(i.price):'']},
+  medicine:{name:'medicine',plural:'Medicines',icon:'💊',blurb:'Reminders at the right times and a warning before tablets run out. Tap the circle after taking a dose.',empty:'Add a medicine with its times and how many tablets are left.',sort:(a,b)=>String(a.name).localeCompare(String(b.name)),check:'_never',tickIcon:'💊',tickLabel:'Took a dose',tickFn:i=>takeMed(i.id),
+    f:[['name','Medicine','text',{req:1}],['who','For','person'],['perDose','Tablets each time','number',{def:1}],['times','Times (24-hour, comma separated)','text',{ph:'08:00, 20:00'}],['food','When','select',{o:['Before food','After food','With food','Any time']}],['stock','Tablets left','number'],['until','Take until','date'],['on','Remind me','check',{def:true}],['note','Note','area']],
+    row:i=>{const d=daysLeft(i);return[i.name,j(i.who,timesOf(i).join(' · '),i.food),d==null?'':d+(d===1?' day left':' days left')]},
+    top:l=>{const low=l.filter(i=>{const d=daysLeft(i);return d!=null&&d<=5});return low.length?h('div',{class:'banner'},'Running low: '+low.map(i=>i.name+' ('+daysLeft(i)+' days)').join(', ')+'. Time to refill.'):null}},
+  weight:{name:'weigh-in',plural:'Weight log',icon:'⚖️',blurb:'Log your weight and watch the trend.',empty:'Add your first weigh-in.',sort:byDate('date'),
+    f:[['weight','Weight (kg)','number',{req:1}],['who','Who','person',{req:1,def:()=>me().nick}],['date','Date','date',{def:today}],['waist','Waist (cm, optional)','number'],['note','Note','area']],
+    row:i=>[i.weight+' kg',j(i.who,niceDay(i.date),i.waist&&'waist '+i.waist+' cm')],
+    top:l=>weightChart(l)},
   note:{name:'note',plural:'Personal space',icon:'🔐',priv:1,blurb:'Only you can see what is written here. Not even your partner.',empty:'Write a thought, a wish list, a surprise plan.',
     f:[['title','Title','text',{req:1}],['body','Write here','area',{tall:1}]],
     row:i=>[i.title,(i.body||'').slice(0,70)]},
@@ -306,18 +366,20 @@ const PAGES={
   expenses:['🧾','Expenses','Track every month'],budget:['🎯','Budget','Plan the month'],
   chat:['💬','Our chat','Just the two of you'],memory:['📸','Memories','Photos and stories'],
   water:['💧','Water','Glasses today'],reminders:['🔔','Coming up','Every date in one list'],ask:['✨','Ask Nestory','Questions about your own details'],
+  yearly:['📊','Year in money','Month by month'],mealplan:['🗓️','Meal planner','Plan the week'],emergency:['🚑','Emergency card','Show a doctor'],lovenote:['💌','Love notes','Little surprises'],
 };
 const TABS=[
   {id:'home',icon:'🏡',label:'Home'},
-  {id:'money',icon:'💰',label:'Money',title:'Money',sub:'Spending, plans and what you own.',tiles:['expenses','budget','saving','asset','subscription']},
-  {id:'us',icon:'💞',label:'Us',title:'Us',sub:'The two of you.',tiles:['chat','memory','trip','bucket','note','shopping','reminders']},
-  {id:'life',icon:'🌿',label:'Life',title:'Life',sub:'Food, water, health and alarms.',tiles:['food','water','alarm','health','medical','period']},
-  {id:'book',icon:'📖',label:'Book',title:'Our book',sub:'Everything about your family, in one place.',tiles:['member','date','insurance','house','document','vehicle','contact','ask']},
+  {id:'money',icon:'💰',label:'Money',title:'Money',sub:'Spending, plans and what you own.',tiles:['expenses','budget','yearly','saving','loan','subscription','remit','owe','asset']},
+  {id:'us',icon:'💞',label:'Us',title:'Us',sub:'The two of you.',tiles:['chat','lovenote','memory','trip','bucket','gift','chore','shopping','note','reminders']},
+  {id:'life',icon:'🌿',label:'Life',title:'Life',sub:'Food, water, health and alarms.',tiles:['emergency','medicine','health','medical','weight','period','water','alarm','food','mealplan','recipe']},
+  {id:'book',icon:'📖',label:'Book',title:'Our book',sub:'Everything about your family, in one place.',tiles:['member','date','insurance','house','warranty','maintenance','document','vehicle','contact','ask']},
 ];
 const AVATARS=['🐻','🐰','🦊','🐼','🐨','🐯','🐧','🐥','🦋','🌸','🌻','⭐'];
 
 /* ---------- state + storage ---------- */
 const S={items:new Map(),priv:new Map(),chat:new Map(),photos:new Map(),uid:'me',hasPriv:true,readonly:false,ready:false,tab:'home',page:null,month:today().slice(0,7),sample:null,local:false};
+S.year=today().slice(0,4);S.week=ymd(monday(new Date()));
 const LS='nestory.v1';
 const Store={
   db:null,
@@ -469,14 +531,149 @@ function supaLogin(sb){
   });
 }
 
+/* ---------- helpers for the newer sections ---------- */
+function nextDay(day){day=Math.round(num(day));if(day<1||day>31)return null;const t=t0(),mk=(y,m)=>new Date(y,m,Math.min(day,new Date(y,m+1,0).getDate()));let x=mk(t.getFullYear(),t.getMonth());if(x<t)x=mk(t.getFullYear(),t.getMonth()+1);return x}
+const ndTs=d=>{const x=nextDay(d);return x?x.getTime():9e15};
+function ordinal(n){n=Math.round(num(n));const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])}
+function addMonths(d,n){const day=d.getDate(),x=new Date(d.getFullYear(),d.getMonth()+n,1);x.setDate(Math.min(day,new Date(x.getFullYear(),x.getMonth()+1,0).getDate()));return x}
+function monday(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
+const esc=v=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function timesOf(m){return String(m.times||'').split(/[,;\s]+/).map(x=>{const r=/^(\d{1,2})[:.](\d{2})$/.exec(x);return r&&+r[1]<24&&+r[2]<60?pad(+r[1])+':'+r[2]:null}).filter(Boolean).sort()}
+function daysLeft(m){if(m.stock===''||m.stock==null)return null;const per=(num(m.perDose)||1)*(timesOf(m).length||1);return Math.floor(num(m.stock)/per)}
+function takeMed(id){
+  const m=S.items.get(id);if(!m||S.readonly)return;
+  if(m.stock===''||m.stock==null){toast('💊 Marked as taken');return}
+  const left=Math.max(0,num(m.stock)-(num(m.perDose)||1));
+  Store.put('items',id,{...m,stock:left,lastTaken:Date.now(),upd:Date.now()});
+  const d=daysLeft({...m,stock:left});toast('💊 Taken. '+left+' left'+(d!=null&&d<=5?', refill soon':''));
+}
+async function addToShopping(lines){
+  if(S.readonly)return;
+  const have=new Set(all('shopping').filter(i=>!i.done).map(i=>String(i.name).toLowerCase()));
+  const add=[...new Set(lines.map(l=>String(l).replace(/^[\s\-•*]+/,'').trim()).filter(Boolean))].filter(l=>!have.has(l.toLowerCase()));
+  if(!add.length){toast('Those are already on the shopping list.');return}
+  let n=0;for(const name of add){if(await Store.put('items',gid('shopping'),{kind:'shopping',name:name.slice(0,120),done:false,by:S.uid,at:Date.now(),upd:Date.now()}))n++}
+  toast(n+(n===1?' item':' items')+' added to the shopping list','Open',()=>go('us','shopping'));
+}
+async function savePhoto(id,file){
+  const img=await loadImg(await readFile(file)),thumb=draw(img,360).toDataURL('image/jpeg',.7);
+  let full,max=1200,q=.78;do{full=draw(img,max).toDataURL('image/jpeg',q);max-=160;q-=.05}while(full.length>225000&&max>400);
+  if(Store.db)await Store.db.collection('photos').doc(id).set({d:full});
+  S.photos.set(id,{d:full});
+  return thumb;
+}
+function weightChart(l){
+  const by={};for(const i of l){if(!i.who||!num(i.weight)||!pd(i.date))continue;(by[i.who]=by[i.who]||[]).push(i)}
+  const names=Object.keys(by);if(!names.length)return null;
+  for(const n of names)by[n]=by[n].sort((a,b)=>String(a.date).localeCompare(String(b.date))).slice(-30);
+  const pts=names.flatMap(n=>by[n]);if(pts.length<2)return null;
+  const ts=pts.map(i=>pd(i.date).getTime()),ws=pts.map(i=>num(i.weight));
+  const ta=Math.min(...ts),tb=Math.max(...ts),wa=Math.floor(Math.min(...ws)-1),wb=Math.ceil(Math.max(...ws)+1);
+  const W=320,H=150,L=34,R=10,T=10,B=22,x=t=>L+(tb===ta?.5:(t-ta)/(tb-ta))*(W-L-R),y=w=>T+(1-(w-wa)/(wb-wa))*(H-T-B);
+  const cols=['var(--berry)','var(--sky)','var(--mint)','var(--sun)'];
+  let svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Weight trend">';
+  for(const w of [wa,(wa+wb)/2,wb])svg+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(w).toFixed(1)+'" y2="'+y(w).toFixed(1)+'" stroke="var(--line)"/><text x="'+(L-6)+'" y="'+(y(w)+4).toFixed(1)+'" text-anchor="end" font-size="10" fill="var(--muted)">'+Math.round(w)+'</text>';
+  names.forEach((n,k)=>{const c=cols[k%4],xy=by[n].map(i=>[x(pd(i.date).getTime()).toFixed(1),y(num(i.weight)).toFixed(1)]);
+    svg+='<polyline fill="none" stroke="'+c+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="'+xy.map(p=>p.join(',')).join(' ')+'"/>';
+    for(const p of xy)svg+='<circle r="3" cx="'+p[0]+'" cy="'+p[1]+'" fill="'+c+'"/>'});
+  svg+='<text x="'+L+'" y="'+(H-6)+'" font-size="10" fill="var(--muted)">'+esc(nice(ymd(new Date(ta))))+'</text><text x="'+(W-R)+'" y="'+(H-6)+'" text-anchor="end" font-size="10" fill="var(--muted)">'+esc(nice(ymd(new Date(tb))))+'</text></svg>';
+  const box=h('div');box.innerHTML=svg;
+  return h('div',{class:'card'},box,h('div',{class:'two',style:'margin-top:8px'},names.map((n,k)=>{const a=by[n],last=num(a[a.length-1].weight),ch=Math.round((last-num(a[0].weight))*10)/10;
+    return h('div',null,h('small',null,h('span',{style:'color:'+cols[k%4]},'● '),n),h('b',{style:'display:block'},last+' kg'),a.length>1?h('small',null,(ch<=0?'▼ ':'▲ ')+Math.abs(ch)+' kg since '+nice(a[0].date)):null)})));
+}
+
+/* ---------- backup, export, restore ---------- */
+const okKey=v=>typeof v==='string'&&/^[\w.\-~:@+]{1,200}$/.test(v);
+async function saveFile(name,text,type){
+  const blob=new Blob([text],{type});
+  if(/iPhone|iPad|Android/i.test(navigator.userAgent)&&navigator.canShare){
+    try{const f=new File([blob],name,{type});if(navigator.canShare({files:[f]})){await navigator.share({files:[f],title:name});return}}catch(e){if(e&&e.name==='AbortError')return}
+  }
+  const a=h('a',{href:URL.createObjectURL(blob),download:name,style:'display:none'});document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},5000);
+}
+async function backup(btn){
+  const old=btn.textContent;btn.disabled=true;btn.textContent='Preparing backup…';
+  try{
+    const photos=[];for(const i of S.items.values()){if(i.thumb){const d=await Store.photo(i.id);if(d)photos.push([i.id,{d}])}}
+    const data={app:'nestory',v:1,exported:new Date().toISOString(),uid:S.uid,items:[...S.items],chat:[...S.chat],priv:[...S.priv],photos};
+    await saveFile('nestory-backup-'+today()+'.json',JSON.stringify(data),'application/json');
+  }catch(e){toast('Could not make the backup. '+((e&&e.message)||''))}
+  btn.disabled=false;btn.textContent=old;
+}
+function exportCSV(){
+  const rows=all('expense').sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
+  if(!rows.length){toast('No expenses to export yet.');return}
+  const q=v=>{if(v==null)return'';if(typeof v==='number')return String(v);v=String(v);if(/^[=+\-@\t\r]/.test(v))v="'"+v;return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+  const csv='﻿'+[['Date','What','Category','Amount ('+cur()+')','Paid by','Paid with','Note'],...rows.map(e=>[e.date,e.title,e.category,num(e.amount),e.paidBy,e.method,e.note])].map(r=>r.map(q).join(',')).join('\r\n');
+  saveFile('nestory-expenses-'+today()+'.csv',csv,'text/csv');
+}
+async function restore(){
+  const f=(await pick('application/json,.json'))[0];if(!f)return;
+  let d=null;try{d=JSON.parse(await f.text())}catch{}
+  if(!d||d.app!=='nestory'||!Array.isArray(d.items)){toast('That file is not a Nestory backup.');return}
+  const own=!!d.uid&&d.uid===S.uid&&S.hasPriv,ok=x=>Array.isArray(x)&&okKey(x[0])&&x[1]&&typeof x[1]==='object';
+  const jobs=[...d.items.filter(ok).map(x=>['items',x]),...(Array.isArray(d.chat)?d.chat:[]).filter(ok).map(x=>['chat',x]),...(own&&Array.isArray(d.priv)?d.priv:[]).filter(ok).map(x=>['priv',x])];
+  const photos=(Array.isArray(d.photos)?d.photos:[]).filter(x=>ok(x)&&typeof x[1].d==='string'&&x[1].d.startsWith('data:image/'));
+  const run=h('button',{class:'btn wide',onclick:async()=>{
+    sheetLock=true;run.disabled=true;let n=0;
+    for(const [sc,[id,data]] of jobs){run.textContent='Restoring '+(++n)+' of '+jobs.length+'…';if(!(await Store.put(sc,id,data))){sheetLock=false;run.disabled=false;run.textContent='Stopped. Tap to try again';return}}
+    for(const [id,v] of photos){run.textContent='Restoring photos…';try{if(Store.db)await Store.db.collection('photos').doc(id).set({d:v.d});S.photos.set(id,{d:v.d})}catch{}}
+    if(!Store.db)Store.persist();
+    sheetLock=false;closeSheet();toast('Backup restored');
+  }},'Restore '+jobs.length+' entries');
+  openSheet('Restore backup',h('div',null,h('p',{class:'note'},'Backup from '+(d.exported?new Date(d.exported).toLocaleString():'an unknown date')+'. Entries in the backup replace the same entries in the app. Anything added since stays as it is.'+(Array.isArray(d.priv)&&d.priv.length&&!own?' Personal-space notes are skipped because they belong to whoever made the backup.':'')),run));
+}
+
+/* ---------- app lock (per phone) ---------- */
+const PINK='nestory.pin';
+const getPin=()=>{try{return localStorage.getItem(PINK)}catch{return null}};
+async function pinHash(p){
+  const str='nestory:'+p;
+  try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+  catch{let a=5381;for(let r=0;r<3000;r++)for(const c of str+r)a=((a*33)^c.charCodeAt(0))>>>0;return 'x'+a.toString(16)}
+}
+let unlocking=false,hiddenAt=0;
+function lockNow(){
+  if(!getPin())return;const L=$('#lock');if(L.classList.contains('open'))return;
+  const msg=h('p',{class:'note',style:'min-height:1.3em;margin:0'});
+  const inp=h('input',{type:'password',inputMode:'numeric',autocomplete:'off',placeholder:'PIN','aria-label':'PIN',onkeydown:e=>{if(e.key==='Enter')unlock()}});
+  const unlock=async()=>{if(unlocking)return;unlocking=true;
+    if((await pinHash(inp.value))===getPin()){L.classList.remove('open');L.replaceChildren();unlocking=false}
+    else{msg.textContent='Wrong PIN. Try again.';inp.value='';setTimeout(()=>{unlocking=false;inp.focus()},800)}};
+  const logo=h('span');logo.innerHTML='<svg viewBox="0 0 64 64" width="84" height="84" aria-hidden="true"><use href="#logo"/></svg>';
+  L.replaceChildren(logo,h('h2',null,'Nestory is locked'),inp,h('button',{class:'btn',style:'min-width:200px',onclick:unlock},'Unlock'),msg,
+    h('button',{style:'color:var(--muted);font-size:.88rem;margin-top:14px',onclick:()=>{if(S.signOut){try{localStorage.removeItem(PINK)}catch{}S.signOut()}else msg.textContent='To reset it, clear this website\'s data in your browser settings.'}},'Forgot PIN?'));
+  L.classList.add('open');setTimeout(()=>inp.focus(),60);
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)hiddenAt=Date.now();else if(hiddenAt&&Date.now()-hiddenAt>60000)lockNow()});
+function pinSheet(){
+  const has=!!getPin(),pinIn=()=>h('input',{type:'password',inputMode:'numeric',autocomplete:'off'});
+  const curI=has?pinIn():null,n1=pinIn(),n2=pinIn();
+  const save=h('button',{class:'btn',onclick:async()=>{
+    if(has&&(await pinHash(curI.value))!==getPin()){toast('Your current PIN is wrong.');return}
+    if(!/^\d{4,8}$/.test(n1.value)){toast('Use 4 to 8 digits.');return}
+    if(n1.value!==n2.value){toast('The two PINs do not match.');return}
+    try{localStorage.setItem(PINK,await pinHash(n1.value))}catch{toast('Could not save the PIN on this phone.');return}
+    closeSheet();toast('App lock is on for this phone');
+  }},has?'Change PIN':'Turn on app lock');
+  const off=has&&h('button',{class:'btn soft',onclick:async()=>{if((await pinHash(curI.value))!==getPin()){toast('Type your current PIN first.');return}try{localStorage.removeItem(PINK)}catch{}closeSheet();toast('App lock is off')}},'Turn off');
+  openSheet('App lock',h('div',null,h('p',{class:'note'},'Nestory asks for this PIN when it opens and after a minute in the background. Each phone has its own PIN.'),
+    has&&h('label',{class:'f'},h('span',null,'Current PIN'),curI),h('label',{class:'f'},h('span',null,has?'New PIN (4 to 8 digits)':'PIN (4 to 8 digits)'),n1),h('label',{class:'f'},h('span',null,'Type it again'),n2),h('div',{class:'actions'},off,save)));
+}
+
 /* ---------- generic form ---------- */
 function openForm(kind,it,after){
-  it=it||{};const def=K[kind],isNew=!it.id,inputs={};
+  it=it||{};const def=K[kind],isNew=!it.id,inputs={};let photoFile=null;
   const rows=def.f.map(([k,label,type,o])=>{
     o=o||{};type=type||'text';
     let v=it[k];if(v==null&&isNew&&o.def!=null)v=typeof o.def==='function'?o.def():o.def;
     let el;
     if(type==='check'){el=h('input',{type:'checkbox',checked:!!v});inputs[k]=()=>el.checked;return h('label',{class:'chk'},el,label)}
+    if(type==='photo'){let file=null;photoFile=()=>file;
+      const prev=h('img',{src:it.thumb||'',alt:'',style:'width:130px;border-radius:12px;margin-bottom:8px;display:'+(it.thumb?'block':'none')});
+      const pickB=h('button',{class:'btn soft',type:'button',onclick:async()=>{const f=await pick('image/*');if(f[0]){file=f[0];prev.src=URL.createObjectURL(file);prev.style.display='block';prev.style.width='130px';pickB.textContent='Change photo'}}},it.thumb?'Change photo':'Add photo');
+      const full=it.thumb&&h('button',{class:'btn soft',type:'button',style:'margin-left:8px',onclick:async()=>{const d=await Store.photo(it.id);if(d){prev.src=d;prev.style.width='100%'}else toast('Full-size photo not found.')}},'View full size');
+      return h('div',{class:'f'},h('span',{style:'display:block;font-weight:600;font-size:.88rem;margin-bottom:6px'},label),prev,pickB,full||null)}
     if(type==='select')el=select(o.o,v);
     else if(type==='person')el=select(people(),v);
     else if(type==='area')el=h('textarea',{value:v||'',style:o.tall?'min-height:220px':''});
@@ -492,14 +689,15 @@ function openForm(kind,it,after){
     if(miss){toast('Please fill in "'+miss[1]+'".');return}
     save.disabled=true;
     const id=it.id||gid(kind);
+    if(photoFile&&photoFile()){try{save.textContent='Saving photo…';data.thumb=await savePhoto(id,photoFile())}catch(e){toast((e&&e.message)||'Could not save the photo.');save.disabled=false;save.textContent='Save';return}}
     const ok=await Store.put(scopeOf(kind),id,{...it,...data,kind,by:it.by||S.uid,at:it.at||Date.now(),upd:Date.now()});
     if(ok){closeSheet();toast('Saved');after&&after()}else save.disabled=false;
   }},'Save');
   const del=!isNew&&h('button',{class:'btn soft',onclick:async()=>{
     if(!armed){armed=true;del.textContent='Tap again to delete';return}
-    await Store.del(scopeOf(kind),it.id);closeSheet();toast('Deleted');
+    await Store.del(scopeOf(kind),it.id);if(it.thumb){if(Store.db)Store.db.collection('photos').doc(it.id).delete().catch(()=>{});S.photos.delete(it.id)}closeSheet();toast('Deleted');
   }},'Delete');
-  openSheet((isNew?'Add ':'Edit ')+def.name,h('div',null,rows,S.readonly?h('p',{class:'note'},'You can view this but not change it.'):h('div',{class:'actions'},del,save)));
+  openSheet((isNew?'Add ':'Edit ')+def.name,h('div',null,rows,def.extra?def.extra(it,isNew):null,S.readonly?h('p',{class:'note'},'You can view this but not change it.'):h('div',{class:'actions'},del,save)));
 }
 
 /* ---------- cycle ---------- */
@@ -528,6 +726,11 @@ function events(){
       case'bucket':if(!i.done)add('🌈','Bucket list: '+i.name,pd(i.target),i.type);break;
       case'trip':add('✈️','Trip: '+i.name,pd(i.from),j(i.who,i.ticket));if(i.to)add('🏡','Back from '+i.name,pd(i.to));break;
       case'saving':add('🐷',i.name+' matures',pd(i.maturity),i.where);break;
+      case'loan':add('💳',i.name+' payment',nextDay(i.dueDay),i.emi&&money(i.emi));add('🎉',i.name+' last payment',pd(i.endDate));break;
+      case'warranty':add('🧾',i.item+' warranty ends',pd(i.warrantyEnd),i.brand);break;
+      case'maintenance':add('🛠️',i.task,pd(i.nextDue),i.vendor);break;
+      case'chore':if(!i.done)add('🧹',i.task,pd(i.due),i.who);break;
+      case'medicine':{const d=daysLeft(i);if(i.on!==false&&d!=null&&d<=7)add('💊',i.name+' running out',new Date(t.getFullYear(),t.getMonth(),t.getDate()+d),'Refill soon');break}
     }
   }
   const cy=cycle();if(cy){const d=Math.round((cy.next-t)/864e5);if(d>=-10)out.push({icon:'🌷',title:'Period expected',date:cy.next,days:d,sub:'Estimate from a '+cy.avg+'-day cycle'})}
@@ -550,7 +753,7 @@ function pageExpenses(){
   const groups=[];for(const e of ex){const g=groups[groups.length-1];if(g&&g[0]===e.date)g[1].push(e);else groups.push([e.date,[e]])}
   return h('div',null,monthNav(),
     h('div',{class:'card'},h('div',{class:'big'},money(total)),h('small',{style:'color:var(--muted)'},bud?(total<=bud?money(bud-total)+' left of your '+money(bud)+' budget':money(total-bud)+' over your '+money(bud)+' budget'):'spent this month'),bud?bar(total,bud):null),
-    !S.readonly&&h('div',{class:'chips'},h('button',{class:'btn',onclick:()=>openForm('expense',{date:S.month===today().slice(0,7)?today():S.month+'-01'})},'Add expense'),h('button',{class:'btn mint',onclick:scanBill},'Scan a bill'),h('button',{class:'btn soft',onclick:openStatement},'Import card statement')),
+    !S.readonly&&h('div',{class:'chips'},h('button',{class:'btn',onclick:()=>openForm('expense',{date:S.month===today().slice(0,7)?today():S.month+'-01'})},'Add expense'),S.sample&&h('button',{class:'btn mint',onclick:scanBill},'Scan a bill'),S.sample&&h('button',{class:'btn soft',onclick:openStatement},'Import card statement')),
     cats.length?h('div',{class:'card'},h('h2',null,'Where it went'),cats.map(([c,v])=>h('div',{class:'catrow'},h('div',{class:'l'},h('span',null,CI[c]+' '+c),h('b',null,money(v))),bar(v,budgetOf(c)||cats[0][1])))):null,
     ex.length?groups.map(([d,list])=>[h('div',{class:'day'},niceDay(d)),h('div',{class:'list'},list.map(e=>h('button',{class:'row',onclick:()=>openForm('expense',e)},h('span',{class:'ic'},CI[e.category]||'🧺'),h('span',{class:'rt'},h('b',null,e.title||'Expense'),h('small',null,j(e.category,e.paidBy,e.method))),h('span',{class:'rr'},money(e.amount)))))]):empty('🧾','Nothing spent in '+monthName()+' yet. Add an expense, or snap a photo of a bill.'));
 }
@@ -732,6 +935,13 @@ function tick(){
     if(a.repeat==='Weekdays'&&(dow===0||dow===6))continue;if(a.repeat==='Weekends'&&dow>0&&dow<6)continue;
     fired.add(key);ring(a);
   }
+  for(const m of all('medicine')){
+    if(m.on===false||(m.until&&m.until<today())||!timesOf(m).includes(hm))continue;
+    if(m.who&&m.who!=='Both of us'&&mine&&m.who!==mine)continue;
+    const key='med'+m.id+today()+hm;if(fired.has(key))continue;fired.add(key);
+    const n=num(m.perDose)||1;beep(3);
+    toast('💊 Time for '+m.name+' · '+n+(n===1?' tablet':' tablets')+(m.food&&m.food!=='Any time'?', '+m.food.toLowerCase():''),'Took it',()=>takeMed(m.id));
+  }
   const every=me().waterEvery===0?0:(num(me().waterEvery)||60);
   if(every&&me().nick&&n.getHours()>=8&&n.getHours()<22&&glasses()<goal()){
     const last=Math.max(lastPing,num((S.items.get(waterId())||{}).last));
@@ -749,7 +959,7 @@ function pageAsk(){
     if(!askQ.trim())return;if(!S.sample){toast('Ask Nestory is not switched on in this version.');return}
     btn.disabled=true;ans.textContent='Thinking…';
     const data={};const cut=ymd(new Date(Date.now()-92*864e5));
-    for(const i of S.items.values()){if(['profile','water','settings'].includes(i.kind))continue;if(i.kind==='expense'&&String(i.date)<cut)continue;const{thumb,id,by,at,upd,kind,...rest}=i;(data[kind]=data[kind]||[]).push(rest)}
+    for(const i of S.items.values()){if(['profile','water','settings','lovenote','mealplan'].includes(i.kind))continue;if(i.kind==='expense'&&String(i.date)<cut)continue;const{thumb,id,by,at,upd,kind,...rest}=i;(data[kind]=data[kind]||[]).push(rest)}
     try{const r=await S.sample('You are Nestory, a warm family organiser. Answer the question using only the family data below. Be short and specific. If the answer is not in the data, say so and say which section to add it in. Today is '+today()+'. Currency: '+cur()+'.\n\nFAMILY DATA (JSON):\n'+JSON.stringify(data).slice(0,120000)+'\n\nQUESTION: '+askQ,{cache:false,onText:u=>{ans.textContent=u.text}});askA=r.text;ans.textContent=askA}
     catch(e){ans.textContent='';aiError(e)}
     btn.disabled=false;
@@ -764,7 +974,7 @@ const empty=(em,text)=>h('div',{class:'empty'},h('span',{class:'em'},em),text);
 const head=(title,blurb,action)=>h('div',{class:'head'},h('div',null,h('h2',null,title),blurb&&h('p',null,blurb)),action||null);
 function rowEl(kind,it){
   const def=K[kind],[t,s,r]=def.row(it);
-  const tick=def.check&&h('button',{class:'tick'+(it[def.check]?' on':''),'aria-label':it[def.check]?'Switch off':'Switch on',onclick:e=>{e.stopPropagation();if(!S.readonly)Store.put(scopeOf(kind),it.id,{...it,[def.check]:!it[def.check]})}},it[def.check]?'✓':'');
+  const tick=def.check&&h('button',{class:'tick'+(it[def.check]?' on':''),'aria-label':def.tickLabel||(it[def.check]?'Switch off':'Switch on'),title:def.tickLabel||null,onclick:e=>{e.stopPropagation();if(S.readonly)return;if(def.tickFn)def.tickFn(it);else Store.put(scopeOf(kind),it.id,{...it,[def.check]:!it[def.check]})}},it[def.check]?'✓':def.tickIcon?h('span',{class:'ti'},def.tickIcon):'');
   const main=h('button',{class:'rt',style:'text-align:left',onclick:()=>openForm(kind,it)},h('b',{style:kind==='alarm'?'font-family:var(--display);font-size:1.4rem':''},t||'Untitled'),s&&h('small',null,s));
   return h('div',{class:'row'+((kind==='shopping'||def.strike)&&it.done?' done':'')},tick||h('span',{class:'ic'},def.icon),main,r&&h('span',{class:'rr'},r));
 }
@@ -778,9 +988,65 @@ function pageList(kind){
   const total=kind==='saving'?sum(list,i=>i.amount):kind==='asset'?sum(list,i=>i.value):0;
   return h('div',null,head(def.plural,def.blurb,!S.readonly&&h('button',{class:'btn',onclick:()=>openForm(kind)},'Add '+def.name)),
     kind==='period'&&cycle()?(()=>{const c=cycle(),d=Math.round((c.next-t0())/864e5);return h('div',{class:'card'},h('small',{style:'color:var(--muted)'},'Next period likely around'),h('div',{class:'big'},c.next.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})),h('p',{class:'note',style:'margin:6px 0 0'},(d>0?'In '+d+' days. ':d===0?'Expected today. ':Math.abs(d)+' days late. ')+'Day '+c.day+' of the cycle. '+(c.guess?'Using a typical 28-day cycle until two periods are logged.':'Average cycle: '+c.avg+' days.')+' This is an estimate, not medical advice.'))})():null,
+    def.top?def.top(list):null,
     kind==='bucket'&&list.length?h('div',{class:'card'},h('div',{class:'big'},list.filter(i=>i.done).length+' of '+list.length+' done'),bar(list.filter(i=>i.done).length,list.length)):null,
     total?h('div',{class:'card'},h('small',{style:'color:var(--muted)'},kind==='saving'?'Saved in total':'Worth in total'),h('div',{class:'big'},money(total))):null,body,
     def.ideas&&!S.readonly?(()=>{const left=def.ideas.filter(([n])=>!list.some(i=>i.name===n));return left.length?[h('div',{class:'day'},'Need ideas? Tap one to add it'),h('div',{class:'chips'},left.map(([n,t])=>h('button',{class:'btn soft',onclick:()=>openForm(kind,{name:n,type:t})},n)))]:null})():null);
+}
+function pageYear(){
+  const y=S.year,ex=all('expense').filter(e=>String(e.date||'').startsWith(y)),rm=all('remit').filter(e=>String(e.date||'').startsWith(y));
+  const mons=[...Array(12)].map((_,k)=>{const p=y+'-'+pad(k+1);return{k,spent:sum(ex.filter(e=>String(e.date).startsWith(p)),e=>e.amount),sent:sum(rm.filter(e=>String(e.date).startsWith(p)),e=>e.amount)}});
+  const max=Math.max(1,...mons.map(m=>m.spent+m.sent)),spent=sum(mons,m=>m.spent),sent=sum(mons,m=>m.sent);
+  const income=num((S.items.get('settings')||{}).income),ty=+today().slice(0,4),gone=+y<ty?12:+y>ty?0:new Date().getMonth()+1;
+  const cats=CATS.map(c=>[c,sum(ex.filter(e=>(e.category||'Other')===c),e=>e.amount)]).filter(c=>c[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  return h('div',null,head('Year in money','Spending and money sent, month by month.'),
+    h('div',{class:'month'},h('button',{onclick:()=>{S.year=String(+y-1);render()},'aria-label':'Previous year'},'‹'),h('b',null,y),h('button',{onclick:()=>{S.year=String(+y+1);render()},'aria-label':'Next year'},'›')),
+    h('div',{class:'card'},h('div',{class:'two'},h('div',null,h('small',null,'Spent'),h('div',{class:'big'},money(spent))),h('div',null,h('small',null,'Sent to family'),h('div',{class:'big'},money(sent)))),
+      income&&gone?h('p',{class:'note',style:'margin:10px 0 0'},'Planned income for '+gone+(gone===1?' month: ':' months: ')+money(income*gone)+'. Left after spending and sending: '+money(income*gone-spent-sent)+'.'):h('p',{class:'note',style:'margin:10px 0 0'},'Add your monthly income in Budget to see what is left each year.')),
+    h('div',{class:'card'},h('h2',null,'Month by month'),mons.map(m=>h('div',{class:'catrow'},h('div',{class:'l'},h('span',null,new Date(+y,m.k,1).toLocaleDateString(undefined,{month:'long'})),h('b',null,money(m.spent+m.sent))),bar(m.spent+m.sent,max),m.sent?h('small',{style:'color:var(--muted)'},money(m.spent)+' spent · '+money(m.sent)+' sent'):null))),
+    cats.length?h('div',{class:'card'},h('h2',null,'Top categories'),cats.map(([c,v])=>h('div',{class:'catrow'},h('div',{class:'l'},h('span',null,CI[c]+' '+c),h('b',null,money(v))),bar(v,cats[0][1])))):null);
+}
+function pageMealPlan(){
+  const wk=S.week,id='plan_'+wk,plan=(S.items.get(id)||{}).d||{},start=pd(wk),recipes=all('recipe');
+  const dl=h('datalist',{id:'recipelist'},recipes.map(r=>h('option',{value:r.name})));
+  const slots=[['B','Breakfast'],['L','Lunch'],['D','Dinner']];
+  const shift=n=>{const d=pd(S.week);d.setDate(d.getDate()+7*n);S.week=ymd(d);render()};
+  const days=[...Array(7)].map((_,k)=>{const d=new Date(start.getFullYear(),start.getMonth(),start.getDate()+k);
+    return h('div',{class:'card',style:'padding:12px 14px'},h('b',{style:'display:block;margin-bottom:6px'+(ymd(d)===today()?';color:var(--berry)':'')},d.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'short'})),
+      h('div',{class:'mp'},slots.map(([sl,label])=>[h('span',{class:'note',style:'margin:0'},label),h('input',{value:plan[k+sl]||'',list:'recipelist',placeholder:'—',disabled:S.readonly,'aria-label':label+', '+d.toDateString(),
+        onchange:e=>{const c=(S.items.get(id)||{}).d||{};Store.put('items',id,{kind:'mealplan',week:wk,d:{...c,[k+sl]:e.target.value.trim()}})}})])))});
+  const fromRecipes=()=>{const names=new Set(Object.values(plan).map(v=>String(v).trim().toLowerCase()).filter(Boolean));
+    const lines=recipes.filter(r=>names.has(String(r.name).trim().toLowerCase())).flatMap(r=>String(r.ingredients||'').split('\n')).filter(l=>l.trim());
+    if(!lines.length){toast('None of this week\'s dishes are saved recipes with ingredients yet.');return}addToShopping(lines)};
+  return h('div',null,head('Meal planner','Plan the week. Dishes that match a saved recipe can fill the shopping list.'),dl,
+    h('div',{class:'month'},h('button',{onclick:()=>shift(-1),'aria-label':'Previous week'},'‹'),h('b',null,'Week of '+start.toLocaleDateString(undefined,{day:'numeric',month:'short'})),h('button',{onclick:()=>shift(1),'aria-label':'Next week'},'›')),
+    !S.readonly&&h('div',{class:'chips'},h('button',{class:'btn mint',onclick:fromRecipes},'Add this week\'s ingredients to shopping'),h('button',{class:'btn soft',onclick:()=>go(S.tab,'recipe')},'Our recipes')),days);
+}
+function pageEmergency(){
+  const dl=pairs=>h('dl',null,pairs.filter(p=>p[1]).map(([k,v])=>[h('dt',null,k),h('dd',null,v)]));
+  const cards=all('health'),meds=all('medicine').filter(m=>m.on!==false&&(!m.until||m.until>=today()));
+  const pol=all('insurance').filter(i=>i.type==='Health'),con=all('contact').filter(c=>c.phone);
+  const telOf=n=>'tel:'+String(n).replace(/[^\d+]/g,'');
+  return h('div',null,head('Emergency card','What a doctor or paramedic may ask, on one screen.'),
+    h('div',{class:'chips'},[['998','🚑 Ambulance 998'],['999','🚓 Police 999'],['997','🚒 Fire 997']].map(([n,l])=>h('a',{class:'btn soft',href:telOf(n),style:'text-decoration:none'},l))),
+    cards.length?cards.map(c=>{const mm=meds.filter(m=>!m.who||m.who===c.person||m.who==='Both of us').map(m=>m.name);
+      return h('div',{class:'card ec'},h('h3',null,'❤️ '+(c.person||'Health card')),dl([['Blood group',c.blood],['Allergies',c.allergies||'None recorded'],['Conditions',c.conditions],['Medicines',[c.meds,mm.join(', ')].filter(Boolean).join('\n')],['Doctor',c.doctor],['Emergency contact',c.emergency],['Height / weight',j(c.height&&c.height+' cm',c.weight&&c.weight+' kg')]]))})
+      :h('div',{class:'card'},h('p',{class:'note',style:'margin:0 0 10px'},'Add a health card for each of you and it will show here.'),!S.readonly&&h('button',{class:'btn',onclick:()=>openForm('health')},'Add health card')),
+    pol.length?h('div',{class:'card ec'},h('h3',null,'🛡️ Health insurance'),pol.map(p=>dl([['Policy',j(p.name,p.provider)],['Covers',p.insured],['Reference',p.ref],['Helpline',p.contact]]))):null,
+    con.length?h('div',{class:'card ec'},h('h3',null,'☎️ Contacts'),h('div',{class:'list'},con.map(c=>h('a',{class:'row',href:telOf(c.phone),style:'text-decoration:none;color:inherit;box-shadow:none;background:var(--bg)'},h('span',{class:'rt'},h('b',null,c.name),h('small',null,j(c.role,c.phone))),h('span',{class:'rr'},'📞'))))):null);
+}
+let loveDraft='';
+function pageLove(){
+  const list=all('lovenote').sort((a,b)=>(b.at||0)-(a.at||0));
+  const ta=h('textarea',{value:loveDraft,placeholder:'Write something that will make them smile…',oninput:e=>loveDraft=e.target.value});
+  const send=h('button',{class:'btn',onclick:async()=>{const t=ta.value.trim();if(!t){toast('Write a little something first.');return}
+    send.disabled=true;const ok=await Store.put('items',gid('lovenote'),{kind:'lovenote',text:t.slice(0,600),from:S.uid,at:Date.now(),seen:false});send.disabled=false;
+    if(ok){loveDraft='';ta.value='';toast('Sent 💌')}}},'Send note');
+  return h('div',null,head('Love notes','Your note pops up on their Home screen the next time they open Nestory.'),
+    !S.readonly&&h('div',{class:'card'},ta,h('div',{class:'emojis',style:'margin:10px 0'},['❤️','😘','🥰','🌹','☕','🌙','🤗','✨'].map(e=>h('button',{onclick:()=>{ta.value+=e;loveDraft=ta.value;ta.focus()},'aria-label':'Add '+e},e))),send),
+    list.length?h('div',{class:'list'},list.map(n=>{const mine=n.from===S.uid;
+      return h('div',{class:'row'},h('span',{class:'ic'},mine?'📤':'💌'),h('span',{class:'rt'},h('b',{style:'white-space:pre-wrap;font-weight:500'},n.text),h('small',null,(mine?'You':nameOf(n.from))+' · '+new Date(n.at).toLocaleDateString(undefined,{day:'numeric',month:'short'})+(mine?(n.seen?' · seen ❤️':' · not seen yet'):''))),
+        mine&&!S.readonly?h('button',{style:'height:32px;min-width:32px;padding:0 8px;border-radius:16px;background:var(--bg);font-size:.85rem','aria-label':'Delete note',onclick:e=>{const b=e.currentTarget;if(b.dataset.armed)Store.del('items',n.id);else{b.dataset.armed='1';b.textContent='Delete?'}}},'✕'):null)})):empty('💌','No notes yet. Send the first one!'));
 }
 function pageReminders(){const ev=events();return h('div',null,head('Coming up','Birthdays, renewals, expiries and dues for the next 12 months.'),ev.length?h('div',{class:'list'},ev.map(evRow)):empty('🔔','Nothing coming up yet. Add birthdays, insurance renewals and documents, and they will show here.'))}
 function tileEl(key,ix){
@@ -806,14 +1072,23 @@ function pageHome(){
   const ex=all('expense').filter(e=>String(e.date||'').startsWith(today().slice(0,7))),spent=sum(ex,e=>e.amount),bud=sum(CATS,budgetOf);
   const al=all('alarm').filter(a=>a.on).sort((a,b)=>String(a.time).localeCompare(String(b.time)));const hm=pad(hr)+':'+pad(new Date().getMinutes());const next=al.find(a=>a.time>hm)||al[0];
   const m=today().slice(0,7);
+  const notes=all('lovenote').filter(n=>n.from!==S.uid&&!n.seen).sort((a,b)=>(b.at||0)-(a.at||0));
+  const loveCard=notes.length?h('div',{class:'card',style:'background:var(--berry-soft)'},h('h2',null,'💌 A note from '+nameOf(notes[0].from)),h('p',{style:'white-space:pre-wrap;font-size:1.1rem;margin:0 0 12px'},notes[0].text),
+    h('div',{class:'chips',style:'margin:0'},h('button',{class:'btn',onclick:()=>{for(const n of notes)Store.put('items',n.id,{...n,seen:true,seenAt:Date.now()})}},'Aww ❤️'),h('button',{class:'btn soft',onclick:()=>go('us','lovenote')},'Reply'))):null;
+  const evs=events().filter(e=>e.days>=0),picks=[evs.find(e=>e.icon==='✈️'),evs.find(e=>e.icon==='💍'),evs.find(e=>e.icon==='🎂')].filter(Boolean);
+  const cdCard=picks.length?h('div',{class:'card'},h('h2',null,'Counting down'),h('div',{class:'cd'},picks.map(e=>h('div',null,h('span',{style:'font-size:1.3rem'},e.icon),h('b',null,e.days===0?'🎉':e.days),h('small',null,e.days===0?'Today!':e.days===1?'day to go':'days to go'),h('small',{style:'color:var(--ink);font-weight:600;margin-top:4px;overflow-wrap:anywhere'},e.title.replace(/^Trip: /,'')))))):null;
+  const md=today().slice(5),yr=+today().slice(0,4),otd=all('memory').filter(x=>String(x.date||'').slice(5)===md&&+String(x.date).slice(0,4)<yr);
+  const otdCard=otd.length?h('div',{class:'card'},h('h2',null,'On this day'),h('div',{class:'otd'},otd.map(x=>{const ago=yr-+x.date.slice(0,4);return h('button',{onclick:()=>viewMemory(x)},x.thumb?h('img',{src:x.thumb,alt:x.title||''}):h('div',{class:'ph'},'💗'),h('small',{style:'display:block;color:var(--muted);margin-top:4px'},ago+(ago===1?' year ago':' years ago')))}))):null;
   return h('div',null,
     S.local&&h('div',{class:'banner'},'Saved on this device only. Open Nestory in Claude to share it with your partner.'),
     S.readonly&&h('div',{class:'banner'},'You can look around but not make changes. Ask the owner to share Nestory with you as a Contributor.'),
     h('h2',{class:'hello'},(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+(nick?', '+nick:'')),
     h('p',{class:'sub'},new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})),
-    !S.readonly&&h('div',{class:'chips'},h('button',{class:'btn',onclick:()=>openForm('expense')},'Add expense'),h('button',{class:'btn mint',onclick:scanBill},'Scan a bill'),h('button',{class:'btn soft',onclick:()=>openForm('food')},'Log a meal')),
+    !S.readonly&&h('div',{class:'chips'},h('button',{class:'btn',onclick:()=>openForm('expense')},'Add expense'),S.sample&&h('button',{class:'btn mint',onclick:scanBill},'Scan a bill'),h('button',{class:'btn soft',onclick:()=>openForm('food')},'Log a meal'),h('button',{class:'btn soft',onclick:()=>go('life','emergency')},'🚑 Emergency card')),
+    loveCard,cdCard,
     h('div',{class:'card'},h('h2',null,'Coming up',h('button',{onclick:()=>go('us','reminders')},'See all')),ev.length?h('div',{class:'list'},ev.map(e=>{const r=evRow(e);r.style.boxShadow='none';r.style.padding='6px 0';return r})):h('p',{class:'note',style:'margin:0'},'Add birthdays, renewals and documents in Book and they will appear here before they are due.')),
     h('div',{class:'card'},h('h2',null,'This month',h('button',{onclick:()=>{S.month=m;go('money','expenses')}},'Open')),h('div',{class:'big'},money(spent)),bud?[bar(spent,bud),h('small',{style:'color:var(--muted)'},spent<=bud?money(bud-spent)+' left in the budget':money(spent-bud)+' over budget')]:h('small',{style:'color:var(--muted)'},'spent so far. Set a budget to see what is left.')),
+    otdCard,
     waterCard(),
     next&&h('div',{class:'card'},h('h2',null,'Next alarm',h('button',{onclick:()=>go('life','alarm')},'All alarms')),h('div',{style:'display:flex;align-items:baseline;gap:10px'},h('span',{class:'big'},next.time),h('span',null,next.label||''))));
 }
@@ -823,7 +1098,9 @@ function view(){
   if(!S.page)return S.tab==='home'?pageHome():pageHub(tab);
   switch(S.page){
     case'expenses':return pageExpenses();case'budget':return pageBudget();case'chat':return pageChat();case'memory':return pageMemories();
-    case'water':return pageWater();case'reminders':return pageReminders();case'ask':return pageAsk();default:return pageList(S.page);
+    case'water':return pageWater();case'reminders':return pageReminders();case'ask':return pageAsk();
+    case'yearly':return pageYear();case'mealplan':return pageMealPlan();case'emergency':return pageEmergency();case'lovenote':return pageLove();
+    default:return pageList(S.page);
   }
 }
 let pending=false,lastKey='';
@@ -862,8 +1139,16 @@ function profileSheet(first){
   openSheet(first?'Welcome to Nestory':'Your settings',h('div',null,first&&h('p',{class:'note'},'A cosy little book for the two of you. First, who are you?'),
     h('label',{class:'f'},h('span',null,'Your name here'),nick),h('div',{class:'f'},h('span',{style:'display:block;font-weight:600;font-size:.88rem;margin-bottom:4px'},'Pick your face')),em,
     h('label',{class:'f'},h('span',null,'Currency (shared)'),curI),h('label',{class:'f'},h('span',null,'Glasses of water a day'),goalI),h('label',{class:'f'},h('span',null,'Water reminder every (minutes)'),everyI),save,
-    S.signOut&&!first?h('button',{class:'btn soft wide',style:'margin-top:10px',onclick:()=>S.signOut()},'Sign out'):null));
+    !first?[h('div',{class:'day',style:'margin-top:20px'},'Your data'),
+      (()=>{const b=h('button',{class:'btn soft wide',style:'margin-bottom:8px',onclick:()=>backup(b)},'💾 Download full backup');return b})(),
+      h('button',{class:'btn soft wide',style:'margin-bottom:8px',onclick:exportCSV},'📊 Export expenses for Excel'),
+      !S.readonly&&h('button',{class:'btn soft wide',style:'margin-bottom:8px',onclick:()=>restore()},'♻️ Restore from a backup'),
+      h('p',{class:'note'},'Download a backup every month or so and keep it somewhere safe, like Google Drive or your email.'),
+      h('div',{class:'day'},'App lock on this phone'),
+      h('button',{class:'btn soft wide',onclick:pinSheet},getPin()?'🔒 Change or turn off PIN':'🔒 Set a PIN')]:null,
+    S.signOut&&!first?h('button',{class:'btn soft wide',style:'margin-top:16px',onclick:()=>S.signOut()},'Sign out'):null));
 }
+lockNow();
 Store.init();
 </script>
 </body>
