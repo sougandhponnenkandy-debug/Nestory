@@ -1644,21 +1644,77 @@ setInterval(tick,15000);
 
 /* ---------- ask ---------- */
 let askQ='',askA='';
+/* ---------- Ask Nestory: works without AI (search + simple answers); uses AI only where available ---------- */
+const ASK_STOP=new Set('a an the is are was were be do does did when where what which who whom whose how much many our my we us i me you your it its of in on at to for from by with and or about any have has had will shall should can could would this that these those there their them they please tell show find give get list all next last due date day time number'.split(' '));
+const ASK_SYN={insurance:['insurance','policy','policies','cover','premium','renew','renewal'],vehicle:['car','vehicle','bike','registration','mulkiya','plate'],document:['passport','visa','emirates','id','licence','license','document','documents','certificate','expire','expiry'],
+  contact:['phone','number','contact','call','doctor','plumber','electrician'],member:['birthday','born','dob','family','amma','achan','mother','father','brother','sister'],date:['anniversary','birthday','festival','date'],
+  loan:['loan','emi','card','credit','payment','pay','due','visa','master','amex'],subscription:['subscription','netflix','renew','spotify','bill'],medicine:['medicine','tablet','tablets','pill','dose','vitamin'],
+  health:['blood','allergy','allergies','group','health'],medical:['doctor','checkup','hospital','report','follow'],house:['rent','house','flat','tenancy','ejari','landlord','contract'],warranty:['warranty','guarantee','bill'],
+  maintenance:['service','servicing','maintenance','ac','filter'],trip:['trip','travel','flight','holiday','vacation'],saving:['saving','savings','deposit','fd','gold','invest','maturity'],asset:['asset','gold','property','own'],
+  recipe:['recipe','cook','ingredients'],gift:['gift','present'],bucket:['dream','bucket','someday'],plan:['plan','plans','dinner','meeting','event'],essential:['rice','buy','stock','groceries','essential'],owe:['owe','lent','borrowed','borrow','lend']};
+const ASK_DATES=['renewal','expiry','dueDay','nextDue','dob','date','from','to','warrantyEnd','regExpiry','insExpiry','maturity','followUp','endDate','due','rentDue','target'];
+const stem=w=>w.replace(/'s$/,'').replace(/(ies)$/,'y').replace(/(ing|ed|es|s)$/,'')||w;
+function askTokens(q){return q.toLowerCase().replace(/[^a-z0-9ഀ-ൿ؀-ۿ ]+/g,' ').split(/\s+/).filter(w=>w&&w.length>1&&!ASK_STOP.has(w))}
+const ASK_MON=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+function askMoney(q){
+  const l=q.toLowerCase(),catHit=CATS.some(c=>c.toLowerCase().split(/[ &]+/).some(w=>w.length>3&&l.includes(w.replace(/s$/,''))));if(!/\b(spen[dt]|spending|expense|expenses|how much|cost|paid|pay for)\b/.test(l)&&!(catHit&&/\b(month|year|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/.test(l))&&!(catHit&&askTokens(q).length<=1))return null;
+  if(/\b(loan|emi|card|subscription|rent)\b/.test(l)&&!/\bspen/.test(l))return null;
+  const t=t0();let y=t.getFullYear(),m=t.getMonth(),label='this month',whole=false;
+  if(/last month|previous month/.test(l)){m--;if(m<0){m=11;y--}label='last month'}
+  else if(/this year|year/.test(l)){whole=true;label='this year'}
+  else{const k=ASK_MON.findIndex(x=>new RegExp('\\b'+x).test(l));if(k>=0){m=k;if(k>t.getMonth())y--;label=new Date(y,m,1).toLocaleDateString(undefined,{month:'long',year:'numeric'})}}
+  const pre=whole?String(y):y+'-'+pad(m+1);let ex=all('expense').filter(e=>String(e.date||'').startsWith(pre));
+  const cat=CATS.find(c=>c.toLowerCase().split(/[ &]+/).some(w=>w.length>3&&l.includes(w.toLowerCase().replace(/s$/,''))));
+  const words=askTokens(q).filter(w=>!/^(spen|spent|spending|expense|expenses|cost|month|year|last|this|previous|paid)$/.test(w)&&!ASK_MON.some(x=>w.startsWith(x)));
+  let what='';
+  if(cat){ex=ex.filter(e=>e.category===cat);what=' on '+cat}
+  else if(words.length){const hit=ex.filter(e=>words.some(w=>String(e.title||'').toLowerCase().includes(w)||String(e.note||'').toLowerCase().includes(w)));if(hit.length){ex=hit;what=' on "'+words.join(' ')+'"'}}
+  const total=sum(ex,e=>e.amount);
+  const by={};for(const e of ex)by[e.category||'Other']=(by[e.category||'Other']||0)+num(e.amount);
+  const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([c,v])=>c+' '+money(v)).join(' · ');
+  return{text:'You spent '+money(total)+what+' '+label+(ex.length?' across '+ex.length+(ex.length===1?' expense.':' expenses.'):'.')+(!cat&&!what&&top?' Biggest: '+top+'.':''),rows:ex.sort(byDate('date')).slice(0,8).map(e=>h('button',{class:'row',style:'text-align:left;width:100%',onclick:()=>openForm('expense',e)},h('span',{class:'ic'},icon('receipt')),h('span',{class:'rt'},h('b',null,e.title||e.category),h('small',null,j(nice(e.date),e.category))),h('span',{class:'rr'},money(e.amount))))};
+}
+function askSearch(q){
+  const toks=askTokens(q),st=toks.map(stem);if(!toks.length)return null;
+  const kindBoost={};for(const [k,ws] of Object.entries(ASK_SYN))for(const w of toks)if(ws.includes(w))kindBoost[k]=(kindBoost[k]||0)+1;
+  const skip=new Set(['profile','water','settings','lovenote','mealplan','catrule','note','tot','dq','wheel','aboutus','quizq','poll']);
+  const scored=[];
+  for(const i of S.items.values()){if(skip.has(i.kind)||!K[i.kind]||!K[i.kind].row)continue;
+    const vals=Object.entries(i).filter(([k,v])=>!['thumb','thumbs','id','by','kind','at','upd','files'].includes(k)&&(typeof v==='string'||typeof v==='number')).map(([,v])=>String(v).toLowerCase()).join(' ');
+    const name=String(K[i.kind].row(i)[0]||'').toLowerCase();
+    let s=0;for(let k=0;k<toks.length;k++){if(vals.includes(toks[k]))s+=name.includes(toks[k])?3:2;else if(st[k].length>2&&vals.includes(st[k]))s+=1.5}
+    if(s===0&&!kindBoost[i.kind])continue;s+=(kindBoost[i.kind]||0)*1.2;if(i.kind==='expense')s-=1;scored.push([s,i])}
+  scored.sort((a,b)=>b[0]-a[0]);const best=scored.filter(x=>x[0]>=Math.max(1.2,(scored[0]||[0])[0]*.5)).slice(0,6).map(x=>x[1]);
+  if(!best.length)return{text:'I could not find anything about that. Try other words, or add it in the right section first.',rows:[]};
+  const it=best[0],def=K[it.kind],[t]=def.row(it);
+  const facts=(def.f||[]).filter(([k,,type])=>it[k]!==undefined&&it[k]!==''&&it[k]!==false&&!['photo','files','area'].includes(type)&&k!==(def.f[0]||[])[0]).slice(0,6).map(([k,l,type])=>{let v=it[k];if(type==='date')v=nice(v);else if(type==='check')v='Yes';else if(type==='number'&&/amount|price|emi|minPay|outstanding|premium|value|rent/i.test(k))v=money(v);else if(k==='dueDay'||k==='statementDay')v=ordinal(v)+' of every month';return l.replace(/\s*\(.*\)\s*$/,'')+': '+v});
+  const tl=String(t||'').toLowerCase(),ev=tl?events().filter(e=>e.days>=0&&e.title.toLowerCase().includes(tl))[0]:null;
+  return{text:(t||def.name)+(facts.length?' — '+facts.join(' · '):'')+(ev?'. Next: '+ev.title+' '+when(ev.days).toLowerCase()+' ('+nice(ymd(ev.date))+')':'')+'.',rows:best.map(i=>rowEl(i.kind,i))};
+}
+function askLocal(q){
+  const l=q.toLowerCase();
+  if(/\b(coming up|upcoming|this week|next week|today|tomorrow)\b/.test(l)&&!askTokens(q).some(w=>Object.values(ASK_SYN).flat().includes(w))){
+    const lim=/today/.test(l)?0:/tomorrow/.test(l)?1:/next week/.test(l)?14:7,ev=events().filter(e=>e.days>=0&&e.days<=lim&&(!/tomorrow/.test(l)||e.days===1));
+    return{text:ev.length?ev.length+(ev.length===1?' thing':' things')+' coming up.':'Nothing planned for then.',rows:ev.slice(0,10).map(evRow)}}
+  return askMoney(q)||askSearch(q);
+}
+let askRes=null;
 function pageAsk(){
-  const ans=h('div',{class:'answer'},askA);
+  const ansT=h('p',{style:'margin:0;white-space:pre-wrap;font-weight:600'},askRes?askRes.text:askA),list=h('div',{class:'list',style:'margin-top:10px'},askRes?askRes.rows:[]);
+  const card=h('div',{class:'card',style:(askRes||askA)?'':'display:none'},ansT,list);
   const inp=h('input',{value:askQ,placeholder:'When does the car insurance renew?',oninput:e=>askQ=e.target.value,onkeydown:e=>{if(e.key==='Enter')btn.click()}});
-  const btn=h('button',{class:'btn',onclick:async()=>{
-    if(!askQ.trim())return;if(!S.sample){toast('Ask Nestory is not switched on in this version.');return}
-    btn.disabled=true;ans.textContent='Thinking…';
-    const data={};const cut=ymd(new Date(Date.now()-92*864e5));
-    for(const i of S.items.values()){if(['profile','water','settings','lovenote','mealplan','catrule'].includes(i.kind))continue;if(i.kind==='expense'&&String(i.date)<cut)continue;const{thumb,id,by,at,upd,kind,...rest}=i;(data[kind]=data[kind]||[]).push(rest)}
-    try{const r=await S.sample('You are Nestory, a warm family organiser. Answer the question using only the family data below. Be short and specific. If the answer is not in the data, say so and say which section to add it in. Today is '+today()+'. Currency: '+cur()+'.\n\nFAMILY DATA (JSON):\n'+JSON.stringify(data).slice(0,120000)+'\n\nQUESTION: '+askQ,{cache:false,onText:u=>{ans.textContent=u.text}});askA=r.text;ans.textContent=askA}
-    catch(e){ans.textContent='';aiError(e)}
-    btn.disabled=false;
-  }},'Ask');
-  return h('div',null,head('Ask Nestory','Ask anything about what you have saved. Your personal space is never included.'),
-    h('div',{class:'card'},h('div',{style:'display:flex;gap:8px'},inp,btn)),askA||true?h('div',{class:'card',style:askA?'':'display:none'},ans):null,
-    (()=>{new MutationObserver(()=>{ans.parentNode.style.display=ans.textContent?'block':'none'}).observe(ans,{childList:true,characterData:true,subtree:true});return null})());
+  const run=async q=>{askQ=q;inp.value=q;if(!q.trim())return;card.style.display='';
+    if(S.sample){btn.disabled=true;ansT.textContent='Thinking…';list.replaceChildren();askRes=null;
+      const data={};const cut=ymd(new Date(Date.now()-92*864e5));
+      for(const i of S.items.values()){if(['profile','water','settings','lovenote','mealplan','catrule'].includes(i.kind))continue;if(i.kind==='expense'&&String(i.date)<cut)continue;const{thumb,id,by,at,upd,kind,...rest}=i;(data[kind]=data[kind]||[]).push(rest)}
+      try{const r=await S.sample('You are Nestory, a warm family organiser. Answer the question using only the family data below. Be short and specific. If the answer is not in the data, say so and say which section to add it in. Today is '+today()+'. Currency: '+cur()+'.\n\nFAMILY DATA (JSON):\n'+JSON.stringify(data).slice(0,120000)+'\n\nQUESTION: '+q,{cache:false,onText:u=>{ansT.textContent=u.text}});askA=r.text;ansT.textContent=askA}
+      catch(e){const r=askLocal(q);askRes=r;ansT.textContent=r.text;list.replaceChildren(...r.rows)}
+      btn.disabled=false;return}
+    const r=askLocal(q);askRes=r;askA='';ansT.textContent=r.text;list.replaceChildren(...r.rows)};
+  const btn=h('button',{class:'btn',onclick:()=>run(inp.value)},'Ask');
+  const ideas=['How much did we spend this month?','Groceries last month','When does the car insurance renew?','Passport expiry','Doctor\'s phone number','What is coming up this week?','Credit card due date','Blood group'];
+  return h('div',null,head('Ask Nestory','Ask about anything you have saved. Your personal space is never included.'),
+    h('div',{class:'card'},h('div',{style:'display:flex;gap:8px'},inp,btn),h('div',{class:'chips',style:'margin:12px 0 0'},ideas.map(x=>h('button',{class:'btn soft',style:'padding:6px 12px;font-size:.82rem',onclick:()=>run(x)},x)))),card);
 }
 
 /* ---------- pages ---------- */
