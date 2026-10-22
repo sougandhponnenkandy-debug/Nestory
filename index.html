@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nestory</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Nestory">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#F5F1FA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1D1626" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F1FA; --card:#FFFFFF; --ink:#33263F; --muted:#77698A; --line:#E7DFF0;
+  --berry:#DB4C78; --berry-soft:#FDE6EE; --mint:#23907F; --mint-soft:#DDF4EF;
+  --sun:#F2B233; --sun-soft:#FFF1CF; --sky:#5C89E0; --sky-soft:#E2ECFD;
+  --shadow:0 6px 18px rgba(74,48,99,.08);
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1D1626; --card:#2A2136; --ink:#F3ECF9; --muted:#AC9EBB; --line:#3D314C;
+    --berry:#F0769B; --berry-soft:#4A2637; --mint:#4CC4B1; --mint-soft:#1F3F3B;
+    --sun:#F7C65A; --sun-soft:#4A3C1C; --sky:#8AAEF2; --sky-soft:#263654;
+    --shadow:0 6px 18px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1D1626; --card:#2A2136; --ink:#F3ECF9; --muted:#AC9EBB; --line:#3D314C;
+  --berry:#F0769B; --berry-soft:#4A2637; --mint:#4CC4B1; --mint-soft:#1F3F3B;
+  --sun:#F7C65A; --sun-soft:#4A3C1C; --sky:#8AAEF2; --sky-soft:#263654;
+  --shadow:0 6px 18px rgba(0,0,0,.3);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{height:100%;margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 var(--body);-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0;text-align:inherit}
+:focus-visible{outline:3px solid var(--sky);outline-offset:2px;border-radius:8px}
+h1,h2,h3{font-family:var(--display);line-height:1.15;margin:0}
+img{max-width:100%}
+
+#app{height:100%;max-width:520px;margin:0 auto;display:flex;flex-direction:column;position:relative}
+#top{display:flex;align-items:center;gap:10px;padding:12px 16px 8px}
+#top .logo{width:40px;height:40px;flex:none}
+#top h1{font-size:1.55rem;flex:1}
+#top .back{font-weight:600;color:var(--berry);padding:8px 10px 8px 0;font-size:1rem}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--card);box-shadow:var(--shadow);font-size:1.3rem;display:grid;place-items:center}
+#main{flex:1;overflow-y:auto;padding:4px 16px 24px;-webkit-overflow-scrolling:touch}
+#tabs{display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 6px 8px}
+#tabs button{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:.72rem;font-weight:600;color:var(--muted);padding:6px 0;border-radius:14px}
+#tabs button span{font-size:1.35rem;line-height:1.2;filter:grayscale(.7);opacity:.75}
+#tabs button[aria-current="page"]{color:var(--berry);background:var(--berry-soft)}
+#tabs button[aria-current="page"] span{filter:none;opacity:1}
+
+.banner{background:var(--sun-soft);border-radius:14px;padding:10px 14px;font-size:.88rem;margin-bottom:12px}
+.hello{font-size:1.7rem;margin:6px 0 2px}
+.sub{color:var(--muted);margin:0 0 14px;font-size:.95rem}
+.card{background:var(--card);border-radius:22px;padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+.card h2{font-size:1.15rem;margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.card h2 button{font:600 .85rem var(--body);color:var(--berry)}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:6px 0 14px}
+.head h2{font-size:1.6rem}
+.head p{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+.btn{background:var(--berry);color:#fff;font-weight:700;border-radius:999px;padding:10px 18px;white-space:nowrap;text-align:center}
+:root[data-theme="dark"] .btn{color:#2A0F1B}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn{color:#2A0F1B}}
+.btn.soft{background:var(--berry-soft);color:var(--berry)}
+.btn.mint{background:var(--mint-soft);color:var(--mint)}
+.btn.wide{width:100%;padding:13px}
+.btn[disabled]{opacity:.5;cursor:default}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chips .btn{padding:8px 14px;font-size:.9rem}
+
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{border-radius:22px;padding:14px;min-height:104px;display:flex;flex-direction:column;justify-content:space-between;background:var(--card);box-shadow:var(--shadow)}
+.tile .em{font-size:1.7rem;width:46px;height:46px;border-radius:16px;display:grid;place-items:center}
+.tile b{font-family:var(--display);font-size:1.08rem;display:block;line-height:1.2;margin-top:8px}
+.tile small{color:var(--muted);font-size:.8rem}
+.t0 .em{background:var(--berry-soft)}.t1 .em{background:var(--mint-soft)}.t2 .em{background:var(--sky-soft)}.t3 .em{background:var(--sun-soft)}
+
+.list{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:18px;padding:12px 14px;width:100%;box-shadow:var(--shadow)}
+.row .ic{font-size:1.3rem;width:40px;height:40px;border-radius:14px;background:var(--bg);display:grid;place-items:center;flex:none}
+.row .rt{flex:1;min-width:0}
+.row .rt b{display:block;font-weight:600;overflow-wrap:anywhere}
+.row .rt small{color:var(--muted);display:block;font-size:.84rem;overflow-wrap:anywhere}
+.row .rr{font-weight:700;white-space:nowrap;font-size:.95rem;text-align:right}
+.row.done .rt b{text-decoration:line-through;color:var(--muted)}
+.tick{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex:none;font-size:.9rem;color:#fff}
+.tick.on{background:var(--mint);border-color:var(--mint)}
+.day{font-weight:700;color:var(--muted);font-size:.82rem;margin:14px 4px 6px}
+.empty{text-align:center;padding:36px 20px;color:var(--muted)}
+.empty .em{font-size:2.6rem;display:block;margin-bottom:6px}
+.pill{display:inline-block;border-radius:999px;padding:3px 10px;font-size:.78rem;font-weight:700;background:var(--sky-soft);color:var(--sky)}
+.pill.soon{background:var(--sun-soft);color:#9A6A00}.pill.now{background:var(--berry-soft);color:var(--berry)}
+:root[data-theme="dark"] .pill.soon{color:var(--sun)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill.soon{color:var(--sun)}}
+
+.month{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.month button{width:40px;height:40px;border-radius:50%;background:var(--card);box-shadow:var(--shadow);font-size:1.2rem;text-align:center}
+.month b{font-family:var(--display);font-size:1.2rem}
+.big{font-family:var(--display);font-size:2rem;line-height:1.1}
+.bar{height:10px;border-radius:99px;background:var(--bg);overflow:hidden;margin:6px 0 2px}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--mint)}
+.bar i.over{background:var(--berry)}
+.catrow{margin-bottom:12px}
+.catrow .l{display:flex;justify-content:space-between;gap:8px;font-size:.92rem;align-items:center}
+.catrow input{width:110px;text-align:right}
+.drops{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.drops span{font-size:1.5rem;filter:grayscale(1);opacity:.3}
+.drops span.on{filter:none;opacity:1}
+
+.polas{display:grid;grid-template-columns:1fr 1fr;gap:16px 12px;padding-top:6px}
+.pola{background:#fff;padding:8px 8px 10px;border-radius:6px;box-shadow:0 8px 20px rgba(60,40,80,.18);color:#33263F;display:block;width:100%}
+.pola:nth-child(odd){transform:rotate(-2deg)}.pola:nth-child(even){transform:rotate(1.6deg)}.pola:nth-child(3n){transform:rotate(-.6deg)}
+.pola img,.pola .ph{width:100%;aspect-ratio:1;object-fit:cover;display:block;border-radius:3px;background:#EEE6F5}
+.pola .ph{display:grid;place-items:center;font-size:2rem}
+.pola b{font-family:var(--display);display:block;margin-top:6px;line-height:1.15}
+.pola small{color:#77698A;font-size:.78rem}
+
+.chat{display:flex;flex-direction:column;gap:6px;padding-bottom:8px}
+.msg{max-width:80%;padding:9px 13px;border-radius:18px;background:var(--card);box-shadow:var(--shadow);align-self:flex-start;overflow-wrap:anywhere;white-space:pre-wrap}
+.msg.me{align-self:flex-end;background:var(--berry-soft)}
+.msg small{display:block;color:var(--muted);font-size:.7rem;margin-top:2px}
+.composer{position:sticky;bottom:-24px;background:var(--bg);padding:8px 0 14px;display:flex;gap:8px;margin-top:auto}
+.composer input{flex:1}
+.quick{display:flex;gap:6px;position:sticky;bottom:44px}
+.quick button{font-size:1.3rem;background:var(--card);border-radius:50%;width:38px;height:38px;text-align:center;box-shadow:var(--shadow)}
+.chatwrap{display:flex;flex-direction:column;min-height:100%}
+
+input:not([type=checkbox]):not([type=file]),select,textarea{width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:11px 12px;min-height:46px}
+.card input:not([type=checkbox]),.card select{background:var(--bg)}
+textarea{min-height:90px;resize:vertical}
+label.f{display:block;margin-bottom:12px;font-weight:600;font-size:.88rem}
+label.f>span{display:block;margin-bottom:4px}
+label.chk{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-weight:600}
+label.chk input{width:22px;height:22px;accent-color:var(--berry)}
+.emojis{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.emojis button{font-size:1.5rem;width:44px;height:44px;border-radius:50%;background:var(--bg);text-align:center}
+.emojis button[aria-pressed="true"]{background:var(--berry-soft);outline:2px solid var(--berry)}
+
+#veil{position:fixed;inset:0;background:rgba(30,18,42,.45);display:none;align-items:flex-end;justify-content:center;z-index:20}
+#veil.open{display:flex}
+#sheet{background:var(--card);width:100%;max-width:520px;max-height:92%;overflow-y:auto;border-radius:26px 26px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom,0px))}
+#sheet .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px}
+#sheet .sh h2{font-size:1.35rem}
+#sheet .x{width:38px;height:38px;border-radius:50%;background:var(--bg);text-align:center;font-size:1.1rem;flex:none}
+.actions{display:flex;gap:10px;margin-top:6px}
+.actions .btn{flex:1}
+.note{font-size:.84rem;color:var(--muted);margin:0 0 12px}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:16px;z-index:40;max-width:min(92%,480px);display:none;gap:12px;align-items:center;font-size:.92rem}
+#toast.open{display:flex}
+#toast button{color:var(--sun);font-weight:700;white-space:nowrap}
+#ring{position:fixed;inset:0;background:var(--berry);color:#fff;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px}
+#ring.open{display:flex}
+#ring .t{font-family:var(--display);font-size:4rem;line-height:1}
+#ring button{background:#fff;color:#B83360;font-weight:700;border-radius:999px;padding:14px 30px;min-width:200px;text-align:center}
+#ring button.ghost{background:rgba(255,255,255,.2);color:#fff}
+#ring .bell{font-size:4rem;animation:wig .5s infinite alternate}
+@keyframes wig{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
+#splash{position:absolute;inset:0;background:var(--bg);display:grid;place-items:center;z-index:10;text-align:center}
+#splash svg{width:96px;height:96px}
+#splash p{color:var(--muted);margin:8px 0 0}
+.answer{white-space:pre-wrap;line-height:1.55}
+.rev{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.rev input[type=checkbox]{width:22px;height:22px;accent-color:var(--berry)}
+.rev select{grid-column:2/4;min-height:38px;padding:6px 10px}
+.rev small{color:var(--muted)}
+@media (prefers-reduced-motion:reduce){#ring .bell{animation:none}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="splash"><div>
+    <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#logo"/></svg>
+    <h1 style="font-size:2rem">Nestory</h1><p>Opening your nest…</p></div></div>
+  <header id="top"></header>
+  <main id="main"></main>
+  <nav id="tabs" aria-label="Sections"></nav>
+</div>
+<div id="veil"><div id="sheet" role="dialog" aria-modal="true"></div></div>
+<div id="toast" role="status"></div>
+<div id="ring" role="alertdialog" aria-label="Alarm"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="logo" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="20" fill="var(--berry-soft)"/>
+  <path d="M32 17.5c-2-3.6-7.2-1.7-5.8 2.5 1 3 5.8 5.8 5.8 5.8s4.8-2.800 5.800-5.800c1.400-4.200-3.800-6.100-5.800-2.500z" fill="var(--berry)"/>
+  <circle cx="23.500" cy="35" r="9.500" fill="var(--sky)"/><circle cx="40.500" cy="35" r="9.500" fill="var(--berry)"/>
+  <circle cx="20.500" cy="33" r="1.400" fill="#33263F"/><circle cx="26.500" cy="33" r="1.400" fill="#33263F"/>
+  <circle cx="37.500" cy="33" r="1.400" fill="#33263F"/><circle cx="43.500" cy="33" r="1.400" fill="#33263F"/>
+  <path d="M21.800 36h3.400l-1.700 2.600zM38.800 36h3.400l-1.700 2.600z" fill="var(--sun)"/>
+  <path d="M8 41h48c0 9-10.500 15-24 15S8 50 8 41z" fill="var(--sun)"/>
+  <path d="M15 46c8 3 26 3 34 0M21 51c6 2 16 2 22 0" stroke="#fff" stroke-opacity=".6" stroke-width="1.700" stroke-linecap="round" fill="none"/>
+</symbol></defs></svg>
+
+<script>
+"use strict";
+/* ===== ONLINE SETUP: paste your two Supabase values between the quotes ===== */
+const NESTORY_SUPABASE={
+  url:"https://oxyncmbgaobcntrpbkwf.supabase.co",   // Project URL, looks like https://abcdefgh.supabase.co
+  key:"sb_publishable_wzmiklMjkJfyKxH9UgmEbg_9qa8MU85"    // Publishable key, starts with sb_publishable_
+};
+/* ========================================================================== */
+/* ---------- tiny helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+function h(tag,a,...kids){
+  const e=document.createElement(tag);
+  if(a)for(const k in a){const v=a[k];if(v==null||v===false)continue;
+    if(k==='class')e.className=v;else if(k==='style')e.style.cssText=v;
+    else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);
+    else if(k in e){try{e[k]=v}catch{e.setAttribute(k,v)}}else e.setAttribute(k,v===true?'':v);}
+  for(const c of kids.flat(Infinity)){if(c==null||c===false||c==='')continue;e.append(c.nodeType?c:document.createTextNode(String(c)))}
+  return e;
+}
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>ymd(new Date());
+const t0=()=>{const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())};
+const pd=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s||'');return m?new Date(+m[1],+m[2]-1,+m[3]):null};
+const nice=s=>{const d=pd(s);return d?d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):''};
+const niceDay=s=>{const d=pd(s);if(!d)return 'No date';const df=Math.round((d-t0())/864e5);return df===0?'Today':df===-1?'Yesterday':d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})};
+const gid=p=>p+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const num=v=>{const n=parseFloat(v);return isFinite(n)?n:0};
+const cur=()=>(S.items.get('settings')?.currency)||'AED';
+const money=n=>cur()+' '+(Math.round(num(n)*100)/100).toLocaleString(undefined,{maximumFractionDigits:2});
+const sum=(a,f)=>a.reduce((t,x)=>t+num(f(x)),0);
+
+/* ---------- what the app knows about ---------- */
+const CATS=['Groceries','Dining out','Rent & home','Utilities','Transport','Health','Shopping','Family','Entertainment','Travel','Subscriptions','Gifts','Other'];
+const CI={'Groceries':'🛒','Dining out':'🍜','Rent & home':'🏠','Utilities':'💡','Transport':'🚗','Health':'💊','Shopping':'🛍️','Family':'👨‍👩‍👧','Entertainment':'🎬','Travel':'✈️','Subscriptions':'📺','Gifts':'🎁','Other':'🧺'};
+const byDate=k=>(a,b)=>String(b[k]||'').localeCompare(String(a[k]||''));
+const soon=k=>(a,b)=>String(a[k]||'9').localeCompare(String(b[k]||'9'));
+const j=(...a)=>a.filter(Boolean).join(', ');
+const K={
+  expense:{name:'expense',plural:'Expenses',icon:'🧾',
+    f:[['amount','Amount','number',{req:1}],['title','Where or what','text',{req:1,ph:'Supermarket, petrol, dinner…'}],['date','Date','date',{def:today}],['category','Category','select',{o:CATS,def:'Other'}],['paidBy','Paid by','person'],['method','Paid with','select',{o:['Card','Cash','Bank transfer','Wallet']}],['note','Note','area']]},
+  saving:{name:'saving',plural:'Savings',icon:'🐷',blurb:'Accounts, deposits, gold and goals.',empty:'Add your first savings pot.',
+    f:[['name','Name','text',{req:1,ph:'Emergency fund'}],['type','Type','select',{o:['Bank savings','Fixed deposit','Gold','Mutual fund','Chit / scheme','Cash','Other']}],['where','Bank or place'],['amount','Saved so far','number'],['target','Goal amount','number'],['maturity','Matures on','date'],['owner','Whose','person'],['note','Note','area']],
+    row:i=>[i.name,j(i.type,i.where,i.maturity&&'matures '+nice(i.maturity)),money(i.amount)]},
+  asset:{name:'asset',plural:'Assets',icon:'💎',blurb:'Everything you own that matters.',empty:'List your first asset, like gold, land or a car.',
+    f:[['name','Name','text',{req:1}],['type','Type','select',{o:['Property','Land','Vehicle','Gold & jewellery','Electronics','Investment','Furniture','Other']}],['value','Value today','number'],['bought','Bought on','date'],['owner','In whose name','person'],['where','Where it is / where papers are kept'],['note','Note','area']],
+    row:i=>[i.name,j(i.type,i.where),i.value?money(i.value):'']},
+  subscription:{name:'bill',plural:'Bills & subscriptions',icon:'🔁',blurb:'Things that charge you again and again.',empty:'Add recurring bills: internet, phone, streaming, school fees.',sort:soon('nextDue'),
+    f:[['name','Name','text',{req:1,ph:'Home internet'}],['amount','Amount','number'],['cycle','How often','select',{o:['Monthly','Quarterly','Yearly','Weekly']}],['nextDue','Next due','date'],['note','Note','area']],
+    row:i=>[i.name,j(i.cycle,i.nextDue&&'next '+nice(i.nextDue)),i.amount?money(i.amount):'']},
+  member:{name:'person',plural:'Family',icon:'👨‍👩‍👧',blurb:'Parents, siblings, cousins and the people you call family.',empty:'Add a family member with their birthday, phone and address.',sort:(a,b)=>String(a.name).localeCompare(String(b.name)),
+    f:[['name','Name','text',{req:1}],['relation','Relation','text',{ph:'Mother, brother-in-law…'}],['dob','Date of birth','date'],['phone','Phone','tel'],['email','Email','email'],['address','Address','area'],['blood','Blood group','select',{o:['A+','A-','B+','B-','O+','O-','AB+','AB-']}],['note','Likes, sizes, anything worth remembering','area']],
+    row:i=>[i.name,j(i.relation,i.phone,i.dob&&'born '+nice(i.dob))]},
+  date:{name:'date',plural:'Important dates',icon:'📅',blurb:'Anniversaries, festivals and days you must not forget.',empty:'Add your anniversary first.',sort:soon('date'),
+    f:[['title','What is it','text',{req:1,ph:'Wedding anniversary'}],['date','Date','date',{req:1}],['yearly','Comes every year','check',{def:true}],['type','Type','select',{o:['Anniversary','Birthday','Festival','Payment','Appointment','Other']}],['note','Note','area']],
+    row:i=>[i.title,j(nice(i.date),i.yearly&&'every year',i.type)]},
+  insurance:{name:'policy',plural:'Insurance',icon:'🛡️',blurb:'Every policy and when it renews.',empty:'Add a policy and its renewal date.',sort:soon('renewal'),
+    f:[['name','Policy name','text',{req:1,ph:'Family health cover'}],['type','Type','select',{o:['Health','Life','Vehicle','Home','Travel','Other']}],['provider','Company'],['insured','Who is covered','person'],['ref','Policy reference'],['cover','Cover amount','number'],['premium','Premium','number'],['cycle','Paid','select',{o:['Yearly','Half-yearly','Quarterly','Monthly','One time']}],['renewal','Renewal date','date'],['contact','Agent or helpline'],['note','Note','area']],
+    row:i=>[i.name,j(i.type,i.provider,i.renewal&&'renews '+nice(i.renewal)),i.premium?money(i.premium):'']},
+  house:{name:'home',plural:'Our homes',icon:'🏠',blurb:'Rent, contract and renewal details.',empty:'Add your home with its rent and contract renewal date.',
+    f:[['name','Name','text',{req:1,ph:'Our flat'}],['type','We','select',{o:['Rent it','Own it','Family home']}],['address','Address','area'],['landlord','Landlord or agent'],['landlordPhone','Their phone','tel'],['rent','Rent amount','number'],['rentCycle','Rent paid','select',{o:['Monthly','Quarterly','Half-yearly','Yearly','In cheques']}],['rentDue','Next rent due','date'],['start','Contract start','date'],['renewal','Contract renewal','date'],['deposit','Deposit paid','number'],['utilities','Electricity, water, internet account details','area'],['note','Note','area']],
+    row:i=>[i.name,j(i.type,i.renewal&&'renews '+nice(i.renewal)),i.rent?money(i.rent):'']},
+  document:{name:'document',plural:'Documents',icon:'🪪',blurb:'Passports, IDs, visas and licences with expiry dates.',empty:'Add a document so you never miss an expiry.',sort:soon('expiry'),
+    f:[['name','Document','text',{req:1,ph:'Passport'}],['type','Type','select',{o:['Passport','National ID','Residence visa','Driving licence','Certificate','Other']}],['person','Whose','person'],['expiry','Expires on','date'],['where','Where it is kept'],['note','Note','area']],
+    row:i=>[i.name,j(i.person,i.expiry&&'expires '+nice(i.expiry),i.where)]},
+  vehicle:{name:'vehicle',plural:'Vehicles',icon:'🚗',blurb:'Registration, insurance and service dates.',empty:'Add your car or bike.',
+    f:[['name','Vehicle','text',{req:1}],['plate','Plate number'],['regExpiry','Registration expires','date'],['insExpiry','Insurance expires','date'],['service','Next service due','date'],['note','Note','area']],
+    row:i=>[i.name,j(i.plate,i.regExpiry&&'registration '+nice(i.regExpiry))]},
+  contact:{name:'contact',plural:'Handy contacts',icon:'☎️',blurb:'Doctor, plumber, building security, emergency numbers.',empty:'Save the numbers you always end up searching for.',sort:(a,b)=>String(a.name).localeCompare(String(b.name)),
+    f:[['name','Name','text',{req:1}],['role','Who are they','text',{ph:'Family doctor'}],['phone','Phone','tel'],['note','Note','area']],
+    row:i=>[i.name,j(i.role,i.phone)]},
+  food:{name:'meal',plural:'Food log',icon:'🍲',blurb:'What you both ate, day by day.',empty:'Log your first meal.',sort:byDate('date'),group:'date',
+    f:[['what','What did you eat','text',{req:1}],['meal','Meal','select',{o:['Breakfast','Lunch','Dinner','Snack','Drink'],def:'Lunch'}],['date','Date','date',{def:today}],['who','Who','person'],['kcal','Calories (optional)','number'],['note','Note','area']],
+    row:i=>[i.what,j(i.meal,i.who),i.kcal?i.kcal+' kcal':'']},
+  health:{name:'health card',plural:'Health cards',icon:'❤️',blurb:'One card per person with the basics a doctor asks for.',empty:'Create a health card for each of you.',
+    f:[['person','Who','person',{req:1}],['blood','Blood group','select',{o:['A+','A-','B+','B-','O+','O-','AB+','AB-']}],['height','Height (cm)','number'],['weight','Weight (kg)','number'],['allergies','Allergies','area'],['conditions','Ongoing conditions','area'],['meds','Regular medicines','area'],['doctor','Usual doctor / hospital'],['emergency','Emergency contact'],['note','Note','area']],
+    row:i=>[i.person||'Health card',j(i.blood&&'Blood '+i.blood,i.height&&i.height+' cm',i.weight&&i.weight+' kg')]},
+  medical:{name:'record',plural:'Medical records',icon:'🩺',blurb:'Visits, prescriptions, tests and vaccinations.',empty:'Add a doctor visit or prescription.',sort:byDate('date'),
+    f:[['title','What','text',{req:1,ph:'Dental check-up'}],['type','Type','select',{o:['Doctor visit','Prescription','Lab test','Vaccination','Surgery','Other']}],['person','Who','person'],['date','Date','date',{def:today}],['doctor','Doctor / hospital'],['details','Details and results','area'],['followUp','Follow-up on','date']],
+    row:i=>[i.title,j(i.person,i.type,nice(i.date),i.followUp&&'follow-up '+nice(i.followUp))]},
+  alarm:{name:'alarm',plural:'Alarms',icon:'⏰',blurb:'Rings on your phone while Nestory is open.',empty:'Set an alarm for medicines, school run or prayer time.',sort:(a,b)=>String(a.time).localeCompare(String(b.time)),check:'on',
+    f:[['time','Time','time',{req:1}],['label','What for','text',{ph:'Take medicine'}],['repeat','Repeat','select',{o:['Every day','Weekdays','Weekends','Just once'],def:'Every day'}],['who','For','person'],['on','Switched on','check',{def:true}]],
+    row:i=>[i.time||'--:--',j(i.label,i.repeat,i.who)]},
+  shopping:{name:'item',plural:'Shopping list',icon:'🛒',blurb:'One shared list. Tick things off as you buy.',empty:'Add something to buy.',sort:(a,b)=>(!!a.done-!!b.done)||((b.at||0)-(a.at||0)),check:'done',
+    f:[['name','Item','text',{req:1}],['qty','How much'],['done','Bought','check']],
+    row:i=>[i.name,i.qty]},
+  bucket:{name:'dream',plural:'Bucket list',icon:'🌈',blurb:'Places to go and things to do together, someday.',empty:'Add your first dream, or tap an idea below.',sort:(a,b)=>(!!a.done-!!b.done)||String(a.target||'9').localeCompare(String(b.target||'9')),check:'done',strike:1,
+    ideas:[['See the northern lights','Travel'],['Take a trip with both our parents','Family'],['Buy our own home','Home'],['Learn to cook each other\'s favourite dish','Learn'],['Watch a sunrise from a mountain top','Experience'],['Go on a road trip with no plan','Travel'],['Start a small garden','Home'],['Renew our vows somewhere special','Together']],
+    f:[['name','The dream','text',{req:1,ph:'See the northern lights'}],['type','Kind','select',{o:['Travel','Experience','Together','Family','Home','Learn','Buy','Giving']}],['who','Whose dream','person'],['target','Hope to do it by','date'],['cost','Rough cost','number'],['note','Note','area'],['done','We did it!','check'],['doneOn','Done on','date']],
+    row:i=>[i.name,j(i.type,i.who,i.done?(i.doneOn?'done '+nice(i.doneOn):'done'):i.target&&'by '+nice(i.target)),i.cost&&!i.done?money(i.cost):'']},
+  period:{name:'period',plural:'Cycle tracker',icon:'🌷',blurb:'Log each period to see when the next one is likely.',empty:'Add the first day of the last period to begin.',sort:byDate('start'),
+    f:[['start','First day','date',{req:1,def:today}],['end','Last day','date'],['flow','Flow','select',{o:['Light','Medium','Heavy']}],['note','Symptoms or notes','area']],
+    row:i=>[nice(i.start),j(i.end&&'to '+nice(i.end),i.flow,i.note),i.end&&pd(i.end)&&pd(i.start)?Math.round((pd(i.end)-pd(i.start))/864e5)+1+' days':'']},
+  trip:{name:'trip',plural:'Trips',icon:'✈️',blurb:'Travel dates, tickets and stays.',empty:'Add your next trip and its travel dates.',sort:(a,b)=>{const t=today(),ua=String(a.to||a.from)>=t,ub=String(b.to||b.from)>=t;return ua!==ub?(ua?-1:1):ua?String(a.from).localeCompare(String(b.from)):String(b.from).localeCompare(String(a.from))},
+    f:[['name','Where to','text',{req:1,ph:'Visiting family, beach holiday…'}],['from','Leaving on','date',{req:1}],['to','Coming back on','date'],['who','Who is going','person'],['mode','Going by','select',{o:['Flight','Car','Train','Bus','Ship']}],['ticket','Flight / ticket details','text',{ph:'Flight number, time, booking reference'}],['stay','Where you are staying'],['budget','Trip budget','number'],['note','Packing list and notes','area']],
+    row:i=>[i.name,j(nice(i.from)+(i.to?' to '+nice(i.to):''),i.who,i.mode),String(i.to||i.from)<today()?'Done':'']},
+  note:{name:'note',plural:'Personal space',icon:'🔐',priv:1,blurb:'Only you can see what is written here. Not even your partner.',empty:'Write a thought, a wish list, a surprise plan.',
+    f:[['title','Title','text',{req:1}],['body','Write here','area',{tall:1}]],
+    row:i=>[i.title,(i.body||'').slice(0,70)]},
+};
+const PAGES={
+  expenses:['🧾','Expenses','Track every month'],budget:['🎯','Budget','Plan the month'],
+  chat:['💬','Our chat','Just the two of you'],memory:['📸','Memories','Photos and stories'],
+  water:['💧','Water','Glasses today'],reminders:['🔔','Coming up','Every date in one list'],ask:['✨','Ask Nestory','Questions about your own details'],
+};
+const TABS=[
+  {id:'home',icon:'🏡',label:'Home'},
+  {id:'money',icon:'💰',label:'Money',title:'Money',sub:'Spending, plans and what you own.',tiles:['expenses','budget','saving','asset','subscription']},
+  {id:'us',icon:'💞',label:'Us',title:'Us',sub:'The two of you.',tiles:['chat','memory','trip','bucket','note','shopping','reminders']},
+  {id:'life',icon:'🌿',label:'Life',title:'Life',sub:'Food, water, health and alarms.',tiles:['food','water','alarm','health','medical','period']},
+  {id:'book',icon:'📖',label:'Book',title:'Our book',sub:'Everything about your family, in one place.',tiles:['member','date','insurance','house','document','vehicle','contact','ask']},
+];
+const AVATARS=['🐻','🐰','🦊','🐼','🐨','🐯','🐧','🐥','🦋','🌸','🌻','⭐'];
+
+/* ---------- state + storage ---------- */
+const S={items:new Map(),priv:new Map(),chat:new Map(),photos:new Map(),uid:'me',hasPriv:true,readonly:false,ready:false,tab:'home',page:null,month:today().slice(0,7),sample:null,local:false};
+const LS='nestory.v1';
+const Store={
+  db:null,
+  async init(){
+    let db=null,user=null,sample=null;
+    try{if(window.claude&&window.claude.use){[db,user,sample]=await Promise.all(['db','user','sample'].map(n=>window.claude.use(n).catch(()=>null)))}}catch{}
+    S.sample=sample;
+    let lanUid=null;
+    if(!db&&!window.claude&&NESTORY_SUPABASE.url&&NESTORY_SUPABASE.key){
+      try{const on=await supaConnect(NESTORY_SUPABASE);db=on.db;lanUid=on.uid}
+      catch(e){$('#splash p').textContent='Could not connect: '+((e&&e.message)||e)+' Check the Supabase URL and key in the file, then reload.';return}
+    }
+    if(!db&&!window.claude&&/^http/.test(location.protocol)){const lan=await lanConnect();if(lan){db=lan.db;lanUid=lan.uid}}
+    if(db){
+      let uid=lanUid;
+      try{if(user)uid=await user.id();const w=user?await user.can('data.write'):null;S.readonly=(w===false)}catch{}
+      S.uid=uid||'guest';S.hasPriv=!!uid;this.db=db;
+      const m=s=>new Map(s.docs.map(d=>[d.id,{...d.data(),id:d.id}]));
+      db.collection('items').onSnapshot(s=>{S.items=m(s);const first=!S.ready;S.ready=true;refresh();if(first)welcome()},e=>{S.ready=true;refresh();toast(e.message||'Could not load your data.')});
+      if(uid)db.collection('data/users/'+uid).onSnapshot(s=>{S.priv=m(s);refresh()},()=>{});
+      db.collection('chat').orderBy('day','desc').limit(30).onSnapshot(s=>{S.chat=m(s);refresh()},()=>{});
+    }else{
+      S.local=true;
+      try{const d=JSON.parse(localStorage.getItem(LS)||'{}');for(const k of['items','priv','chat','photos'])if(d[k])S[k]=new Map(d[k])}catch{}
+      S.ready=true;refresh();welcome();
+    }
+  },
+  persist(){try{localStorage.setItem(LS,JSON.stringify({items:[...S.items],priv:[...S.priv],chat:[...S.chat],photos:[...S.photos]}))}catch{}},
+  ref(scope,id){return scope==='priv'?this.db.collection('data/users/'+S.uid).doc(id):this.db.collection(scope).doc(id)},
+  async put(scope,id,data){
+    const d={...data};delete d.id;
+    try{
+      if(this.db)await this.ref(scope,id).set(d);
+      else{S[scope].set(id,{...d,id});this.persist();refresh()}
+      return true;
+    }catch(e){toast(e&&e.code==='quota_exceeded'?'Storage is full. Delete some old entries first.':'Could not save. '+((e&&e.message)||''));return false}
+  },
+  async del(scope,id){
+    try{if(this.db)await this.ref(scope,id).delete();else{S[scope].delete(id);this.persist();refresh()}}catch(e){toast('Could not delete. '+((e&&e.message)||''))}
+  },
+  async photo(id){
+    if(S.photos.has(id))return S.photos.get(id).d;
+    if(!this.db)return null;
+    try{const s=await this.db.collection('photos').doc(id).get();if(s.exists){S.photos.set(id,s.data());return s.data().d}}catch{}
+    return null;
+  }
+};
+const all=kind=>K[kind]&&K[kind].priv?[...S.priv.values()]:[...S.items.values()].filter(i=>i.kind===kind);
+const scopeOf=kind=>K[kind]&&K[kind].priv?'priv':'items';
+const profile=uid=>S.items.get('profile_'+uid);
+const me=()=>profile(S.uid)||{};
+const nameOf=uid=>(profile(uid)||{}).nick||'Someone';
+const people=()=>{const p=[...S.items.values()].filter(i=>i.kind==='profile').map(i=>i.nick).filter(Boolean);const mm=all('member').map(i=>i.name).filter(Boolean);return [...new Set([...p,p.length>1?'Both of us':null,...mm].filter(Boolean))]};
+
+/* ---------- toast, sheet ---------- */
+let toastT;
+function toast(text,action,fn){
+  const t=$('#toast');t.replaceChildren(h('span',null,text),action&&h('button',{onclick:()=>{t.classList.remove('open');fn()}},action));
+  t.classList.add('open');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('open'),action?12000:4200);
+}
+function openSheet(title,body){
+  $('#sheet').replaceChildren(h('div',{class:'sh'},h('h2',null,title),h('button',{class:'x',onclick:closeSheet,'aria-label':'Close'},'✕')),body);
+  $('#veil').classList.add('open');$('#sheet').scrollTop=0;
+}
+let sheetLock=false;
+function closeSheet(){if(sheetLock)return;$('#veil').classList.remove('open');$('#sheet').replaceChildren();if(pending){pending=false;render()}}
+$('#veil').addEventListener('click',e=>{if(e.target.id==='veil')closeSheet()});
+function select(opts,val,blank){const s=h('select',null,blank!==false&&h('option',{value:''},'—'),opts.map(o=>h('option',{value:o},o)));if(val&&!opts.includes(val))s.append(h('option',{value:val},val));s.value=val||'';return s}
+
+/* ---------- home server mode (server.js on your own laptop) ---------- */
+async function lanConnect(){
+  let hello;
+  try{const r=await fetch('api/hello',{cache:'no-store'});if(!r.ok)return null;hello=await r.json();if(hello.app!=='nestory')return null}catch{return null}
+  const snapOf=async t=>{try{const r=await fetch('api/snapshot',{headers:{'x-token':t},cache:'no-store'});return r.ok?await r.json():null}catch{return null}};
+  let tok=null;try{tok=localStorage.getItem('nestory.token')}catch{}
+  let snap=tok?await snapOf(tok):null;
+  while(!snap){tok=await lanLogin(hello);try{localStorage.setItem('nestory.token',tok)}catch{}snap=await snapOf(tok)}
+  const cols={items:new Map(snap.items),chat:new Map(snap.chat),priv:new Map(snap.priv)},subs={items:[],chat:[],priv:[]};
+  const scope=p=>p.startsWith('data/users/')?'priv':p;
+  const emit=s=>{const docs=[...cols[s]].map(([id,d])=>({id,exists:true,data:()=>d}));subs[s].forEach(f=>f({docs}))};
+  const api=async(m,s,id,body)=>{let r;try{r=await fetch('api/doc/'+s+'/'+encodeURIComponent(id),{method:m,headers:{'x-token':tok,'content-type':'application/json'},body:body?JSON.stringify(body):undefined})}catch{throw new Error('The laptop running Nestory is not reachable.')}
+    const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Server error '+r.status);return j};
+  const col=p=>{const s=scope(p);const c={orderBy:()=>c,limit:()=>c,
+    onSnapshot(fn){subs[s].push(fn);setTimeout(()=>emit(s),0);return()=>{}},
+    doc:id=>({async set(d){if(cols[s]){cols[s].set(id,d);emit(s)}await api('PUT',s,id,d)},async delete(){if(cols[s]){cols[s].delete(id);emit(s)}await api('DELETE',s,id)},async get(){const r=await api('GET',s,id);return{id,exists:!!r.data,data:()=>r.data}}})};return c};
+  let opened=false;
+  const es=new EventSource('api/events?token='+encodeURIComponent(tok));
+  es.onmessage=e=>{try{const m=JSON.parse(e.data);if(!cols[m.s])return;if(m.d==null)cols[m.s].delete(m.id);else cols[m.s].set(m.id,m.d);emit(m.s)}catch{}};
+  es.onopen=async()=>{if(opened){const n=await snapOf(tok);if(n){for(const k in cols){cols[k]=new Map(n[k]);emit(k)}}}opened=true};
+  return{db:{collection:col},uid:snap.uid};
+}
+function lanLogin(hello){
+  return new Promise(resolve=>{
+    const name=h('input',{placeholder:'Your name',autocomplete:'username'}),pin=h('input',{type:'password',inputMode:'numeric',placeholder:'4 or more digits',autocomplete:'current-password'});
+    const btn=h('button',{class:'btn wide',onclick:async()=>{
+      btn.disabled=true;
+      try{const r=await fetch('api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:name.value,pin:pin.value})});const j=await r.json();
+        if(!r.ok){toast(j.error||'Could not sign in.');btn.disabled=false;return}
+        sheetLock=false;closeSheet();resolve(j.token);
+      }catch{toast('The laptop running Nestory is not reachable.');btn.disabled=false}
+    }},'Enter Nestory');
+    openSheet('Who is this?',h('div',null,h('p',{class:'note'},hello.users<hello.max?'First time on this phone? Choose a name and a PIN. Coming back? Type the same name and PIN you chose before.':'Type the name and PIN you chose before.'),
+      h('label',{class:'f'},h('span',null,'Name'),name),h('label',{class:'f'},h('span',null,'PIN'),pin),btn));
+    const x=$('#sheet .x');x&&x.remove();sheetLock=true;
+  });
+}
+
+/* ---------- online mode (Supabase) ---------- */
+async function supaConnect(cfg){
+  await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
+  const sb=window.supabase.createClient(cfg.url.trim(),cfg.key.trim());
+  let session=(await sb.auth.getSession()).data.session;
+  while(!session)session=await supaLogin(sb);
+  const uid=session.user.id;
+  S.signOut=async()=>{await sb.auth.signOut();location.reload()};
+  const load=async()=>{const out={items:new Map(),chat:new Map(),priv:new Map()};
+    for(let from=0;;from+=1000){const{data,error}=await sb.from('docs').select('scope,id,data').in('scope',['items','chat','priv']).order('id').range(from,from+999);
+      if(error)throw new Error(error.message);for(const r of data)out[r.scope]&&out[r.scope].set(r.id,r.data);if(data.length<1000)break}
+    return out};
+  let cols=await load();const subs={items:[],chat:[],priv:[]};
+  const scope=p=>p.startsWith('data/users/')?'priv':p;
+  const emit=s=>{const docs=[...cols[s]].map(([id,d])=>({id,exists:true,data:()=>d}));subs[s].forEach(f=>f({docs}))};
+  const chk=r=>{if(r.error)throw new Error(r.error.message);return r};
+  const col=p=>{const s=scope(p);const c={orderBy:()=>c,limit:()=>c,
+    onSnapshot(fn){subs[s].push(fn);setTimeout(()=>emit(s),0);return()=>{}},
+    doc:id=>({
+      async set(d){if(cols[s]){cols[s].set(id,d);emit(s)}chk(await sb.from('docs').upsert({scope:s,id,owner:s==='priv'?uid:null,data:d,updated_at:new Date().toISOString()}))},
+      async delete(){if(cols[s]){cols[s].delete(id);emit(s)}chk(await sb.from('docs').delete().eq('scope',s).eq('id',id))},
+      async get(){const r=chk(await sb.from('docs').select('data').eq('scope',s).eq('id',id).maybeSingle());return{id,exists:!!r.data,data:()=>r.data&&r.data.data}}})};return c};
+  let live=false;
+  sb.channel('nestory-docs').on('postgres_changes',{event:'*',schema:'public',table:'docs'},p=>{
+    const del=p.eventType==='DELETE',r=del?p.old:p.new;if(!r||!cols[r.scope])return;
+    if(del)cols[r.scope].delete(r.id);else cols[r.scope].set(r.id,r.data);emit(r.scope);
+  }).subscribe(async st=>{if(st==='SUBSCRIBED'){if(live){try{cols=await load();for(const k in subs)emit(k)}catch{}}live=true}});
+  document.addEventListener('visibilitychange',async()=>{if(!document.hidden){try{cols=await load();for(const k in subs)emit(k)}catch{}}});
+  return{db:{collection:col},uid};
+}
+function supaLogin(sb){
+  return new Promise(resolve=>{
+    const email=h('input',{type:'email',placeholder:'you@example.com',autocomplete:'username'}),pw=h('input',{type:'password',autocomplete:'current-password'});
+    const btn=h('button',{class:'btn wide',onclick:async()=>{
+      btn.disabled=true;
+      const{data,error}=await sb.auth.signInWithPassword({email:email.value.trim(),password:pw.value});
+      if(error||!data.session){toast(error?error.message:'Could not sign in.');btn.disabled=false;return}
+      sheetLock=false;closeSheet();resolve(data.session);
+    }},'Sign in');
+    openSheet('Sign in to Nestory',h('div',null,h('p',{class:'note'},'Use the email and password that were set up for you.'),h('label',{class:'f'},h('span',null,'Email'),email),h('label',{class:'f'},h('span',null,'Password'),pw),btn));
+    const x=$('#sheet .x');x&&x.remove();sheetLock=true;
+  });
+}
+
+/* ---------- generic form ---------- */
+function openForm(kind,it,after){
+  it=it||{};const def=K[kind],isNew=!it.id,inputs={};
+  const rows=def.f.map(([k,label,type,o])=>{
+    o=o||{};type=type||'text';
+    let v=it[k];if(v==null&&isNew&&o.def!=null)v=typeof o.def==='function'?o.def():o.def;
+    let el;
+    if(type==='check'){el=h('input',{type:'checkbox',checked:!!v});inputs[k]=()=>el.checked;return h('label',{class:'chk'},el,label)}
+    if(type==='select')el=select(o.o,v);
+    else if(type==='person')el=select(people(),v);
+    else if(type==='area')el=h('textarea',{value:v||'',style:o.tall?'min-height:220px':''});
+    else el=h('input',{type:type==='number'?'text':type,inputMode:type==='number'?'decimal':undefined,value:v==null?'':v,placeholder:o.ph});
+    inputs[k]=()=>type==='number'?(el.value.trim()===''?'':num(el.value)):el.value.trim();
+    el.dataset.req=o.req?'1':'';el.dataset.label=label;
+    return h('label',{class:'f'},h('span',null,label+(o.req?' *':'')),el);
+  });
+  let armed=false;
+  const save=h('button',{class:'btn',onclick:async()=>{
+    const data={};for(const k in inputs)data[k]=inputs[k]();
+    const miss=def.f.find(([k,,,o])=>o&&o.req&&(data[k]===''||data[k]==null));
+    if(miss){toast('Please fill in "'+miss[1]+'".');return}
+    save.disabled=true;
+    const id=it.id||gid(kind);
+    const ok=await Store.put(scopeOf(kind),id,{...it,...data,kind,by:it.by||S.uid,at:it.at||Date.now(),upd:Date.now()});
+    if(ok){closeSheet();toast('Saved');after&&after()}else save.disabled=false;
+  }},'Save');
+  const del=!isNew&&h('button',{class:'btn soft',onclick:async()=>{
+    if(!armed){armed=true;del.textContent='Tap again to delete';return}
+    await Store.del(scopeOf(kind),it.id);closeSheet();toast('Deleted');
+  }},'Delete');
+  openSheet((isNew?'Add ':'Edit ')+def.name,h('div',null,rows,S.readonly?h('p',{class:'note'},'You can view this but not change it.'):h('div',{class:'actions'},del,save)));
+}
+
+/* ---------- cycle ---------- */
+function cycle(){
+  const st=all('period').map(p=>pd(p.start)).filter(Boolean).sort((a,b)=>a-b);if(!st.length)return null;
+  const gaps=[];for(let i=1;i<st.length;i++){const g=Math.round((st[i]-st[i-1])/864e5);if(g>=15&&g<=60)gaps.push(g)}
+  const last6=gaps.slice(-6),avg=last6.length?Math.round(last6.reduce((a,b)=>a+b,0)/last6.length):28,last=st[st.length-1];
+  let next=new Date(last.getFullYear(),last.getMonth(),last.getDate()+avg);
+  return{avg,next,last,guess:!last6.length,day:Math.round((t0()-last)/864e5)+1};
+}
+/* ---------- reminders ---------- */
+function nextYearly(s){const d=pd(s);if(!d)return null;const t=t0();let x=new Date(t.getFullYear(),d.getMonth(),d.getDate());if(x<t)x=new Date(t.getFullYear()+1,d.getMonth(),d.getDate());return x}
+function events(){
+  const out=[],t=t0();
+  const add=(icon,title,date,sub)=>{if(!date)return;const days=Math.round((date-t)/864e5);if(days<-30||days>370)return;out.push({icon,title,date,days,sub})};
+  for(const i of S.items.values()){
+    switch(i.kind){
+      case'member':if(i.dob){const n=nextYearly(i.dob);add('🎂',i.name+"'s birthday",n,'Turning '+(n.getFullYear()-pd(i.dob).getFullYear()))}break;
+      case'date':add(i.type==='Birthday'?'🎂':i.type==='Anniversary'?'💍':'📅',i.title,i.yearly?nextYearly(i.date):pd(i.date),i.type);break;
+      case'insurance':add('🛡️',i.name+' renewal',pd(i.renewal),j(i.provider,i.premium&&money(i.premium)));break;
+      case'house':add('🏠',i.name+' contract renewal',pd(i.renewal),i.landlord);add('🔑','Rent due: '+i.name,pd(i.rentDue),i.rent&&money(i.rent));break;
+      case'document':add('🪪',i.name+' expires',pd(i.expiry),i.person);break;
+      case'vehicle':add('🚗',i.name+' registration',pd(i.regExpiry));add('🚗',i.name+' insurance',pd(i.insExpiry));add('🔧',i.name+' service',pd(i.service));break;
+      case'medical':add('🩺','Follow-up: '+i.title,pd(i.followUp),j(i.person,i.doctor));break;
+      case'subscription':add('🔁',i.name+' due',pd(i.nextDue),i.amount&&money(i.amount));break;
+      case'bucket':if(!i.done)add('🌈','Bucket list: '+i.name,pd(i.target),i.type);break;
+      case'trip':add('✈️','Trip: '+i.name,pd(i.from),j(i.who,i.ticket));if(i.to)add('🏡','Back from '+i.name,pd(i.to));break;
+      case'saving':add('🐷',i.name+' matures',pd(i.maturity),i.where);break;
+    }
+  }
+  const cy=cycle();if(cy){const d=Math.round((cy.next-t)/864e5);if(d>=-10)out.push({icon:'🌷',title:'Period expected',date:cy.next,days:d,sub:'Estimate from a '+cy.avg+'-day cycle'})}
+  return out.sort((a,b)=>a.days-b.days);
+}
+const when=d=>d===0?'Today':d===1?'Tomorrow':d<0?Math.abs(d)+(d===-1?' day':' days')+' overdue':'in '+d+' days';
+const evRow=e=>h('div',{class:'row'},h('span',{class:'ic'},e.icon),h('span',{class:'rt'},h('b',null,e.title),h('small',null,j(e.date.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'}),e.sub))),h('span',{class:'pill '+(e.days<=3?'now':e.days<=21?'soon':'')},when(e.days)));
+
+/* ---------- money ---------- */
+const monthExp=()=>all('expense').filter(e=>String(e.date||'').startsWith(S.month));
+const budgetOf=c=>num((S.items.get('budget_'+CATS.indexOf(c))||{}).amount);
+const monthName=()=>{const[y,m]=S.month.split('-');return new Date(+y,+m-1,1).toLocaleDateString(undefined,{month:'long',year:'numeric'})};
+function shiftMonth(n){const[y,m]=S.month.split('-');const d=new Date(+y,+m-1+n,1);S.month=ymd(d).slice(0,7);render()}
+const monthNav=()=>h('div',{class:'month'},h('button',{onclick:()=>shiftMonth(-1),'aria-label':'Previous month'},'‹'),h('b',null,monthName()),h('button',{onclick:()=>shiftMonth(1),'aria-label':'Next month'},'›'));
+function bar(v,max){const p=max>0?Math.min(100,v/max*100):0;return h('div',{class:'bar'},h('i',{class:max>0&&v>max?'over':'',style:'width:'+p+'%'}))}
+
+function pageExpenses(){
+  const ex=monthExp().sort(byDate('date')),total=sum(ex,e=>e.amount),bud=sum(CATS,budgetOf);
+  const cats=CATS.map(c=>[c,sum(ex.filter(e=>(e.category||'Other')===c),e=>e.amount)]).filter(c=>c[1]>0).sort((a,b)=>b[1]-a[1]);
+  const groups=[];for(const e of ex){const g=groups[groups.length-1];if(g&&g[0]===e.date)g[1].push(e);else groups.push([e.date,[e]])}
+  return h('div',null,monthNav(),
+    h('div',{class:'card'},h('div',{class:'big'},money(total)),h('small',{style:'color:var(--muted)'},bud?(total<=bud?money(bud-total)+' left of your '+money(bud)+' budget':money(total-bud)+' over your '+money(bud)+' budget'):'spent this month'),bud?bar(total,bud):null),
+    !S.readonly&&h('div',{class:'chips'},h('button',{class:'btn',onclick:()=>openForm('expense',{date:S.month===today().slice(0,7)?today():S.month+'-01'})},'Add expense'),h('button',{class:'btn mint',onclick:scanBill},'Scan a bill'),h('button',{class:'btn soft',onclick:openStatement},'Import card statement')),
+    cats.length?h('div',{class:'card'},h('h2',null,'Where it went'),cats.map(([c,v])=>h('div',{class:'catrow'},h('div',{class:'l'},h('span',null,CI[c]+' '+c),h('b',null,money(v))),bar(v,budgetOf(c)||cats[0][1])))):null,
+    ex.length?groups.map(([d,list])=>[h('div',{class:'day'},niceDay(d)),h('div',{class:'list'},list.map(e=>h('button',{class:'row',onclick:()=>openForm('expense',e)},h('span',{class:'ic'},CI[e.category]||'🧺'),h('span',{class:'rt'},h('b',null,e.title||'Expense'),h('small',null,j(e.category,e.paidBy,e.method))),h('span',{class:'rr'},money(e.amount)))))]):empty('🧾','Nothing spent in '+monthName()+' yet. Add an expense, or snap a photo of a bill.'));
+}
+function pageBudget(){
+  const ex=monthExp(),income=num((S.items.get('settings')||{}).income),planned=sum(CATS,budgetOf),spent=sum(ex,e=>e.amount);
+  const inc=h('input',{inputMode:'decimal',value:income||'',placeholder:'0',disabled:S.readonly,onchange:e=>Store.put('items','settings',{...(S.items.get('settings')||{}),kind:'settings',income:num(e.target.value)})});
+  return h('div',null,head('Budget','Set a monthly limit for each category. It applies every month.'),monthNav(),
+    h('div',{class:'card'},h('label',{class:'f'},h('span',null,'Monthly income (both of you)'),inc),
+      h('div',{class:'catrow'},h('div',{class:'l'},h('span',null,'Planned'),h('b',null,money(planned)))),
+      h('div',{class:'catrow'},h('div',{class:'l'},h('span',null,'Spent in '+monthName()),h('b',null,money(spent))),bar(spent,planned)),
+      income?h('div',{class:'l',style:'display:flex;justify-content:space-between'},h('span',null,income-planned>=0?'Left to save or plan':'Planned more than you earn'),h('b',{style:'color:var(--'+(income-planned>=0?'mint':'berry')+')'},money(Math.abs(income-planned)))):null),
+    h('div',{class:'card'},h('h2',null,'Category limits'),CATS.map((c,ix)=>{
+      const b=budgetOf(c),s=sum(ex.filter(e=>(e.category||'Other')===c),e=>e.amount);
+      return h('div',{class:'catrow'},h('div',{class:'l'},h('span',null,CI[c]+' '+c),h('input',{inputMode:'decimal',value:b||'',placeholder:'0',disabled:S.readonly,'aria-label':c+' budget',onchange:e=>Store.put('items','budget_'+ix,{kind:'budget',category:c,amount:num(e.target.value)})})),
+        bar(s,b),h('small',{style:'color:var(--muted)'},b?(s<=b?money(b-s)+' left':money(s-b)+' over'):(s?money(s)+' spent, no limit set':'')));
+    })));
+}
+
+/* ---------- bills and statements (asks Claude) ---------- */
+function readFile(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(new Error('Could not read that file.'));r.readAsDataURL(f)})}
+function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('That picture could not be opened. Try a JPG or PNG.'));i.src=src})}
+function draw(img,max){const s=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c}
+async function toBlob(file,max){const c=draw(await loadImg(await readFile(file)),max);return new Promise(r=>c.toBlob(r,'image/jpeg',.82))}
+function pick(accept,multiple){return new Promise(res=>{const i=h('input',{type:'file',accept,multiple,style:'display:none',onchange:()=>{res([...i.files]);i.remove()}});document.body.append(i);i.click()})}
+function aiError(e){const c=e&&e.code;toast(c==='not_granted'?'Allow Nestory to ask Claude, then try again.':c==='rate_limited'?'Too many requests just now. Try again in a minute.':c==='images_unavailable'?'Pictures cannot be read here. Type it in instead.':'Could not read that. '+((e&&e.message)||''))}
+async function scanBill(){
+  if(!S.sample){toast('Bill reading is not switched on in this version. Add it by hand for now.');return}
+  const files=await pick('image/*');if(!files.length)return;
+  openSheet('Reading your bill',h('p',{class:'note'},'Looking for the shop, date and total…'));
+  try{
+    const blob=await toBlob(files[0],1600);
+    const r=await S.sample.json('This is a photo of a shop bill or receipt. Reply with ONLY a JSON object: {"title": shop or merchant name, "date": "YYYY-MM-DD", "amount": grand total paid as a number, "category": one of '+JSON.stringify(CATS)+', "note": main items in under 12 words}. Today is '+today()+'; if the date is unreadable use today.',{images:[blob],cache:false});
+    openForm('expense',{title:r.title||'',date:/^\d{4}-\d{2}-\d{2}$/.test(r.date)?r.date:today(),amount:num(r.amount)||'',category:CATS.includes(r.category)?r.category:'Other',note:r.note||'',method:'Card'});
+    toast('Check the details, then save.');
+  }catch(e){closeSheet();aiError(e)}
+}
+function loadScript(src){return new Promise((res,rej)=>{const s=h('script',{src,onload:res,onerror:()=>rej(new Error('Could not load the PDF reader.'))});document.head.append(s)})}
+async function pdfText(file,password){
+  if(!window.pdfjsLib){await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js');
+    try{window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'}catch{}}
+  let doc;
+  try{doc=await window.pdfjsLib.getDocument({data:await file.arrayBuffer(),password:password||undefined}).promise}
+  catch(e){throw new Error(e&&e.name==='PasswordException'?'This PDF is locked. Type its password in the box and try again.':'Could not open that PDF. Try screenshots of the statement instead.')}
+  let out='';
+  for(let p=1;p<=Math.min(doc.numPages,25);p++){const tc=await (await doc.getPage(p)).getTextContent();out+=tc.items.map(i=>i.str+(i.hasEOL?'\n':' ')).join('')+'\n'}
+  return out;
+}
+function openStatement(){
+  if(!S.sample){toast('Statement reading is not switched on in this version.');return}
+  let files=[];
+  const info=h('p',{class:'note'},'No file chosen.');
+  const pw=h('input',{type:'password',placeholder:'Only if the PDF is locked',autocomplete:'off'});
+  const text=h('textarea',{placeholder:'…or paste the transaction lines here'});
+  const go=h('button',{class:'btn wide',onclick:async()=>{
+    go.disabled=true;go.textContent='Finding transactions…';
+    try{
+      let body=text.value.trim();const imgs=[];
+      for(const f of files){if(f.type==='application/pdf'||/\.pdf$/i.test(f.name))body+='\n'+await pdfText(f,pw.value);else imgs.push(await toBlob(f,1800))}
+      if(!body&&!imgs.length)throw new Error('Choose a statement file or paste its text first.');
+      const r=await S.sample.json('Below (or in the attached pictures) is a credit card or bank statement. List every purchase or debit. Skip payments received, refunds, credits, opening and closing balances. Reply with ONLY JSON: {"transactions":[{"date":"YYYY-MM-DD","title": short merchant name,"amount": positive number,"category": one of '+JSON.stringify(CATS)+'}]}. Today is '+today()+'.\n\n'+body.slice(0,90000),{images:imgs.length?imgs.slice(0,6):undefined,cache:false,modelTier:'default'});
+      reviewStatement((r&&r.transactions)||[]);
+    }catch(e){go.disabled=false;go.textContent='Find transactions';if(e&&e.code)aiError(e);else toast(e.message||'Something went wrong.')}
+  }},'Find transactions');
+  openSheet('Import card statement',h('div',null,
+    h('p',{class:'note'},'Choose the statement as a PDF or as screenshots. Nestory lists the purchases and you pick which ones to add.'),
+    h('button',{class:'btn soft wide',style:'margin-bottom:8px',onclick:async()=>{files=await pick('application/pdf,image/*',true);info.textContent=files.length?files.map(f=>f.name).join(', '):'No file chosen.'}},'Choose statement file'),info,
+    h('label',{class:'f'},h('span',null,'PDF password'),pw),h('label',{class:'f'},h('span',null,'Paste text instead'),text),go));
+}
+function reviewStatement(tx){
+  tx=tx.filter(t=>num(t.amount)>0).map(t=>({date:/^\d{4}-\d{2}-\d{2}$/.test(t.date)?t.date:today(),title:String(t.title||'Card purchase').slice(0,80),amount:num(t.amount),category:CATS.includes(t.category)?t.category:'Other'}));
+  if(!tx.length){closeSheet();toast('No purchases found in that statement.');return}
+  const have=new Set(all('expense').map(e=>e.date+'|'+num(e.amount)));
+  const rows=tx.map(t=>{const dup=have.has(t.date+'|'+t.amount);const cb=h('input',{type:'checkbox',checked:!dup});const sel=select(CATS,t.category,false);
+    return{t,cb,sel,el:h('div',{class:'rev'},cb,h('span',null,h('b',null,t.title),h('small',null,' '+nice(t.date)+(dup?' · looks already added':''))),h('b',null,money(t.amount)),sel)}});
+  const add=h('button',{class:'btn wide',style:'margin-top:14px',onclick:async()=>{
+    const chosen=rows.filter(r=>r.cb.checked);add.disabled=true;let n=0;
+    for(const r of chosen){add.textContent='Adding '+(++n)+' of '+chosen.length+'…';await Store.put('items',gid('expense'),{kind:'expense',...r.t,category:r.sel.value,method:'Card',by:S.uid,at:Date.now(),upd:Date.now()})}
+    closeSheet();toast(chosen.length+' expenses added');
+  }},'Add ticked expenses');
+  openSheet('Found '+tx.length+' purchases',h('div',null,h('p',{class:'note'},'Untick anything you do not want. Change a category if it looks wrong.'),rows.map(r=>r.el),add));
+}
+
+/* ---------- memories ---------- */
+function pageMemories(){
+  const list=all('memory').sort(byDate('date'));
+  return h('div',null,head('Memories','Your photo album with the stories behind it.',!S.readonly&&h('button',{class:'btn',onclick:()=>memoryForm()},'Add memory')),
+    list.length?h('div',{class:'polas'},list.map(m=>h('button',{class:'pola',onclick:()=>viewMemory(m)},m.thumb?h('img',{src:m.thumb,alt:''}):h('div',{class:'ph'},'💗'),h('b',null,m.title),h('small',null,nice(m.date))))):empty('📸','No memories yet. Add your first photo and the story that goes with it.'));
+}
+function memoryForm(it){
+  it=it||{};let file=null;
+  const title=h('input',{value:it.title||'',placeholder:'Our first trip together'}),date=h('input',{type:'date',value:it.date||today()}),story=h('textarea',{value:it.story||'',placeholder:'What happened that day?'});
+  const info=h('p',{class:'note'},it.thumb?'Photo already added. Choose another to replace it.':'No photo chosen yet.');
+  const save=h('button',{class:'btn',onclick:async()=>{
+    if(!title.value.trim()){toast('Give the memory a title.');return}
+    save.disabled=true;save.textContent='Saving…';
+    const id=it.id||gid('memory');let thumb=it.thumb||'';
+    try{
+      if(file){
+        const img=await loadImg(await readFile(file));thumb=draw(img,360).toDataURL('image/jpeg',.7);
+        let full,max=1200,q=.78;do{full=draw(img,max).toDataURL('image/jpeg',q);max-=160;q-=.05}while(full.length>225000&&max>400);
+        if(Store.db)await Store.db.collection('photos').doc(id).set({d:full});
+        S.photos.set(id,{d:full});
+      }
+      const ok=await Store.put('items',id,{...it,kind:'memory',title:title.value.trim(),date:date.value,story:story.value.trim(),thumb,by:it.by||S.uid,at:it.at||Date.now(),upd:Date.now()});
+      if(ok){closeSheet();toast('Saved')}else{save.disabled=false;save.textContent='Save'}
+    }catch(e){save.disabled=false;save.textContent='Save';toast(e.message||'Could not save the photo.')}
+  }},'Save');
+  openSheet(it.id?'Edit memory':'Add memory',h('div',null,
+    h('button',{class:'btn soft wide',style:'margin-bottom:8px',onclick:async()=>{const f=await pick('image/*');if(f[0]){file=f[0];info.textContent=file.name}}},'Choose photo'),info,
+    h('label',{class:'f'},h('span',null,'Title *'),title),h('label',{class:'f'},h('span',null,'Date'),date),h('label',{class:'f'},h('span',null,'The story'),story),h('div',{class:'actions'},save)));
+}
+function viewMemory(m){
+  const img=h('img',{src:m.thumb||'',alt:m.title,style:'width:100%;border-radius:14px;display:'+(m.thumb?'block':'none')});
+  Store.photo(m.id).then(d=>{if(d){img.src=d;img.style.display='block'}});
+  let armed=false;
+  const del=h('button',{class:'btn soft',onclick:async()=>{if(!armed){armed=true;del.textContent='Tap again to delete';return}
+    await Store.del('items',m.id);if(Store.db)Store.db.collection('photos').doc(m.id).delete().catch(()=>{});S.photos.delete(m.id);if(!Store.db)Store.persist();closeSheet();toast('Deleted')}},'Delete');
+  openSheet(m.title,h('div',null,img,h('p',{class:'note',style:'margin-top:10px'},j(nice(m.date),'added by '+nameOf(m.by))),m.story&&h('p',{style:'white-space:pre-wrap'},m.story),
+    !S.readonly&&h('div',{class:'actions'},del,h('button',{class:'btn',onclick:()=>memoryForm(m)},'Edit'))));
+}
+
+/* ---------- chat ---------- */
+let chatDraft='',chatQ=Promise.resolve();
+function sendChat(text){
+  text=(text||'').trim();if(!text||S.readonly)return;
+  const day=today(),id=day+'_'+S.uid,c=S.chat.get(id);
+  const data={day,uid:S.uid,msgs:[...((c&&c.msgs)||[]),{t:Date.now(),x:text.slice(0,2000)}]};
+  S.chat.set(id,{...data,id});chatDraft='';render();
+  chatQ=chatQ.then(()=>Store.put('chat',id,data));
+}
+function pageChat(){
+  const msgs=[];for(const d of S.chat.values())for(const m of d.msgs||[])msgs.push({...m,uid:d.uid});
+  msgs.sort((a,b)=>a.t-b.t);let last='';
+  const inp=h('input',{id:'chatin',value:chatDraft,placeholder:'Say something sweet…',autocomplete:'off',oninput:e=>chatDraft=e.target.value,onkeydown:e=>{if(e.key==='Enter'){sendChat(inp.value)}}});
+  return h('div',{class:'chatwrap'},
+    msgs.length?h('div',{class:'chat'},msgs.map(m=>{const d=ymd(new Date(m.t)),mine=m.uid===S.uid,out=[];if(d!==last){last=d;out.push(h('div',{class:'day',style:'align-self:center'},niceDay(d)))}
+      out.push(h('div',{class:'msg'+(mine?' me':'')},m.x,h('small',null,(mine?'':nameOf(m.uid)+' · ')+new Date(m.t).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}))));return out})):empty('💬','Your private chat. Say hello!'),
+    !S.readonly&&h('div',{class:'composer'},['❤️','😘','🤗','👍'].map(e=>h('button',{class:'avatar',style:'flex:none',onclick:()=>sendChat(e),'aria-label':'Send '+e},e)),inp,h('button',{class:'btn',onclick:()=>sendChat(inp.value)},'Send')));
+}
+
+/* ---------- water ---------- */
+const waterId=()=>'water_'+today()+'_'+S.uid;
+const glasses=()=>num((S.items.get(waterId())||{}).n);
+const goal=()=>num(me().waterGoal)||8;
+function drink(n){if(S.readonly)return;const v=Math.max(0,glasses()+n);lastPing=Date.now();Store.put('items',waterId(),{kind:'water',day:today(),uid:S.uid,n:v,last:Date.now()})}
+function waterCard(){
+  const g=glasses(),G=goal();
+  return h('div',{class:'card'},h('h2',null,'Water today',h('button',{onclick:()=>go('life','water')},'Details')),
+    h('div',{class:'drops'},Array.from({length:Math.max(G,g)},(_,i)=>h('span',{class:i<g?'on':''},'💧'))),
+    h('div',{style:'display:flex;justify-content:space-between;align-items:center;gap:10px'},h('span',null,g>=G?'Goal reached. Well done!':g+' of '+G+' glasses'),h('button',{class:'btn mint',onclick:()=>drink(1)},'I drank a glass')));
+}
+function pageWater(){
+  const others=[...S.items.values()].filter(i=>i.kind==='water'&&i.day===today()&&i.uid!==S.uid);
+  const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);const w=S.items.get('water_'+ymd(d)+'_'+S.uid);return[d.toLocaleDateString(undefined,{weekday:'short'}),num(w&&w.n)]});
+  return h('div',null,head('Water','A gentle nudge to keep sipping.'),waterCard(),
+    h('div',{class:'chips'},h('button',{class:'btn soft',onclick:()=>drink(-1)},'Remove a glass'),h('button',{class:'btn soft',onclick:openSettings},'Change goal and reminder')),
+    others.map(o=>h('div',{class:'card'},h('b',null,nameOf(o.uid)+' has had '+num(o.n)+' glasses today'))),
+    h('div',{class:'card'},h('h2',null,'Your last 7 days'),days.map(([d,n])=>h('div',{class:'catrow'},h('div',{class:'l'},h('span',null,d),h('b',null,n+' / '+goal())),bar(n,goal())))),
+    h('p',{class:'note'},me().waterEvery===0?'Reminders are off.':'Reminds you every '+(num(me().waterEvery)||60)+' minutes between 8 am and 10 pm while Nestory is open.'));
+}
+
+/* ---------- alarms + ticker ---------- */
+let actx,ringT,lastPing=Date.now();const fired=new Set();
+function beep(n){try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();
+  for(let i=0;i<n;i++){const o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=i%2?880:660;o.connect(g);g.connect(actx.destination);const t=actx.currentTime+i*.28;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.3,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+.24);o.start(t);o.stop(t+.26)}}catch{}}
+document.addEventListener('pointerdown',()=>{try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume()}catch{}},{passive:true});
+function ring(a){
+  const stop=()=>{clearInterval(ringT);$('#ring').classList.remove('open')};
+  $('#ring').replaceChildren(h('div',{class:'bell'},'⏰'),h('div',{class:'t'},a.time),h('div',{style:'font-size:1.2rem;font-weight:600'},a.label||'Alarm'),
+    h('button',{onclick:()=>{stop();if(a.repeat==='Just once'&&a.id)Store.put('items',a.id,{...a,on:false})}},'Stop'),
+    h('button',{class:'ghost',onclick:()=>{stop();setTimeout(()=>ring(a),5*60000)}},'Snooze 5 minutes'));
+  $('#ring').classList.add('open');beep(4);clearInterval(ringT);ringT=setInterval(()=>beep(4),1600);
+}
+function tick(){
+  if(!S.ready)return;const n=new Date(),hm=pad(n.getHours())+':'+pad(n.getMinutes()),dow=n.getDay(),mine=me().nick;
+  for(const a of all('alarm')){
+    if(!a.on||a.time!==hm)continue;const key=a.id+today()+hm;if(fired.has(key))continue;
+    if(a.who&&a.who!=='Both of us'&&mine&&a.who!==mine)continue;
+    if(a.repeat==='Weekdays'&&(dow===0||dow===6))continue;if(a.repeat==='Weekends'&&dow>0&&dow<6)continue;
+    fired.add(key);ring(a);
+  }
+  const every=me().waterEvery===0?0:(num(me().waterEvery)||60);
+  if(every&&me().nick&&n.getHours()>=8&&n.getHours()<22&&glasses()<goal()){
+    const last=Math.max(lastPing,num((S.items.get(waterId())||{}).last));
+    if(Date.now()-last>=every*60000){lastPing=Date.now();beep(2);toast('💧 Time for a glass of water','I drank it',()=>drink(1))}
+  }
+}
+setInterval(tick,15000);
+
+/* ---------- ask ---------- */
+let askQ='',askA='';
+function pageAsk(){
+  const ans=h('div',{class:'answer'},askA);
+  const inp=h('input',{value:askQ,placeholder:'When does the car insurance renew?',oninput:e=>askQ=e.target.value,onkeydown:e=>{if(e.key==='Enter')btn.click()}});
+  const btn=h('button',{class:'btn',onclick:async()=>{
+    if(!askQ.trim())return;if(!S.sample){toast('Ask Nestory is not switched on in this version.');return}
+    btn.disabled=true;ans.textContent='Thinking…';
+    const data={};const cut=ymd(new Date(Date.now()-92*864e5));
+    for(const i of S.items.values()){if(['profile','water','settings'].includes(i.kind))continue;if(i.kind==='expense'&&String(i.date)<cut)continue;const{thumb,id,by,at,upd,kind,...rest}=i;(data[kind]=data[kind]||[]).push(rest)}
+    try{const r=await S.sample('You are Nestory, a warm family organiser. Answer the question using only the family data below. Be short and specific. If the answer is not in the data, say so and say which section to add it in. Today is '+today()+'. Currency: '+cur()+'.\n\nFAMILY DATA (JSON):\n'+JSON.stringify(data).slice(0,120000)+'\n\nQUESTION: '+askQ,{cache:false,onText:u=>{ans.textContent=u.text}});askA=r.text;ans.textContent=askA}
+    catch(e){ans.textContent='';aiError(e)}
+    btn.disabled=false;
+  }},'Ask');
+  return h('div',null,head('Ask Nestory','Ask anything about what you have saved. Your personal space is never included.'),
+    h('div',{class:'card'},h('div',{style:'display:flex;gap:8px'},inp,btn)),askA||true?h('div',{class:'card',style:askA?'':'display:none'},ans):null,
+    (()=>{new MutationObserver(()=>{ans.parentNode.style.display=ans.textContent?'block':'none'}).observe(ans,{childList:true,characterData:true,subtree:true});return null})());
+}
+
+/* ---------- pages ---------- */
+const empty=(em,text)=>h('div',{class:'empty'},h('span',{class:'em'},em),text);
+const head=(title,blurb,action)=>h('div',{class:'head'},h('div',null,h('h2',null,title),blurb&&h('p',null,blurb)),action||null);
+function rowEl(kind,it){
+  const def=K[kind],[t,s,r]=def.row(it);
+  const tick=def.check&&h('button',{class:'tick'+(it[def.check]?' on':''),'aria-label':it[def.check]?'Switch off':'Switch on',onclick:e=>{e.stopPropagation();if(!S.readonly)Store.put(scopeOf(kind),it.id,{...it,[def.check]:!it[def.check]})}},it[def.check]?'✓':'');
+  const main=h('button',{class:'rt',style:'text-align:left',onclick:()=>openForm(kind,it)},h('b',{style:kind==='alarm'?'font-family:var(--display);font-size:1.4rem':''},t||'Untitled'),s&&h('small',null,s));
+  return h('div',{class:'row'+((kind==='shopping'||def.strike)&&it.done?' done':'')},tick||h('span',{class:'ic'},def.icon),main,r&&h('span',{class:'rr'},r));
+}
+function pageList(kind){
+  const def=K[kind];
+  if(def.priv&&!S.hasPriv)return h('div',null,head(def.plural,def.blurb),empty('🔐','Sign in to Claude to use your personal space.'));
+  const list=all(kind).sort(def.sort||((a,b)=>(b.upd||0)-(a.upd||0)));let body;
+  if(!list.length)body=empty(def.icon,def.empty);
+  else if(def.group){const g=[];for(const i of list){const l=g[g.length-1];if(l&&l[0]===i[def.group])l[1].push(i);else g.push([i[def.group],[i]])}body=g.map(([d,l])=>[h('div',{class:'day'},niceDay(d)),h('div',{class:'list'},l.map(i=>rowEl(kind,i)))])}
+  else body=h('div',{class:'list'},list.map(i=>rowEl(kind,i)));
+  const total=kind==='saving'?sum(list,i=>i.amount):kind==='asset'?sum(list,i=>i.value):0;
+  return h('div',null,head(def.plural,def.blurb,!S.readonly&&h('button',{class:'btn',onclick:()=>openForm(kind)},'Add '+def.name)),
+    kind==='period'&&cycle()?(()=>{const c=cycle(),d=Math.round((c.next-t0())/864e5);return h('div',{class:'card'},h('small',{style:'color:var(--muted)'},'Next period likely around'),h('div',{class:'big'},c.next.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})),h('p',{class:'note',style:'margin:6px 0 0'},(d>0?'In '+d+' days. ':d===0?'Expected today. ':Math.abs(d)+' days late. ')+'Day '+c.day+' of the cycle. '+(c.guess?'Using a typical 28-day cycle until two periods are logged.':'Average cycle: '+c.avg+' days.')+' This is an estimate, not medical advice.'))})():null,
+    kind==='bucket'&&list.length?h('div',{class:'card'},h('div',{class:'big'},list.filter(i=>i.done).length+' of '+list.length+' done'),bar(list.filter(i=>i.done).length,list.length)):null,
+    total?h('div',{class:'card'},h('small',{style:'color:var(--muted)'},kind==='saving'?'Saved in total':'Worth in total'),h('div',{class:'big'},money(total))):null,body,
+    def.ideas&&!S.readonly?(()=>{const left=def.ideas.filter(([n])=>!list.some(i=>i.name===n));return left.length?[h('div',{class:'day'},'Need ideas? Tap one to add it'),h('div',{class:'chips'},left.map(([n,t])=>h('button',{class:'btn soft',onclick:()=>openForm(kind,{name:n,type:t})},n)))]:null})():null);
+}
+function pageReminders(){const ev=events();return h('div',null,head('Coming up','Birthdays, renewals, expiries and dues for the next 12 months.'),ev.length?h('div',{class:'list'},ev.map(evRow)):empty('🔔','Nothing coming up yet. Add birthdays, insurance renewals and documents, and they will show here.'))}
+function tileEl(key,ix){
+  const p=PAGES[key],def=K[key],n=def?all(key).length:key==='expenses'?monthExp().length:key==='memory'?all('memory').length:null;
+  const icon=p?p[0]:def.icon,label=p?p[1]:def.plural,sub=key==='memory'?n+' saved':def?(n?n+' saved':'Nothing yet'):key==='expenses'?money(sum(monthExp(),e=>e.amount))+' this month':key==='water'?glasses()+' of '+goal()+' today':key==='reminders'?events().filter(e=>e.days<=30).length+' in 30 days':p[2];
+  return h('button',{class:'tile t'+(ix%4),onclick:()=>go(S.tab,key)},h('span',{class:'em'},icon),h('span',null,h('b',null,label),h('small',null,sub)));
+}
+function pageHub(tab){
+  const kids=[h('h2',{class:'hello'},tab.title),h('p',{class:'sub'},tab.sub)];
+  if(tab.id==='book'){
+    const res=h('div',{class:'list',style:'margin-bottom:14px'});
+    kids.push(h('input',{type:'search',placeholder:'Search everything you have saved',style:'margin-bottom:14px;background:var(--card)',oninput:e=>{
+      const q=e.target.value.trim().toLowerCase();res.replaceChildren();if(q.length<2)return;
+      const hits=[...S.items.values()].filter(i=>K[i.kind]&&K[i.kind].row&&Object.entries(i).some(([k,v])=>!['thumb','id','by','kind'].includes(k)&&String(v).toLowerCase().includes(q))).slice(0,25);
+      res.append(...(hits.length?hits.map(i=>rowEl(i.kind,i)):[h('p',{class:'note'},'Nothing matches "'+q+'".')]));
+    }}),res);
+  }
+  kids.push(h('div',{class:'tiles'},tab.tiles.map(tileEl)));
+  return h('div',null,kids);
+}
+function pageHome(){
+  const hr=new Date().getHours(),nick=me().nick,ev=events().filter(e=>e.days<=45).slice(0,5);
+  const ex=all('expense').filter(e=>String(e.date||'').startsWith(today().slice(0,7))),spent=sum(ex,e=>e.amount),bud=sum(CATS,budgetOf);
+  const al=all('alarm').filter(a=>a.on).sort((a,b)=>String(a.time).localeCompare(String(b.time)));const hm=pad(hr)+':'+pad(new Date().getMinutes());const next=al.find(a=>a.time>hm)||al[0];
+  const m=today().slice(0,7);
+  return h('div',null,
+    S.local&&h('div',{class:'banner'},'Saved on this device only. Open Nestory in Claude to share it with your partner.'),
+    S.readonly&&h('div',{class:'banner'},'You can look around but not make changes. Ask the owner to share Nestory with you as a Contributor.'),
+    h('h2',{class:'hello'},(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+(nick?', '+nick:'')),
+    h('p',{class:'sub'},new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})),
+    !S.readonly&&h('div',{class:'chips'},h('button',{class:'btn',onclick:()=>openForm('expense')},'Add expense'),h('button',{class:'btn mint',onclick:scanBill},'Scan a bill'),h('button',{class:'btn soft',onclick:()=>openForm('food')},'Log a meal')),
+    h('div',{class:'card'},h('h2',null,'Coming up',h('button',{onclick:()=>go('us','reminders')},'See all')),ev.length?h('div',{class:'list'},ev.map(e=>{const r=evRow(e);r.style.boxShadow='none';r.style.padding='6px 0';return r})):h('p',{class:'note',style:'margin:0'},'Add birthdays, renewals and documents in Book and they will appear here before they are due.')),
+    h('div',{class:'card'},h('h2',null,'This month',h('button',{onclick:()=>{S.month=m;go('money','expenses')}},'Open')),h('div',{class:'big'},money(spent)),bud?[bar(spent,bud),h('small',{style:'color:var(--muted)'},spent<=bud?money(bud-spent)+' left in the budget':money(spent-bud)+' over budget')]:h('small',{style:'color:var(--muted)'},'spent so far. Set a budget to see what is left.')),
+    waterCard(),
+    next&&h('div',{class:'card'},h('h2',null,'Next alarm',h('button',{onclick:()=>go('life','alarm')},'All alarms')),h('div',{style:'display:flex;align-items:baseline;gap:10px'},h('span',{class:'big'},next.time),h('span',null,next.label||''))));
+}
+function go(tab,page){S.tab=tab;S.page=page||null;render();$('#main').scrollTop=0}
+function view(){
+  const tab=TABS.find(t=>t.id===S.tab);
+  if(!S.page)return S.tab==='home'?pageHome():pageHub(tab);
+  switch(S.page){
+    case'expenses':return pageExpenses();case'budget':return pageBudget();case'chat':return pageChat();case'memory':return pageMemories();
+    case'water':return pageWater();case'reminders':return pageReminders();case'ask':return pageAsk();default:return pageList(S.page);
+  }
+}
+let pending=false,lastKey='';
+function refresh(){
+  const a=document.activeElement;
+  if(S.page!=='chat'&&a&&$('#main').contains(a)&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)){pending=true;return}
+  render();
+}
+$('#main').addEventListener('focusout',()=>{if(pending)setTimeout(()=>{if(pending&&!$('#veil').classList.contains('open')){pending=false;refresh()}},80)});
+function render(){
+  if(!S.ready)return;$('#splash').style.display='none';
+  const main=$('#main'),key=S.tab+'/'+S.page,keep=key===lastKey?main.scrollTop:0,focusChat=document.activeElement&&document.activeElement.id==='chatin';
+  const tab=TABS.find(t=>t.id===S.tab);
+  $('#top').replaceChildren(...(S.page?[h('button',{class:'back',onclick:()=>go(S.tab)},'‹ '+tab.label),h('span',{style:'flex:1'})]:[h('svg',null),h('h1',null,'Nestory')]),h('button',{class:'avatar',onclick:openSettings,'aria-label':'Your settings'},me().emoji||'🙂'));
+  const sv=$('#top svg');if(sv){sv.outerHTML='<svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><use href="#logo"/></svg>'}
+  main.replaceChildren(view());lastKey=key;
+  if(S.page==='chat'){main.scrollTop=main.scrollHeight;if(focusChat){const i=$('#chatin');i&&i.focus()}}else main.scrollTop=keep;
+  $('#tabs').replaceChildren(...TABS.map(t=>h('button',{'aria-current':t.id===S.tab?'page':null,onclick:()=>go(t.id)},h('span',null,t.icon),t.label)));
+}
+
+/* ---------- settings + welcome ---------- */
+function openSettings(){profileSheet(false)}
+function welcome(){if(!S.readonly&&!me().nick)profileSheet(true)}
+function profileSheet(first){
+  const p=me(),st=S.items.get('settings')||{};let emoji=p.emoji||AVATARS[0];
+  const nick=h('input',{value:p.nick||'',placeholder:'What your partner calls you'});
+  const em=h('div',{class:'emojis'});const paint=()=>em.replaceChildren(...AVATARS.map(a=>h('button',{'aria-pressed':String(a===emoji),onclick:()=>{emoji=a;paint()}},a)));paint();
+  const curI=h('input',{value:st.currency||'AED',maxLength:5}),goalI=h('input',{inputMode:'numeric',value:p.waterGoal||8}),everyI=select(['Off','30','45','60','90','120'],p.waterEvery===0?'Off':String(p.waterEvery||60),false);
+  const save=h('button',{class:'btn wide',onclick:async()=>{
+    if(!nick.value.trim()){toast('Tell us what to call you.');return}
+    save.disabled=true;
+    await Store.put('items','profile_'+S.uid,{kind:'profile',uid:S.uid,nick:nick.value.trim().slice(0,24),emoji,waterGoal:Math.max(1,Math.round(num(goalI.value))||8),waterEvery:everyI.value==='Off'?0:num(everyI.value)});
+    const c=curI.value.trim().toUpperCase()||'AED';if(c!==(st.currency||'AED')||!S.items.get('settings'))await Store.put('items','settings',{...st,kind:'settings',currency:c});
+    closeSheet();toast(first?'Welcome to your nest':'Saved');
+  }},first?'Start using Nestory':'Save');
+  openSheet(first?'Welcome to Nestory':'Your settings',h('div',null,first&&h('p',{class:'note'},'A cosy little book for the two of you. First, who are you?'),
+    h('label',{class:'f'},h('span',null,'Your name here'),nick),h('div',{class:'f'},h('span',{style:'display:block;font-weight:600;font-size:.88rem;margin-bottom:4px'},'Pick your face')),em,
+    h('label',{class:'f'},h('span',null,'Currency (shared)'),curI),h('label',{class:'f'},h('span',null,'Glasses of water a day'),goalI),h('label',{class:'f'},h('span',null,'Water reminder every (minutes)'),everyI),save,
+    S.signOut&&!first?h('button',{class:'btn soft wide',style:'margin-top:10px',onclick:()=>S.signOut()},'Sign out'):null));
+}
+Store.init();
+</script>
+</body>
+</html>
