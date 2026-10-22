@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -11,22 +11,23 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Nestory">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#FBF7FC" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1B1522" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F9FBFF">
+<meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* Soft & cute: a pastel nest. Each tab has its own colour (Home berry, Money mint, Us lilac, Life sky, Book honey);
-   rounded Fredoka for headings and numbers, Nunito for reading; one line-icon set throughout. */
+/* Sky blue: one calm blue carries every tab, button and banner on bright white; the app always stays light.
+   Sticker icons keep a few friendly accents (coral hearts, amber stars, green leaves, cyan water).
+   Quicksand for headings and numbers, Nunito for reading. */
 :root{
-  --bg:#FBF7FC; --card:#FFFFFF; --ink:#3A2E45; --muted:#8A7C99; --line:#EFE7F4; --eye:#33263F;
-  --berry:#E05A86; --berry-soft:#FDE8EF; --berry-ink:#B83A66;
-  --mint:#2E9C8A;  --mint-soft:#DDF5EF;  --mint-ink:#1E7A6B;
-  --lilac:#9B7BEA; --lilac-soft:#EFE8FD; --lilac-ink:#6E4FC9;
-  --sky:#5B8DEF;   --sky-soft:#E4EDFE;   --sky-ink:#3A6BD0;
-  --sun:#F0A93B;   --sun-soft:#FFF2D9;   --sun-ink:#9A5F08;
-  --on-strong:#FFFFFF; --paper:#FFFFFF; --stk:#4A3757;
-  --shadow:0 1px 2px rgba(74,48,99,.05),0 8px 24px rgba(74,48,99,.07);
+  --bg:#F9FBFF; --card:#FFFFFF; --ink:#1C2638; --muted:#5B677D; --line:#E6ECF5; --eye:#1C2638;
+  --lilac:#2F7FE0; --lilac-soft:#E3EEFD; --lilac-ink:#1A5FB4;
+  --sky:#33B5E5;   --sky-soft:#DFF4FC;   --sky-ink:#0C6E94;
+  --berry:#F4627A; --berry-soft:#FFE5EA; --berry-ink:#B8344E;
+  --sun:#FFB547;   --sun-soft:#FFF3DB;   --sun-ink:#8A5600;
+  --mint:#3BB27A;  --mint-soft:#E0F5EA;  --mint-ink:#1B7A4C;
+  --on-strong:#FFFFFF; --paper:#FFFFFF; --stk:#1F2B42;
+  --shadow:0 1px 2px rgba(28,38,56,.05),0 8px 24px rgba(28,38,56,.07);
   --display:"Quicksand","Nunito","Trebuchet MS",system-ui,sans-serif;
   --body:"Nunito","Segoe UI",system-ui,-apple-system,sans-serif;
   box-sizing:border-box;
@@ -34,26 +35,26 @@
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#1B1522; --card:#271F31; --ink:#F4EEF9; --muted:#AA9DBA; --line:#3A2F47; --eye:#2A1F33;
-    --berry:#F07EA2; --berry-soft:#3E2333; --berry-ink:#F7A9C2;
-    --mint:#58C2B0;  --mint-soft:#1D3A36;  --mint-ink:#8BDCCD;
-    --lilac:#B49BF2; --lilac-soft:#30264A; --lilac-ink:#CDBDF8;
-    --sky:#86AAF4;   --sky-soft:#22304F;   --sky-ink:#B1C9FA;
-    --sun:#F5BE63;   --sun-soft:#3E321C;   --sun-ink:#F8D193;
-    --on-strong:#1E1726; --paper:#EDE6F4; --stk:#1A1320;
-    --shadow:0 1px 2px rgba(0,0,0,.25),0 8px 24px rgba(0,0,0,.25);
+    --bg:#111826; --card:#1B2435; --ink:#EEF3FA; --muted:#A3AFC2; --line:#2C3850; --eye:#111826;
+    --lilac:#6FA8F0; --lilac-soft:#1E3355; --lilac-ink:#A8CBF7;
+    --sky:#5CC8EE;   --sky-soft:#173A4A;   --sky-ink:#A3E0F5;
+    --berry:#FF8599; --berry-soft:#45222B; --berry-ink:#FFB3C0;
+    --sun:#FFC56E;   --sun-soft:#3F331C;   --sun-ink:#FFDDA3;
+    --mint:#5CCB96;  --mint-soft:#183C2C;  --mint-ink:#A1E5C3;
+    --on-strong:#111826; --paper:#EEF3FA; --stk:#0B101A;
+    --shadow:0 1px 2px rgba(0,0,0,.25),0 8px 24px rgba(0,0,0,.28);
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#1B1522; --card:#271F31; --ink:#F4EEF9; --muted:#AA9DBA; --line:#3A2F47; --eye:#2A1F33;
-  --berry:#F07EA2; --berry-soft:#3E2333; --berry-ink:#F7A9C2;
-  --mint:#58C2B0;  --mint-soft:#1D3A36;  --mint-ink:#8BDCCD;
-  --lilac:#B49BF2; --lilac-soft:#30264A; --lilac-ink:#CDBDF8;
-  --sky:#86AAF4;   --sky-soft:#22304F;   --sky-ink:#B1C9FA;
-  --sun:#F5BE63;   --sun-soft:#3E321C;   --sun-ink:#F8D193;
-  --on-strong:#1E1726; --paper:#EDE6F4; --stk:#1A1320;
-  --shadow:0 1px 2px rgba(0,0,0,.25),0 8px 24px rgba(0,0,0,.25);
+  --bg:#111826; --card:#1B2435; --ink:#EEF3FA; --muted:#A3AFC2; --line:#2C3850; --eye:#111826;
+  --lilac:#6FA8F0; --lilac-soft:#1E3355; --lilac-ink:#A8CBF7;
+  --sky:#5CC8EE;   --sky-soft:#173A4A;   --sky-ink:#A3E0F5;
+  --berry:#FF8599; --berry-soft:#45222B; --berry-ink:#FFB3C0;
+  --sun:#FFC56E;   --sun-soft:#3F331C;   --sun-ink:#FFDDA3;
+  --mint:#5CCB96;  --mint-soft:#183C2C;  --mint-ink:#A1E5C3;
+  --on-strong:#111826; --paper:#EEF3FA; --stk:#0B101A;
+  --shadow:0 1px 2px rgba(0,0,0,.25),0 8px 24px rgba(0,0,0,.28);
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -246,11 +247,7 @@ label.chk input{width:22px;height:22px;accent-color:var(--berry)}
 @media (prefers-reduced-motion:reduce){#ring .bell{animation:none}}
 
 /* ===== Soft & cute theme ===== */
-#app,#pop{--sec:var(--berry);--sec-soft:var(--berry-soft);--sec-ink:var(--berry-ink);--sec-strong:var(--berry)}
-#app[data-sec="money"],#pop[data-sec="money"]{--sec:var(--mint);--sec-soft:var(--mint-soft);--sec-ink:var(--mint-ink);--sec-strong:var(--mint)}
-#app[data-sec="us"],#pop[data-sec="us"]{--sec:var(--lilac);--sec-soft:var(--lilac-soft);--sec-ink:var(--lilac-ink);--sec-strong:var(--lilac)}
-#app[data-sec="life"],#pop[data-sec="life"]{--sec:var(--sky);--sec-soft:var(--sky-soft);--sec-ink:var(--sky-ink);--sec-strong:var(--sky)}
-#app[data-sec="book"],#pop[data-sec="book"]{--sec:var(--sun);--sec-soft:var(--sun-soft);--sec-ink:var(--sun-ink);--sec-strong:var(--sun-ink)}
+#app,#pop{--sec:var(--lilac);--sec-soft:var(--lilac-soft);--sec-ink:var(--lilac-ink);--sec-strong:var(--lilac-ink)}
 body{font-size:14px;line-height:1.5}
 h1,h2,h3,.big,.hello{font-family:var(--display);font-weight:700;letter-spacing:-.01em;text-wrap:balance}
 .big{font-size:1.55rem;font-variant-numeric:tabular-nums}
