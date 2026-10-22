@@ -209,6 +209,23 @@ label.chk input{width:22px;height:22px;accent-color:var(--berry)}
   <main id="main"></main>
   <nav id="tabs" aria-label="Sections"></nav>
 </div>
+<script>
+/* Shows a clear message instead of an endless loading screen if something goes wrong while starting. */
+function nestoryStop(msg){var p=document.querySelector('#splash p');if(p){p.textContent=msg;p.style.cssText='color:#B83360;max-width:320px;margin:12px auto 0;font-weight:600'}throw new Error('Nestory stopped: '+msg)}
+window.addEventListener('error',function(e){var sp=document.getElementById('splash');var p=document.querySelector('#splash p');if(!sp||sp.style.display==='none'||!p||/Nestory stopped/.test(e.message||''))return;p.textContent='Nestory could not start: '+(e.message||'unknown error')+(e.lineno?' (line '+e.lineno+')':'')+'. If you just edited index.html, check the setup lines.';p.style.color='#B83360'});
+window.addEventListener('unhandledrejection',function(e){var sp=document.getElementById('splash');var p=document.querySelector('#splash p');if(!sp||sp.style.display==='none'||!p)return;var m=(e.reason&&e.reason.message)||String(e.reason||'');if(/Nestory stopped/.test(m))return;p.textContent='Nestory could not start: '+m;p.style.color='#B83360'});
+</script>
+<script>
+/* ===================== ONLINE SETUP =====================
+   Paste your two Supabase values between the quotes below.
+   Keep the quotes and the comma exactly as they are.       */
+window.NESTORY_SETUP = {
+  url: "https://oxyncmbgaobcntrpbkwf.supabase.co",
+  key: "sb_publishable_wzmiklMjkJfyKxH9UgmEbg_9qa8MU85"
+};
+/* ======================================================== */
+window.NESTORY_SETUP_OK = true;
+</script>
 <div id="veil"><div id="sheet" role="dialog" aria-modal="true"></div></div>
 <div id="toast" role="status"></div>
 <div id="ring" role="alertdialog" aria-label="Alarm"></div>
@@ -226,12 +243,10 @@ label.chk input{width:22px;height:22px;accent-color:var(--berry)}
 
 <script>
 "use strict";
-/* ===== ONLINE SETUP: paste your two Supabase values between the quotes ===== */
-const NESTORY_SUPABASE={
-  url:"https://oxyncmbgaobcntrpbkwf.supabase.co"  // Project URL, looks like https://abcdefgh.supabase.co
-  key:"sb_publishable_wzmiklMjkJfyKxH9UgmEbg_9qa8MU85"    // Publishable key, starts with sb_publishable_
-};
-/* ========================================================================== */
+if(!window.NESTORY_SETUP_OK){nestoryStop('The setup lines near the top of index.html have a typo, so Nestory cannot start. Check that the URL and key each sit between two straight double quotes "like this", and that the comma after the URL line is still there.')}
+const NESTORY_SUPABASE={url:String((window.NESTORY_SETUP||{}).url||'').trim(),key:String((window.NESTORY_SETUP||{}).key||'').trim()};
+if(NESTORY_SUPABASE.url&&!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(NESTORY_SUPABASE.url))nestoryStop('The Supabase URL in index.html does not look right. It should look like https://abcdefgh.supabase.co with nothing after .co');
+if(NESTORY_SUPABASE.key&&!/^sb_publishable_[\w-]+$/.test(NESTORY_SUPABASE.key)&&!/^eyJ[\w-]+\.[\w-]+\.[\w-]+$/.test(NESTORY_SUPABASE.key))nestoryStop('The Supabase key in index.html does not look right. Use the Publishable key, which starts with sb_publishable_ and has no spaces.');
 /* ---------- tiny helpers ---------- */
 const $=(s,r=document)=>r.querySelector(s);
 function h(tag,a,...kids){
@@ -389,8 +404,9 @@ const Store={
     S.sample=sample;
     let lanUid=null;
     if(!db&&!window.claude&&NESTORY_SUPABASE.url&&NESTORY_SUPABASE.key){
-      try{const on=await supaConnect(NESTORY_SUPABASE);db=on.db;lanUid=on.uid}
-      catch(e){$('#splash p').textContent='Could not connect: '+((e&&e.message)||e)+' Check the Supabase URL and key in the file, then reload.';return}
+      const slow=setTimeout(()=>{const p=$('#splash p');if(p&&$('#splash').style.display!=='none'&&!$('#veil').classList.contains('open'))p.textContent='Still connecting… If this does not finish, check your internet, and in supabase.com check the project is not paused.'},20000);
+      try{const on=await supaConnect(NESTORY_SUPABASE);db=on.db;lanUid=on.uid;clearTimeout(slow)}
+      catch(e){clearTimeout(slow);$('#splash p').textContent='Could not connect: '+((e&&e.message)||e)+' Check the Supabase URL and key in the file, then reload.';return}
     }
     if(!db&&!window.claude&&/^http/.test(location.protocol)){const lan=await lanConnect();if(lan){db=lan.db;lanUid=lan.uid}}
     if(db){
