@@ -247,7 +247,7 @@ label.chk input{width:22px;height:22px;accent-color:var(--berry)}
 @media (prefers-reduced-motion:reduce){#ring .bell{animation:none}}
 
 /* ===== Soft & cute theme ===== */
-#app,#pop{--sec:var(--lilac);--sec-soft:var(--lilac-soft);--sec-ink:var(--lilac-ink);--sec-strong:var(--lilac-ink)}
+:root,#app,#pop,#veil,#lock,#toast{--sec:var(--lilac);--sec-soft:var(--lilac-soft);--sec-ink:var(--lilac-ink);--sec-strong:var(--lilac-ink)}
 body{font-size:14px;line-height:1.5}
 h1,h2,h3,.big,.hello{font-family:var(--display);font-weight:700;letter-spacing:-.01em;text-wrap:balance}
 .big{font-size:1.55rem;font-variant-numeric:tabular-nums}
@@ -274,7 +274,7 @@ h1,h2,h3,.big,.hello{font-family:var(--display);font-weight:700;letter-spacing:-
 .card h2 .ttl{display:inline-flex;align-items:center;gap:8px}
 .card h2 .ttl .i{color:var(--sec-ink);font-size:1.15rem}
 .card h2 button{font:700 .82rem var(--body);color:var(--sec-ink)}
-.btn{background:var(--sec-strong);color:var(--on-strong);font-weight:800;font-size:.86rem;letter-spacing:.01em;transition:transform .12s ease,filter .2s}
+.btn{background:var(--sec-strong,var(--lilac-ink));color:var(--on-strong,#FFFFFF);font-weight:800;font-size:.86rem;letter-spacing:.01em;transition:transform .12s ease,filter .2s}
 .btn:active{transform:scale(.97)}
 .btn.soft{background:var(--sec-soft);color:var(--sec-ink)}
 .btn.mint{background:var(--mint-soft);color:var(--mint-ink)}
